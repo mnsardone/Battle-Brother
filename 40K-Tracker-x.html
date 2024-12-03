@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>40K Match Tracker v1.0</title>
+    <title>40K Match Tracker v1.4</title>
     <style>
         :root {
             --primary-color: black;
@@ -12,6 +12,7 @@
             --button-critical-bg: red;
             --button-hover-positive-bg: mediumseagreen;
             --button-hover-critical-bg: darkred;
+            --button-active-bg: #cccccc;
         }
 
         body {
@@ -50,6 +51,13 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            align-items: flex-end;
+        }
+        #options-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
         }
         #controls {
             display: flex;
@@ -76,6 +84,14 @@
             width: 250px;
             gap: 15px;
             box-sizing: border-box;
+            position: relative;
+            cursor: move;
+        }
+        .faction.dragging {
+            opacity: 0.5;
+        }
+        .faction.over {
+            border: 2px dashed #000;
         }
         .faction-title {
             font-size: 40px;
@@ -126,31 +142,64 @@
         .positive-button:hover {
             background-color: var(--button-hover-positive-bg);
         }
-        #background-upload {
+        #appearance-controls {
             position: fixed;
             bottom: 20px;
             right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        #background-upload {
             background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            display: none;
+            margin-top: 10px;
+        }
+        .latest-history {
+            font-size: 14px;
+            color: gray;
+            text-align: center;
+            margin-top: 10px;
+            min-height: 20px;
+        }
+        .history-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
         }
         .history {
-            margin-top: 15px;
+            margin-top: 10px;
             font-size: 0.9em;
             color: gray;
             text-align: center;
+            max-height: 100px;
+            overflow-y: auto;
+            display: none;
+            width: 100%;
+            text-align: left;
         }
-        #image-display {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 100px;
-            height: 100px;
-            background-size: cover;
-            background-position: center;
-            border-radius: 5px;
-            border: 1px solid #ccc;
+        .history ul {
+            list-style-type: disc;
+            margin: 0;
+            padding-left: 20px;
+        }
+        .history-button {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+        #toggle-appearance-button,
+        #toggle-options-button {
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        /* Styles for active state */
+        .active-button {
+            background-color: var(--button-active-bg);
         }
         @media (max-width: 600px) {
             .faction {
@@ -170,37 +219,44 @@
             <button id="redo-button" onclick="redo()" disabled>Redo</button>
         </div>
         <div id="top-right-buttons">
-            <button class="critical-button" onclick="confirmResetAll()">Reset All</button>
-            <button onclick="confirmSaveData()">Save</button>
-            <button onclick="confirmLoadData()">Load</button>
-            <button onclick="exportData()">Export Game</button>
-            <button onclick="document.getElementById('import-file-input').click()">Import Game</button>
-            <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
+            <button id="toggle-options-button" onclick="toggleOptionsMenu()">Options</button>
+            <div id="options-menu">
+                <button class="critical-button" onclick="confirmResetAll()">Reset All</button>
+                <button onclick="confirmSaveData()">Save</button>
+                <button onclick="confirmLoadData()">Load</button>
+                <button onclick="exportData()">Export Game</button>
+                <button onclick="document.getElementById('import-file-input').click()">Import Game</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
+            </div>
         </div>
     </header>
 
     <div id="faction-list"></div>
 
-    <div id="background-upload">
-        <label>
-            Background: 
-            <input type="file" accept="image/*" onchange="setBackground(event)">
-        </label>
-        <label>
-            Contrast Fix:
-            <input type="checkbox" id="title-color-toggle" onchange="toggleTitleAndTimeColor()">
-            <span>White</span>
-        </label>
+    <div id="appearance-controls">
+        <button id="toggle-appearance-button" onclick="toggleAppearanceMenu()">Appearance</button>
+        <div id="background-upload">
+            <label>
+                Background: 
+                <input type="file" accept="image/*" onchange="setBackground(event)">
+            </label>
+            <label>
+                Contrast Fix:
+                <input type="checkbox" id="title-color-toggle" onchange="toggleTitleAndTimeColor()">
+                <span>White</span>
+            </label>
+        </div>
     </div>
 
     <button id="toggle-player-button" style="position: fixed; bottom: 200px; left: 20px;">Hide Player</button>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
 
     <script>
         let factionIdCounter = 0;
         let undoStack = []; // Tracks actions for undo functionality
         let redoStack = []; // Tracks actions for redo functionality
         const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
+        let factionHistories = {}; // Stores detailed histories for each faction
 
         function updateTime() {
             const liveTimeElement = document.getElementById("live-time");
@@ -226,6 +282,10 @@
                 updateUndoRedoButtonState();
                 updateButtonState(factionId, 'vp', 0);
                 updateButtonState(factionId, 'cp', 0);
+
+                // Initialize history for the new faction
+                factionHistories[factionId] = [];
+                addHistory(factionId, 'Faction added');
             }
         }
 
@@ -233,6 +293,7 @@
             const factionDiv = document.createElement("div");
             factionDiv.className = "faction";
             factionDiv.id = factionId;
+            factionDiv.draggable = true; // Enable dragging
             factionDiv.innerHTML = `
                 <div class="faction-title" id="faction-title-${factionId}">${name}</div>
                 <div class="faction-values">
@@ -249,10 +310,81 @@
                         <button id="decrement-cp-${factionId}" onclick="changeValue('${factionId}', 'cp', -1)" ${cp <= 0 ? 'disabled' : ''}>- CP</button>
                     </div>
                 </div>
+                <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
+                <div class="history-buttons">
+                    <button class="history-button" onclick="toggleHistory('${factionId}')">Show History</button>
+                    <button class="history-button" onclick="editFactionName('${factionId}')">Edit Name</button>
+                </div>
                 <button class="critical-button" onclick="removeFaction('${factionId}')">Remove Faction</button>
-                <div class="history" id="history-${factionId}">No actions yet.</div>
+                <div class="history" id="history-${factionId}">
+                    <ul id="history-list-${factionId}"></ul>
+                </div>
             `;
+
+            // Add drag-and-drop event listeners
+            addDragAndDropHandlers(factionDiv);
+
             return factionDiv;
+        }
+
+        function addDragAndDropHandlers(factionDiv) {
+            factionDiv.addEventListener('dragstart', dragStart);
+            factionDiv.addEventListener('dragover', dragOver);
+            factionDiv.addEventListener('dragenter', dragEnter);
+            factionDiv.addEventListener('dragleave', dragLeave);
+            factionDiv.addEventListener('drop', dragDrop);
+            factionDiv.addEventListener('dragend', dragEnd);
+        }
+
+        function dragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.id);
+            e.currentTarget.classList.add('dragging');
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+        }
+
+        function dragEnter(e) {
+            e.preventDefault();
+            if (e.target.classList.contains('faction')) {
+                e.target.classList.add('over');
+            }
+        }
+
+        function dragLeave(e) {
+            if (e.target.classList.contains('faction')) {
+                e.target.classList.remove('over');
+            }
+        }
+
+        function dragDrop(e) {
+            e.preventDefault();
+            const draggedId = e.dataTransfer.getData('text/plain');
+            const targetId = e.currentTarget.id;
+
+            if (draggedId !== targetId) {
+                const factionList = document.getElementById('faction-list');
+                const draggedElement = document.getElementById(draggedId);
+                const targetElement = document.getElementById(targetId);
+
+                // Swap the elements
+                const draggedIndex = Array.from(factionList.children).indexOf(draggedElement);
+                const targetIndex = Array.from(factionList.children).indexOf(targetElement);
+
+                if (draggedIndex < targetIndex) {
+                    factionList.insertBefore(draggedElement, targetElement.nextSibling);
+                } else {
+                    factionList.insertBefore(draggedElement, targetElement);
+                }
+            }
+            e.currentTarget.classList.remove('over');
+        }
+
+        function dragEnd(e) {
+            e.currentTarget.classList.remove('dragging');
+            const factionElements = document.querySelectorAll('.faction');
+            factionElements.forEach(elem => elem.classList.remove('over'));
         }
 
         function changeValue(id, type, delta) {
@@ -308,7 +440,6 @@
         }
 
         function addHistory(id, type, delta) {
-            const historyElem = document.getElementById(`history-${id}`);
             let actionDescription = '';
             if (type === 'vp') {
                 actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
@@ -316,8 +447,66 @@
                 actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
             } else if (type === 'faction') {
                 actionDescription = delta; // For faction actions like 'added' or 'restored'
+            } else {
+                actionDescription = type; // General action description
             }
-            historyElem.textContent = actionDescription;
+
+            const timestamp = new Date().toLocaleTimeString();
+            const historyEntry = `[${timestamp}] ${actionDescription}`;
+
+            // Store in faction's history
+            if (!factionHistories[id]) {
+                factionHistories[id] = [];
+            }
+            factionHistories[id].push(historyEntry);
+
+            // Update latest history display
+            const latestHistoryElem = document.getElementById(`latest-history-${id}`);
+            latestHistoryElem.textContent = historyEntry;
+
+            // Update history display if visible
+            const historyList = document.getElementById(`history-list-${id}`);
+            if (historyList && historyList.parentElement.style.display !== 'none') {
+                const li = document.createElement('li');
+                li.textContent = historyEntry;
+                historyList.insertBefore(li, historyList.firstChild);
+            }
+        }
+
+        function toggleHistory(id) {
+            const historyDiv = document.getElementById(`history-${id}`);
+            const historyButton = historyDiv.previousElementSibling.querySelector('.history-button');
+            if (historyDiv.style.display === 'none' || historyDiv.style.display === '') {
+                historyDiv.style.display = 'block';
+                historyButton.textContent = 'Hide History';
+                // Load history entries
+                const historyList = document.getElementById(`history-list-${id}`);
+                historyList.innerHTML = ''; // Clear existing entries
+                if (factionHistories[id]) {
+                    factionHistories[id].slice().reverse().forEach(entry => {
+                        const li = document.createElement('li');
+                        li.textContent = entry;
+                        historyList.appendChild(li);
+                    });
+                }
+            } else {
+                historyDiv.style.display = 'none';
+                historyButton.textContent = 'Show History';
+            }
+        }
+
+        function editFactionName(id) {
+            const factionTitleElem = document.getElementById(`faction-title-${id}`);
+            const currentName = factionTitleElem.textContent;
+            const newName = prompt("Enter the new name for this faction:", currentName);
+            if (newName && newName.trim() !== '') {
+                const oldName = currentName;
+                factionTitleElem.textContent = newName;
+                addUndoAction({ action: 'rename', factionId: id, oldName, newName });
+                redoStack = []; // Clear redo stack on new action
+                addHistory(id, `Name changed from "${oldName}" to "${newName}"`);
+                updateUndoRedoButtonState();
+            }
         }
 
         function undo() {
@@ -339,6 +528,7 @@
                 factionList.appendChild(factionDiv);
                 updateButtonState(lastAction.factionId, 'vp', lastAction.vp);
                 updateButtonState(lastAction.factionId, 'cp', lastAction.cp);
+                factionHistories[lastAction.factionId] = lastAction.history || [];
                 addHistory(lastAction.factionId, 'faction', 'restored');
             } else if (lastAction.action === 'change') {
                 // Undo a value change
@@ -347,6 +537,11 @@
                 const delta = lastAction.oldValue - lastAction.newValue;
                 addHistory(lastAction.factionId, lastAction.type, delta);
                 updateButtonState(lastAction.factionId, lastAction.type, lastAction.oldValue);
+            } else if (lastAction.action === 'rename') {
+                // Undo renaming a faction
+                const factionTitleElem = document.getElementById(`faction-title-${lastAction.factionId}`);
+                factionTitleElem.textContent = lastAction.oldName;
+                addHistory(lastAction.factionId, `Name reverted to "${lastAction.oldName}"`);
             }
             updateUndoRedoButtonState();
         }
@@ -367,6 +562,7 @@
                 factionList.appendChild(factionDiv);
                 updateButtonState(lastUndoneAction.factionId, 'vp', 0);
                 updateButtonState(lastUndoneAction.factionId, 'cp', 0);
+                factionHistories[lastUndoneAction.factionId] = [];
                 addHistory(lastUndoneAction.factionId, 'faction', 'added');
             } else if (lastUndoneAction.action === 'remove') {
                 // Redo removing a faction
@@ -378,6 +574,11 @@
                 const delta = lastUndoneAction.newValue - lastUndoneAction.oldValue;
                 addHistory(lastUndoneAction.factionId, lastUndoneAction.type, delta);
                 updateButtonState(lastUndoneAction.factionId, lastUndoneAction.type, lastUndoneAction.newValue);
+            } else if (lastUndoneAction.action === 'rename') {
+                // Redo renaming a faction
+                const factionTitleElem = document.getElementById(`faction-title-${lastUndoneAction.factionId}`);
+                factionTitleElem.textContent = lastUndoneAction.newName;
+                addHistory(lastUndoneAction.factionId, `Name changed to "${lastUndoneAction.newName}"`);
             }
             updateUndoRedoButtonState();
         }
@@ -400,6 +601,7 @@
             factionList.innerHTML = "";
             undoStack = [];
             redoStack = [];
+            factionHistories = {};
             updateUndoRedoButtonState();
         }
 
@@ -415,9 +617,15 @@
                 const factionName = factionDiv.querySelector(".faction-title").textContent;
                 const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent.split(' ')[0]);
                 const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent.split(' ')[0]);
-                factions.push({ factionName, vp, cp });
+                const factionId = factionDiv.id;
+                factions.push({ factionName, vp, cp, factionId });
             });
-            localStorage.setItem("factionData", JSON.stringify(factions));
+            const data = {
+                factions,
+                factionHistories,
+                factionOrder: Array.from(document.getElementById('faction-list').children).map(child => child.id)
+            };
+            localStorage.setItem("factionData", JSON.stringify(data));
         }
 
         function confirmLoadData() {
@@ -430,14 +638,17 @@
             const savedData = localStorage.getItem("factionData");
             if (savedData) {
                 try {
-                    const factions = JSON.parse(savedData);
+                    const data = JSON.parse(savedData);
                     resetAll(); // Clear existing factions
-                    factions.forEach(faction => {
-                        const factionId = generateUniqueFactionId();
-                        const factionDiv = createFactionElement(factionId, faction.factionName, faction.vp, faction.cp);
-                        document.getElementById("faction-list").appendChild(factionDiv);
-                        updateButtonState(factionId, 'vp', faction.vp);
-                        updateButtonState(factionId, 'cp', faction.cp);
+                    factionHistories = data.factionHistories || {};
+                    data.factionOrder.forEach(factionId => {
+                        const factionData = data.factions.find(f => f.factionId === factionId);
+                        if (factionData) {
+                            const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
+                            document.getElementById("faction-list").appendChild(factionDiv);
+                            updateButtonState(factionId, 'vp', factionData.vp);
+                            updateButtonState(factionId, 'cp', factionData.cp);
+                        }
                     });
                 } catch (error) {
                     alert("Failed to load saved data. The data might be corrupted.");
@@ -483,9 +694,15 @@
                 const factionName = factionDiv.querySelector(".faction-title").textContent;
                 const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent.split(' ')[0]);
                 const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent.split(' ')[0]);
-                factions.push({ factionName, vp, cp });
+                const factionId = factionDiv.id;
+                factions.push({ factionName, vp, cp, factionId });
             });
-            const dataStr = JSON.stringify(factions, null, 2);
+            const data = {
+                factions,
+                factionHistories,
+                factionOrder: Array.from(document.getElementById('faction-list').children).map(child => child.id)
+            };
+            const dataStr = JSON.stringify(data, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
 
@@ -504,14 +721,17 @@
             const reader = new FileReader();
             reader.onload = function (e) {
                 try {
-                    const factions = JSON.parse(e.target.result);
+                    const data = JSON.parse(e.target.result);
                     resetAll(); // Clear existing factions
-                    factions.forEach(faction => {
-                        const factionId = generateUniqueFactionId();
-                        const factionDiv = createFactionElement(factionId, faction.factionName, faction.vp, faction.cp);
-                        document.getElementById("faction-list").appendChild(factionDiv);
-                        updateButtonState(factionId, 'vp', faction.vp);
-                        updateButtonState(factionId, 'cp', faction.cp);
+                    factionHistories = data.factionHistories || {};
+                    data.factionOrder.forEach(factionId => {
+                        const factionData = data.factions.find(f => f.factionId === factionId);
+                        if (factionData) {
+                            const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
+                            document.getElementById("faction-list").appendChild(factionDiv);
+                            updateButtonState(factionId, 'vp', factionData.vp);
+                            updateButtonState(factionId, 'cp', factionData.cp);
+                        }
                     });
                     updateUndoRedoButtonState();
                     alert("Data imported successfully!");
@@ -521,6 +741,32 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        // Toggle Options Menu
+        function toggleOptionsMenu() {
+            const optionsMenu = document.getElementById('options-menu');
+            const optionsButton = document.getElementById('toggle-options-button');
+            if (optionsMenu.style.display === 'none' || optionsMenu.style.display === '') {
+                optionsMenu.style.display = 'flex';
+                optionsButton.classList.add('active-button');
+            } else {
+                optionsMenu.style.display = 'none';
+                optionsButton.classList.remove('active-button');
+            }
+        }
+
+        // Toggle Appearance Menu
+        function toggleAppearanceMenu() {
+            const appearanceMenu = document.getElementById('background-upload');
+            const appearanceButton = document.getElementById('toggle-appearance-button');
+            if (appearanceMenu.style.display === 'none' || appearanceMenu.style.display === '') {
+                appearanceMenu.style.display = 'block';
+                appearanceButton.classList.add('active-button');
+            } else {
+                appearanceMenu.style.display = 'none';
+                appearanceButton.classList.remove('active-button');
+            }
         }
 
         // Toggle YouTube Player
