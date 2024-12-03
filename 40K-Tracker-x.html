@@ -20,6 +20,9 @@
             --modal-bg: rgba(0, 0, 0, 0.5);
             --modal-content-bg: white;
             --status-box-bg: #d3d3d3; /* Light grey background */
+            --version-font-size: 16px; /* Small font size for version number */
+            --rounded-rectangle-bg: rgba(0, 0, 255, 0.3); /* Semi-transparent blue */
+            --rounded-rectangle-border: rgba(0, 0, 255, 0.6); /* Slightly less transparent border */
         }
 
         body {
@@ -30,6 +33,7 @@
             background-repeat: no-repeat;
             background-position: center;
             transition: background-image 0.3s ease-in-out;
+            /* Removed border around the webpage */
         }
 
         header {
@@ -55,6 +59,15 @@
             font-family: 'Metal Mania', sans-serif; /* Applied the new font */
             transition: color 0.3s ease-in-out;
             font-size: 48px;
+            display: inline-block; /* To position the version number next to it */
+        }
+
+        #version-number {
+            font-size: var(--version-font-size);
+            margin-left: 10px;
+            vertical-align: middle;
+            color: var(--primary-color);
+            font-family: 'Metal Mania', sans-serif; /* Matching font */
         }
 
         #controls {
@@ -101,9 +114,9 @@
         .faction {
             margin-bottom: 30px;
             padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: rgba(255, 255, 255, 0.8);
+            border: 1px solid #333; /* Thinner and lighter black border */
+            border-radius: 10px; /* Rounded borders */
+            /* Background color is set via JavaScript with RGBA for transparency */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -113,6 +126,8 @@
             box-sizing: border-box;
             position: relative;
             cursor: move;
+            transition: background-color 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9); /* 90% opaque */
         }
 
         .faction.dragging {
@@ -123,6 +138,13 @@
             border: 2px dashed #000;
         }
 
+        .skull-emoji {
+            font-size: 28px; /* Increased size */
+            display: none; /* Hidden by default */
+            position: absolute;
+            top: -10px;
+        }
+
         .faction-title {
             font-size: 40px;
             font-weight: bold;
@@ -131,6 +153,38 @@
             overflow-wrap: break-word;
             word-break: break-word;
             font-family: 'Metal Mania', sans-serif; /* Applied the new font */
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .action-buttons .status-dropdown {
+            flex: 1;
+        }
+
+        .action-buttons .history-button {
+            flex: 1;
+        }
+
+        .status-dropdown {
+            font-size: 14px;
+            font-weight: lighter;
+            padding: 5px;
+            width: auto;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .delete-option {
+            color: #ff4d4d; /* Light red */
+            font-weight: bold;
         }
 
         .faction-values {
@@ -147,14 +201,24 @@
 
         .incrementer {
             display: flex;
-            gap: 10px;
+            gap: 5px;
             justify-content: center;
+            align-items: center;
         }
 
-        .incrementer div {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        .incrementer input[type="number"] {
+            width: 40px;
+            padding: 5px;
+            font-size: 14px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+        }
+
+        .incrementer button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
         }
 
         button {
@@ -185,6 +249,23 @@
             background-color: var(--button-hover-positive-bg);
         }
 
+        .negative-button {
+            background-color: #f08080;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            transition: background-color 0.3s ease;
+        }
+
+        .negative-button:hover {
+            background-color: #e06666;
+        }
+
+        .disabled-button {
+            background-color: #ccc !important;
+            color: #666 !important;
+            cursor: not-allowed !important;
+        }
+
         #appearance-controls {
             position: fixed;
             bottom: 20px;
@@ -209,12 +290,6 @@
             text-align: center;
             margin-top: 10px;
             min-height: 20px;
-        }
-
-        .history-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
         }
 
         .history {
@@ -275,7 +350,8 @@
             text-align: center;
         }
 
-        .modal input {
+        .modal input,
+        .modal select {
             width: 80%;
             padding: 8px;
             margin-bottom: 10px;
@@ -358,6 +434,29 @@
                 font-size: 24px;
             }
 
+            .incrementer input[type="number"] {
+                width: 30px;
+            }
+
+            .incrementer button {
+                font-size: 12px;
+                padding: 5px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .history-button {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .status-dropdown {
+                width: 100%;
+            }
+
             button {
                 font-size: 16px;
                 width: 100%;
@@ -384,8 +483,16 @@
 <body>
     <header>
         <div id="live-time"></div>
+        <!-- Added Lightning Bolt Emoji to the Left of the Title -->
+        <span style="font-size: 48px;">⚡</span>
         <h1 id="page-title">The Thunderdome</h1>
-        <!-- Removed status box and terrain status -->
+        <span id="version-number">v1.1</span>
+        <div id="controls">
+            <button id="add-faction-button">Add Faction</button>
+            <button id="next-command-phase-button">Next Command Phase</button>
+            <button id="undo-button" disabled>Undo</button>
+            <button id="redo-button" disabled>Redo</button>
+        </div>
         <div id="top-right-buttons">
             <button id="toggle-options-button">Options</button>
             <div id="options-menu">
@@ -395,14 +502,7 @@
                 <button id="export-data-button">Export Game</button>
                 <button id="import-data-button">Import Game</button>
                 <input type="file" id="import-file-input" accept=".json" style="display: none;">
-                <!-- Removed Add Terrain button -->
             </div>
-        </div>
-        <div id="controls">
-            <button id="add-faction-button">Add Faction</button>
-            <button id="next-command-phase-button">Next Command Phase</button>
-            <button id="undo-button" disabled>Undo</button>
-            <button id="redo-button" disabled>Redo</button>
         </div>
     </header>
 
@@ -423,7 +523,7 @@
         </div>
     </div>
 
-    <button id="toggle-player-button" style="position: fixed; bottom: 20px; left: 20px;">Show Player</button>
+    <button id="toggle-player-button" style="position: fixed; bottom: 20px; left: 20px;">Show Music</button>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px; display: none;"></iframe>
 
     <!-- Notification Container -->
@@ -464,12 +564,58 @@
             const notificationContainer = document.getElementById('notification-container');
             const modal = document.getElementById('modal');
             const modalContent = document.getElementById('modal-content');
+            const versionNumber = document.getElementById('version-number');
+
+            const predefinedColors = [
+                '#B6B3F2',
+                '#B0EDF0',
+                '#BAF1B4',
+                '#FCEDA8',
+                '#FCA9C9',
+                '#F8AC8C',
+                '#FBE4C4',
+                '#F9F4F0',
+                '#D2E4E8',
+                '#DEACD1'
+            ];
 
             let factionIdCounter = 0;
             let undoStack = []; // Tracks actions for undo functionality
             let redoStack = []; // Tracks actions for redo functionality
             const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
             let factionHistories = {}; // Stores detailed histories for each faction
+
+            /**
+             * Converts a hex color code to RGBA.
+             * @param {string} hex - The hex color code.
+             * @param {number} alpha - The alpha value (0 to 1).
+             * @returns {string} The RGBA color string.
+             */
+            function hexToRgba(hex, alpha = 0.90) { // 90% opacity
+                let c;
+                if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+                    c= hex.substring(1).split('');
+                    if(c.length === 3){
+                        c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                    }
+                    c= '0x'+c.join('');
+                    return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+','+alpha+')';
+                }
+                throw new Error('Bad Hex');
+            }
+
+            /**
+             * Converts RGBA color string to HEX.
+             * @param {string} rgba - The RGBA color string.
+             * @returns {string} The HEX color code.
+             */
+            function rgbaToHex(rgba) {
+                const parts = rgba.replace(/rgba?\(|\s+|\)/g, '').split(',');
+                const r = parseInt(parts[0], 10).toString(16).padStart(2, '0');
+                const g = parseInt(parts[1], 10).toString(16).padStart(2, '0');
+                const b = parseInt(parts[2], 10).toString(16).padStart(2, '0');
+                return `#${r}${g}${b}`.toUpperCase();
+            }
 
             /**
              * Updates the live time display every second.
@@ -496,6 +642,12 @@
                 showModal(`
                     <h2>Add Faction</h2>
                     <input type="text" id="new-faction-name" placeholder="Faction Name">
+                    <select id="new-faction-color">
+                        <option value="" disabled selected>Select Color</option>
+                        ${predefinedColors.map(color => `
+                            <option value="${color}" style="background-color: ${color}; color: #000;">${color}</option>
+                        `).join('')}
+                    </select>
                     <div>
                         <button id="confirm-add-faction-button">Add</button>
                         <button id="cancel-add-faction-button">Cancel</button>
@@ -503,6 +655,7 @@
                 `);
 
                 const newFactionNameInput = document.getElementById('new-faction-name');
+                const newFactionColorSelect = document.getElementById('new-faction-color');
                 const confirmAddFactionButton = document.getElementById('confirm-add-faction-button');
                 const cancelAddFactionButton = document.getElementById('cancel-add-faction-button');
 
@@ -517,13 +670,23 @@
              */
             function addFaction() {
                 const factionNameInput = document.getElementById('new-faction-name');
+                const factionColorSelect = document.getElementById('new-faction-color');
                 const factionName = factionNameInput.value.trim() || 'New Faction';
+                const factionColorHex = factionColorSelect.value || '#FFFFFF'; // Default to white if no color selected
+                let factionColorRgba = '#FFFFFF'; // Default
+
+                try {
+                    factionColorRgba = hexToRgba(factionColorHex, 0.90); // 90% opacity
+                } catch (error) {
+                    showNotification('Invalid color selected. Defaulting to white.', 'error');
+                }
+
                 closeModal();
 
                 const factionId = generateUniqueFactionId();
-                const factionDiv = createFactionElement(factionId, factionName, 0, 0);
+                const factionDiv = createFactionElement(factionId, factionName, 0, 0, factionColorRgba);
                 factionListElement.appendChild(factionDiv);
-                addUndoAction({ action: 'add', factionId, name: factionName }); // Added name for redo functionality
+                addUndoAction({ action: 'add', factionId, name: factionName, color: factionColorHex }); // Added color for redo functionality
                 redoStack = []; // Clear redo stack on new action
                 updateUndoRedoButtonState();
                 updateButtonState(factionId, 'vp', 0);
@@ -531,7 +694,7 @@
 
                 // Initialize history for the new faction
                 factionHistories[factionId] = [];
-                addHistory(factionId, 'Faction added');
+                addHistory(factionId, 'faction', 'Faction added');
             }
 
             /**
@@ -540,54 +703,88 @@
              * @param {string} name - The name of the faction.
              * @param {number} vp - Victory points.
              * @param {number} cp - Command points.
+             * @param {string} color - The background color of the faction in RGBA.
              * @returns {HTMLElement} The faction DOM element.
              */
-            function createFactionElement(factionId, name, vp, cp) {
+            function createFactionElement(factionId, name, vp, cp, color) {
                 const factionDiv = document.createElement('div');
                 factionDiv.className = 'faction';
                 factionDiv.id = factionId;
                 factionDiv.draggable = true; // Enable dragging
+                factionDiv.style.backgroundColor = color; // Set background color
 
                 factionDiv.innerHTML = `
+                    <span class="skull-emoji" id="skull-${factionId}">☠️</span>
                     <div class="faction-title" id="faction-title-${factionId}">${name}</div>
                     <div class="faction-values">
                         <div class="faction-value" id="vp-${factionId}">${vp} VP</div>
                         <div class="faction-value" id="cp-${factionId}">${cp} CP</div>
                     </div>
                     <div class="incrementer">
-                        <div>
-                            <button class="positive-button increment-vp-button">+ VP</button>
-                            <button class="decrement-vp-button" ${vp <= 0 ? 'disabled' : ''}>- VP</button>
-                        </div>
-                        <div>
-                            <button class="positive-button increment-cp-button">+ CP</button>
-                            <button class="decrement-cp-button" ${cp <= 0 ? 'disabled' : ''}>- CP</button>
-                        </div>
+                        <input type="number" min="1" id="vp-increment-${factionId}" value="1">
+                        <button class="positive-button increment-vp-button">+ VP</button>
+                        <button class="negative-button decrement-vp-button">-1VP</button>
+                    </div>
+                    <div class="incrementer">
+                        <input type="number" min="1" id="cp-increment-${factionId}" value="1">
+                        <button class="positive-button increment-cp-button">+ CP</button>
+                        <button class="negative-button decrement-cp-button">-1CP</button>
                     </div>
                     <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
-                    <div class="history-buttons">
+                    <div class="action-buttons">
+                        <select class="status-dropdown" id="status-dropdown-${factionId}">
+                            <option value="Active" selected>Active</option>
+                            <option value="Tabled">Tabled</option>
+                            <option value="Delete" class="delete-option">Delete</option>
+                        </select>
                         <button class="history-button toggle-history-button" id="toggle-history-button-${factionId}">Show History</button>
-                        <button class="history-button edit-name-button">Edit Name</button>
+                        <button class="history-button edit-faction-button">Edit Faction</button>
                     </div>
-                    <button class="critical-button remove-faction-button">Remove Faction</button>
                     <div class="history" id="history-${factionId}">
                         <ul id="history-list-${factionId}"></ul>
                     </div>
                 `;
 
-                // Event Listeners for faction buttons
-                factionDiv.querySelector('.increment-vp-button').addEventListener('click', () => changeValue(factionId, 'vp', 1));
+                // Event Listeners for faction buttons and inputs
+                factionDiv.querySelector('.increment-vp-button').addEventListener('click', () => {
+                    const incrementValue = parseInt(document.getElementById(`vp-increment-${factionId}`).value) || 1;
+                    changeValue(factionId, 'vp', incrementValue);
+                });
                 factionDiv.querySelector('.decrement-vp-button').addEventListener('click', () => changeValue(factionId, 'vp', -1));
-                factionDiv.querySelector('.increment-cp-button').addEventListener('click', () => changeValue(factionId, 'cp', 1));
+                factionDiv.querySelector('.increment-cp-button').addEventListener('click', () => {
+                    const incrementValue = parseInt(document.getElementById(`cp-increment-${factionId}`).value) || 1;
+                    changeValue(factionId, 'cp', incrementValue);
+                });
                 factionDiv.querySelector('.decrement-cp-button').addEventListener('click', () => changeValue(factionId, 'cp', -1));
                 factionDiv.querySelector('.toggle-history-button').addEventListener('click', () => toggleHistory(factionId));
-                factionDiv.querySelector('.edit-name-button').addEventListener('click', () => showEditFactionNameModal(factionId));
-                factionDiv.querySelector('.remove-faction-button').addEventListener('click', () => showRemoveFactionModal(factionId));
+                factionDiv.querySelector('.edit-faction-button').addEventListener('click', () => showEditFactionModal(factionId));
+                factionDiv.querySelector(`#status-dropdown-${factionId}`).addEventListener('change', (e) => handleStatusChange(factionId, e.target.value));
 
                 // Add drag-and-drop event listeners
                 addDragAndDropHandlers(factionDiv);
 
                 return factionDiv;
+            }
+
+            /**
+             * Handles status dropdown changes, including the "Delete" option.
+             * @param {string} id - The faction ID.
+             * @param {string} status - The selected status.
+             */
+            function handleStatusChange(id, status) {
+                const skullElem = document.getElementById(`skull-${id}`);
+                if (status === 'Tabled') {
+                    skullElem.style.display = 'block';
+                    addHistory(id, 'status', `Status changed to Tabled`);
+                } else if (status === 'Active') {
+                    skullElem.style.display = 'none';
+                    addHistory(id, 'status', `Status changed to Active`);
+                } else if (status === 'Delete') {
+                    showRemoveFactionModal(id);
+                    // Reset dropdown to previous state to prevent immediate deletion
+                    const faction = document.getElementById(id);
+                    faction.querySelector(`#status-dropdown-${id}`).value = 'Active';
+                }
             }
 
             /**
@@ -718,7 +915,13 @@
             function updateButtonState(id, type, value) {
                 const decrementButton = document.querySelector(`#${id} .decrement-${type}-button`);
                 if (decrementButton) {
-                    decrementButton.disabled = value <= 0;
+                    if (value <= 0) {
+                        decrementButton.disabled = true;
+                        decrementButton.classList.add('disabled-button');
+                    } else {
+                        decrementButton.disabled = false;
+                        decrementButton.classList.remove('disabled-button');
+                    }
                 }
             }
 
@@ -741,11 +944,11 @@
              */
             function showRemoveFactionModal(factionId) {
                 showModal(`
-                    <h2>Remove Faction</h2>
-                    <p>Are you sure you want to remove this faction?</p>
+                    <h2>Delete Faction</h2>
+                    <p>Are you sure you want to delete this faction?</p>
                     <div>
-                        <button id="confirm-remove-faction-button">Yes</button>
-                        <button id="cancel-remove-faction-button">No</button>
+                        <button id="confirm-remove-faction-button" class="critical-button">Delete</button>
+                        <button id="cancel-remove-faction-button">Cancel</button>
                     </div>
                 `);
 
@@ -763,7 +966,9 @@
                 const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
                 const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
                 const name = faction.querySelector('.faction-title').textContent;
-                addUndoAction({ action: 'remove', factionId, vp, cp, name }); // Track removal
+                const colorRgba = faction.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
+                const colorHex = rgbaToHex(colorRgba);
+                addUndoAction({ action: 'remove', factionId, vp, cp, name, color: colorHex }); // Track removal
                 redoStack = []; // Clear redo stack on new action
                 faction.remove();
                 updateUndoRedoButtonState();
@@ -782,11 +987,19 @@
                     actionDescription = customMessage;
                 } else {
                     if (type === 'vp') {
-                        actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
+                        if (delta > 0) {
+                            actionDescription = `Gained ${delta} VP`;
+                        } else {
+                            actionDescription = `Removed ${Math.abs(delta)} VP`;
+                        }
                     } else if (type === 'cp') {
-                        actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
+                        actionDescription = delta > 0 ? `Gained ${delta} CP` : `Spent ${Math.abs(delta)} CP`;
                     } else if (type === 'faction') {
                         actionDescription = delta; // For faction actions like 'added' or 'restored'
+                    } else if (type === 'color') {
+                        actionDescription = delta > 0 ? 'Color Changed' : 'Color Reverted';
+                    } else if (type === 'status') {
+                        actionDescription = delta; // Status change message
                     } else {
                         actionDescription = type; // General action description
                     }
@@ -841,45 +1054,98 @@
             }
 
             /**
-             * Shows the modal to edit a faction's name.
+             * Shows the modal to edit a faction's name and color.
              * @param {string} id - The faction ID.
              */
-            function showEditFactionNameModal(id) {
+            function showEditFactionModal(id) {
                 const factionTitleElem = document.getElementById(`faction-title-${id}`);
+                const factionDiv = document.getElementById(id);
                 const currentName = factionTitleElem.textContent;
+                const currentColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
+                const currentColorHex = rgbaToHex(currentColorRgba);
+
+                // Find the corresponding hex code from predefinedColors
+                let currentHexColor = '#FFFFFF'; // Default
+                predefinedColors.forEach(hex => {
+                    const tempDiv = document.createElement('div');
+                    tempDiv.style.backgroundColor = hex;
+                    if (tempDiv.style.backgroundColor === currentColorRgba) {
+                        currentHexColor = hex;
+                    }
+                });
+
                 showModal(`
-                    <h2>Edit Faction Name</h2>
+                    <h2>Edit Faction</h2>
                     <input type="text" id="edit-faction-name" value="${currentName}">
+                    <select id="edit-faction-color">
+                        <option value="" disabled>Select Color</option>
+                        ${predefinedColors.map(color => `
+                            <option value="${color}" style="background-color: ${color}; color: #000;" ${color === currentHexColor ? 'selected' : ''}>${color}</option>
+                        `).join('')}
+                    </select>
                     <div>
-                        <button id="confirm-edit-name-button">Save</button>
-                        <button id="cancel-edit-name-button">Cancel</button>
+                        <button id="confirm-edit-faction-button">Save</button>
+                        <button id="cancel-edit-faction-button">Cancel</button>
                     </div>
                 `);
 
                 const editFactionNameInput = document.getElementById('edit-faction-name');
+                const editFactionColorSelect = document.getElementById('edit-faction-color');
+                const confirmEditFactionButton = document.getElementById('confirm-edit-faction-button');
+                const cancelEditFactionButton = document.getElementById('cancel-edit-faction-button');
+
                 editFactionNameInput.focus();
 
-                document.getElementById('confirm-edit-name-button').addEventListener('click', () => editFactionName(id));
-                document.getElementById('cancel-edit-name-button').addEventListener('click', closeModal);
+                confirmEditFactionButton.addEventListener('click', () => editFaction(id));
+                cancelEditFactionButton.addEventListener('click', closeModal);
             }
 
             /**
-             * Edits the name of a faction.
+             * Edits the name and color of a faction.
              * @param {string} id - The faction ID.
              */
-            function editFactionName(id) {
+            function editFaction(id) {
                 const factionTitleElem = document.getElementById(`faction-title-${id}`);
+                const factionDiv = document.getElementById(id);
                 const factionNameInput = document.getElementById('edit-faction-name');
+                const factionColorSelect = document.getElementById('edit-faction-color');
                 const newName = factionNameInput.value.trim();
-                if (newName && newName !== factionTitleElem.textContent) {
-                    const oldName = factionTitleElem.textContent;
-                    factionTitleElem.textContent = newName;
-                    addUndoAction({ action: 'rename', factionId: id, oldName, newName });
-                    redoStack = []; // Clear redo stack on new action
-                    addHistory(id, `Name changed from "${oldName}" to "${newName}"`);
-                    updateUndoRedoButtonState();
+                const newColorHex = factionColorSelect.value || '#FFFFFF'; // Default to white if no color selected
+
+                const oldName = factionTitleElem.textContent;
+                const oldColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
+                const oldColorHex = rgbaToHex(oldColorRgba);
+
+                let newColorRgba = oldColorRgba;
+                if (newColorHex !== oldColorHex) {
+                    try {
+                        newColorRgba = hexToRgba(newColorHex, 0.90); // 90% opacity
+                    } catch (error) {
+                        showNotification('Invalid color selected. Keeping the old color.', 'error');
+                    }
                 }
+
+                let changesMade = false;
+
+                if (newName && newName !== oldName) {
+                    factionTitleElem.textContent = newName;
+                    addHistory(id, 'faction', `Name changed from "${oldName}" to "${newName}"`);
+                    changesMade = true;
+                }
+
+                if (newColorRgba !== oldColorRgba) {
+                    factionDiv.style.backgroundColor = newColorRgba;
+                    addHistory(id, 'color', 1, 'Color Changed');
+                    changesMade = true;
+                }
+
+                if (changesMade) {
+                    addUndoAction({ action: 'edit', factionId: id, oldName, newName: newName || oldName, oldColor: oldColorHex, newColor: newColorHex });
+                    redoStack = []; // Clear redo stack on new action
+                }
+
                 closeModal();
+                updateUndoRedoButtonState();
             }
 
             /**
@@ -899,7 +1165,8 @@
                     document.getElementById(lastAction.factionId).remove();
                 } else if (lastAction.action === 'remove') {
                     // Undo removing a faction
-                    const factionDiv = createFactionElement(lastAction.factionId, lastAction.name, lastAction.vp, lastAction.cp);
+                    const factionColorRgba = hexToRgba(lastAction.color, 0.90);
+                    const factionDiv = createFactionElement(lastAction.factionId, lastAction.name, lastAction.vp, lastAction.cp, factionColorRgba);
                     factionListElement.appendChild(factionDiv);
                     updateButtonState(lastAction.factionId, 'vp', lastAction.vp);
                     updateButtonState(lastAction.factionId, 'cp', lastAction.cp);
@@ -918,11 +1185,14 @@
                     }
                     addHistory(lastAction.factionId, lastAction.type, delta, customMessage);
                     updateButtonState(lastAction.factionId, lastAction.type, lastAction.oldValue);
-                } else if (lastAction.action === 'rename') {
-                    // Undo renaming a faction
+                } else if (lastAction.action === 'edit') {
+                    // Undo editing a faction's name and color
                     const factionTitleElem = document.getElementById(`faction-title-${lastAction.factionId}`);
                     factionTitleElem.textContent = lastAction.oldName;
-                    addHistory(lastAction.factionId, `Name reverted to "${lastAction.oldName}"`);
+                    const factionDiv = document.getElementById(lastAction.factionId);
+                    factionDiv.style.backgroundColor = hexToRgba(lastAction.oldColor, 0.90);
+                    addHistory(lastAction.factionId, 'color', -1, 'Color Reverted');
+                    addHistory(lastAction.factionId, 'faction', `Name reverted to "${lastAction.oldName}"`);
                 }
                 updateUndoRedoButtonState();
             }
@@ -941,7 +1211,8 @@
 
                 if (lastUndoneAction.action === 'add') {
                     // Redo adding a faction
-                    const factionDiv = createFactionElement(lastUndoneAction.factionId, lastUndoneAction.name, 0, 0);
+                    const factionColorRgba = hexToRgba(lastUndoneAction.color, 0.90);
+                    const factionDiv = createFactionElement(lastUndoneAction.factionId, lastUndoneAction.name, 0, 0, factionColorRgba);
                     factionListElement.appendChild(factionDiv);
                     updateButtonState(lastUndoneAction.factionId, 'vp', 0);
                     updateButtonState(lastUndoneAction.factionId, 'cp', 0);
@@ -957,11 +1228,14 @@
                     const delta = lastUndoneAction.newValue - lastUndoneAction.oldValue;
                     addHistory(lastUndoneAction.factionId, lastUndoneAction.type, delta);
                     updateButtonState(lastUndoneAction.factionId, lastUndoneAction.type, lastUndoneAction.newValue);
-                } else if (lastUndoneAction.action === 'rename') {
-                    // Redo renaming a faction
+                } else if (lastUndoneAction.action === 'edit') {
+                    // Redo editing a faction's name and color
                     const factionTitleElem = document.getElementById(`faction-title-${lastUndoneAction.factionId}`);
                     factionTitleElem.textContent = lastUndoneAction.newName;
-                    addHistory(lastUndoneAction.factionId, `Name changed to "${lastUndoneAction.newName}"`);
+                    const factionDiv = document.getElementById(lastUndoneAction.factionId);
+                    factionDiv.style.backgroundColor = hexToRgba(lastUndoneAction.newColor, 0.90);
+                    addHistory(lastUndoneAction.factionId, 'color', 1, 'Color Changed');
+                    addHistory(lastUndoneAction.factionId, 'faction', `Name changed to "${lastUndoneAction.newName}"`);
                 }
                 updateUndoRedoButtonState();
             }
@@ -1065,7 +1339,8 @@
                         data.factionOrder.forEach(factionId => {
                             const factionData = data.factions.find(f => f.factionId === factionId);
                             if (factionData) {
-                                const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
+                                const factionColorRgba = hexToRgba(factionData.color, 0.90);
+                                const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp, factionColorRgba);
                                 factionListElement.appendChild(factionDiv);
                                 updateButtonState(factionId, 'vp', factionData.vp);
                                 updateButtonState(factionId, 'cp', factionData.cp);
@@ -1108,13 +1383,15 @@
             }
 
             /**
-             * Toggles the title and time color for contrast.
+             * Toggles the title, version text, and time color for contrast.
              */
             function toggleTitleAndTimeColor() {
                 const title = document.getElementById('page-title');
+                const version = document.getElementById('version-number');
                 const newColor = titleColorToggle.checked ? 'var(--secondary-color)' : 'var(--primary-color)';
                 title.style.color = newColor;
                 liveTimeElement.style.color = newColor;
+                version.style.color = newColor; // Toggled version text color
             }
 
             /**
@@ -1154,7 +1431,8 @@
                         data.factionOrder.forEach(factionId => {
                             const factionData = data.factions.find(f => f.factionId === factionId);
                             if (factionData) {
-                                const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
+                                const factionColorRgba = hexToRgba(factionData.color, 0.90);
+                                const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp, factionColorRgba);
                                 factionListElement.appendChild(factionDiv);
                                 updateButtonState(factionId, 'vp', factionData.vp);
                                 updateButtonState(factionId, 'cp', factionData.cp);
@@ -1272,7 +1550,8 @@
                     const factionName = factionDiv.querySelector('.faction-title').textContent;
                     const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent);
                     const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent);
-                    return { factionName, vp, cp, factionId: factionDiv.id };
+                    const color = rgbaToHex(factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)');
+                    return { factionName, vp, cp, color, factionId: factionDiv.id };
                 });
             }
 
@@ -1297,12 +1576,12 @@
                     youtubePlayer.style.display = 'block';
                     togglePlayerButton.style.position = 'fixed';
                     togglePlayerButton.style.bottom = '200px';
-                    togglePlayerButton.textContent = 'Hide Player';
+                    togglePlayerButton.textContent = 'Hide Music';
                 } else {
                     youtubePlayer.style.display = 'none';
                     togglePlayerButton.style.position = 'fixed';
                     togglePlayerButton.style.bottom = '20px';
-                    togglePlayerButton.textContent = 'Show Player';
+                    togglePlayerButton.textContent = 'Show Music';
                 }
             });
 
