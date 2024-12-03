@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>40K Match Tracker v1.8</title>
+    <title>40K Match Tracker v1.9</title>
     <style>
         /* CSS Styles */
 
@@ -50,6 +50,19 @@
             font-size: 32px;
             color: var(--primary-color);
             transition: color 0.3s ease-in-out;
+        }
+
+        #status-box {
+            position: absolute;
+            top: 50px;
+            left: 20px;
+            font-size: 20px;
+            color: var(--primary-color);
+            transition: color 0.3s ease-in-out;
+        }
+
+        #status-box p {
+            margin: 5px 0;
         }
 
         #top-right-buttons {
@@ -326,6 +339,11 @@
                 margin-bottom: 10px;
             }
 
+            #status-box {
+                position: static;
+                margin-bottom: 10px;
+            }
+
             #controls,
             #top-right-buttons,
             #appearance-controls {
@@ -358,6 +376,10 @@
 <body>
     <header>
         <div id="live-time"></div>
+        <div id="status-box">
+            <p id="terrain-status">Terrain: None</p>
+            <p id="primary-objective-status">Primary Objective: None</p>
+        </div>
         <h1 id="page-title">40K Match Tracker</h1>
         <div id="controls">
             <button id="add-faction-button">Add Faction</button>
@@ -375,6 +397,8 @@
                 <button id="import-data-button">Import Game</button>
                 <input type="file" id="import-file-input" accept=".json" style="display: none;">
             </div>
+            <button id="add-terrain-button">Add Terrain</button>
+            <button id="add-primary-objective-button">Add Primary Objective</button>
         </div>
     </header>
 
@@ -436,12 +460,18 @@
             const notificationContainer = document.getElementById('notification-container');
             const modal = document.getElementById('modal');
             const modalContent = document.getElementById('modal-content');
+            const addTerrainButton = document.getElementById('add-terrain-button');
+            const addPrimaryObjectiveButton = document.getElementById('add-primary-objective-button');
+            const terrainStatus = document.getElementById('terrain-status');
+            const primaryObjectiveStatus = document.getElementById('primary-objective-status');
 
             let factionIdCounter = 0;
             let undoStack = []; // Tracks actions for undo functionality
             let redoStack = []; // Tracks actions for redo functionality
             const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
             let factionHistories = {}; // Stores detailed histories for each faction
+            let terrainValue = 'None';
+            let primaryObjectiveValue = 'None';
 
             /**
              * Updates the live time display every second.
@@ -452,6 +482,80 @@
                 requestAnimationFrame(updateTime);
             }
             requestAnimationFrame(updateTime); // Start updating the time
+
+            // Add event listeners for the new buttons
+            addTerrainButton.addEventListener('click', showAddTerrainModal);
+            addPrimaryObjectiveButton.addEventListener('click', showAddPrimaryObjectiveModal);
+
+            /**
+             * Shows the modal to add or edit Terrain.
+             */
+            function showAddTerrainModal() {
+                showModal(`
+                    <h2>${terrainValue === 'None' ? 'Add Terrain' : 'Edit Terrain'}</h2>
+                    <input type="text" id="terrain-input" value="${terrainValue === 'None' ? '' : terrainValue}" placeholder="Enter Terrain">
+                    <div>
+                        <button id="confirm-add-terrain-button">${terrainValue === 'None' ? 'Add' : 'Save'}</button>
+                        <button id="cancel-add-terrain-button">Cancel</button>
+                    </div>
+                `);
+
+                const terrainInput = document.getElementById('terrain-input');
+                const confirmAddTerrainButton = document.getElementById('confirm-add-terrain-button');
+                const cancelAddTerrainButton = document.getElementById('cancel-add-terrain-button');
+
+                terrainInput.focus();
+
+                confirmAddTerrainButton.addEventListener('click', () => {
+                    const newTerrainValue = terrainInput.value.trim() || 'None';
+                    terrainValue = newTerrainValue;
+                    terrainStatus.textContent = `Terrain: ${terrainValue}`;
+                    closeModal();
+                    // Update button text
+                    if (terrainValue !== 'None') {
+                        addTerrainButton.textContent = 'Edit Terrain';
+                    } else {
+                        addTerrainButton.textContent = 'Add Terrain';
+                    }
+                });
+
+                cancelAddTerrainButton.addEventListener('click', closeModal);
+            }
+
+            /**
+             * Shows the modal to add or edit Primary Objective.
+             */
+            function showAddPrimaryObjectiveModal() {
+                showModal(`
+                    <h2>${primaryObjectiveValue === 'None' ? 'Add Primary Objective' : 'Edit Primary Objective'}</h2>
+                    <input type="text" id="primary-objective-input" value="${primaryObjectiveValue === 'None' ? '' : primaryObjectiveValue}" placeholder="Enter Primary Objective">
+                    <div>
+                        <button id="confirm-add-primary-objective-button">${primaryObjectiveValue === 'None' ? 'Add' : 'Save'}</button>
+                        <button id="cancel-add-primary-objective-button">Cancel</button>
+                    </div>
+                `);
+
+                const primaryObjectiveInput = document.getElementById('primary-objective-input');
+                const confirmAddPrimaryObjectiveButton = document.getElementById('confirm-add-primary-objective-button');
+                const cancelAddPrimaryObjectiveButton = document.getElementById('cancel-add-primary-objective-button');
+
+                primaryObjectiveInput.focus();
+
+                confirmAddPrimaryObjectiveButton.addEventListener('click', () => {
+                    const newPrimaryObjectiveValue = primaryObjectiveInput.value.trim() || 'None';
+                    primaryObjectiveValue = newPrimaryObjectiveValue;
+                    primaryObjectiveStatus.textContent = `Primary Objective: ${primaryObjectiveValue}`;
+                    closeModal();
+                    // Update button text
+                    if (primaryObjectiveValue !== 'None') {
+                        addPrimaryObjectiveButton.textContent = 'Edit Primary Objective';
+                    } else {
+                        addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
+                    }
+                });
+
+                cancelAddPrimaryObjectiveButton.addEventListener('click', closeModal);
+            }
 
             /**
              * Generates a unique ID for a new faction.
@@ -482,8 +586,6 @@
 
                 confirmAddFactionButton.addEventListener('click', addFaction);
                 cancelAddFactionButton.addEventListener('click', closeModal);
-
-                // The keydown event is handled in showModal() via modalKeyDownHandler
             }
 
             /**
@@ -955,7 +1057,7 @@
             }
 
             /**
-             * Resets all factions by clearing the faction list.
+             * Resets all factions and status values.
              */
             function resetAll() {
                 closeModal();
@@ -963,6 +1065,13 @@
                 undoStack = [];
                 redoStack = [];
                 factionHistories = {};
+                terrainValue = 'None';
+                primaryObjectiveValue = 'None';
+                terrainStatus.textContent = 'Terrain: None';
+                primaryObjectiveStatus.textContent = 'Primary Objective: None';
+                // Reset button texts
+                addTerrainButton.textContent = 'Add Terrain';
+                addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
                 updateUndoRedoButtonState();
             }
 
@@ -991,7 +1100,9 @@
                 const data = {
                     factions: getFactionData(),
                     factionHistories,
-                    factionOrder: Array.from(factionListElement.children).map(child => child.id)
+                    factionOrder: Array.from(factionListElement.children).map(child => child.id),
+                    terrainValue,
+                    primaryObjectiveValue
                 };
                 localStorage.setItem('factionData', JSON.stringify(data));
                 showNotification('Data saved successfully!', 'success');
@@ -1034,6 +1145,22 @@
                                 updateButtonState(factionId, 'cp', factionData.cp);
                             }
                         });
+                        // Load terrain and primary objective values
+                        terrainValue = data.terrainValue || 'None';
+                        primaryObjectiveValue = data.primaryObjectiveValue || 'None';
+                        terrainStatus.textContent = `Terrain: ${terrainValue}`;
+                        primaryObjectiveStatus.textContent = `Primary Objective: ${primaryObjectiveValue}`;
+                        // Update button texts
+                        if (terrainValue !== 'None') {
+                            addTerrainButton.textContent = 'Edit Terrain';
+                        } else {
+                            addTerrainButton.textContent = 'Add Terrain';
+                        }
+                        if (primaryObjectiveValue !== 'None') {
+                            addPrimaryObjectiveButton.textContent = 'Edit Primary Objective';
+                        } else {
+                            addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
+                        }
                         showNotification('Data loaded successfully!', 'success');
                     } catch (error) {
                         showNotification('Failed to load saved data. The data might be corrupted.', 'error');
@@ -1078,6 +1205,8 @@
                 const newColor = titleColorToggle.checked ? 'var(--secondary-color)' : 'var(--primary-color)';
                 title.style.color = newColor;
                 liveTimeElement.style.color = newColor;
+                terrainStatus.style.color = newColor;
+                primaryObjectiveStatus.style.color = newColor;
             }
 
             /**
@@ -1087,7 +1216,9 @@
                 const data = {
                     factions: getFactionData(),
                     factionHistories,
-                    factionOrder: Array.from(factionListElement.children).map(child => child.id)
+                    factionOrder: Array.from(factionListElement.children).map(child => child.id),
+                    terrainValue,
+                    primaryObjectiveValue
                 };
                 const dataStr = JSON.stringify(data, null, 2);
                 const blob = new Blob([dataStr], { type: 'application/json' });
@@ -1123,6 +1254,22 @@
                                 updateButtonState(factionId, 'cp', factionData.cp);
                             }
                         });
+                        // Load terrain and primary objective values
+                        terrainValue = data.terrainValue || 'None';
+                        primaryObjectiveValue = data.primaryObjectiveValue || 'None';
+                        terrainStatus.textContent = `Terrain: ${terrainValue}`;
+                        primaryObjectiveStatus.textContent = `Primary Objective: ${primaryObjectiveValue}`;
+                        // Update button texts
+                        if (terrainValue !== 'None') {
+                            addTerrainButton.textContent = 'Edit Terrain';
+                        } else {
+                            addTerrainButton.textContent = 'Add Terrain';
+                        }
+                        if (primaryObjectiveValue !== 'None') {
+                            addPrimaryObjectiveButton.textContent = 'Edit Primary Objective';
+                        } else {
+                            addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
+                        }
                         updateUndoRedoButtonState();
                         showNotification('Data imported successfully!', 'success');
                     } catch (error) {
