@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>40K Match Tracker v1.4</title>
+    <title>40K Match Tracker v1.5</title>
     <style>
         :root {
             --primary-color: black;
@@ -13,6 +13,8 @@
             --button-hover-positive-bg: mediumseagreen;
             --button-hover-critical-bg: darkred;
             --button-active-bg: #cccccc;
+            --modal-bg: rgba(0, 0, 0, 0.5);
+            --modal-content-bg: white;
         }
 
         body {
@@ -201,6 +203,36 @@
         .active-button {
             background-color: var(--button-active-bg);
         }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: var(--modal-bg);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--modal-content-bg);
+            padding: 20px;
+            border-radius: 5px;
+            width: 300px;
+            max-width: 80%;
+            text-align: center;
+        }
+        .modal input {
+            width: 80%;
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .modal button {
+            margin: 5px;
+        }
         @media (max-width: 600px) {
             .faction {
                 width: 100%;
@@ -213,7 +245,7 @@
         <div id="live-time"></div>
         <h1 id="page-title">40K Match Tracker</h1>
         <div id="controls">
-            <button onclick="addFaction()">Add Faction</button>
+            <button onclick="showAddFactionModal()">Add Faction</button>
             <button onclick="nextCommandPhase()">Next Command Phase</button>
             <button id="undo-button" onclick="undo()" disabled>Undo</button>
             <button id="redo-button" onclick="redo()" disabled>Redo</button>
@@ -221,9 +253,9 @@
         <div id="top-right-buttons">
             <button id="toggle-options-button" onclick="toggleOptionsMenu()">Options</button>
             <div id="options-menu">
-                <button class="critical-button" onclick="confirmResetAll()">Reset All</button>
-                <button onclick="confirmSaveData()">Save</button>
-                <button onclick="confirmLoadData()">Load</button>
+                <button class="critical-button" onclick="showConfirmResetAllModal()">Reset All</button>
+                <button onclick="showConfirmSaveModal()">Save</button>
+                <button onclick="showConfirmLoadModal()">Load</button>
                 <button onclick="exportData()">Export Game</button>
                 <button onclick="document.getElementById('import-file-input').click()">Import Game</button>
                 <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
@@ -251,6 +283,13 @@
     <button id="toggle-player-button" style="position: fixed; bottom: 200px; left: 20px;">Hide Player</button>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
 
+    <!-- Modal Structure -->
+    <div id="modal" class="modal">
+        <div class="modal-content" id="modal-content">
+            <!-- Content will be injected dynamically -->
+        </div>
+    </div>
+
     <script>
         let factionIdCounter = 0;
         let undoStack = []; // Tracks actions for undo functionality
@@ -270,23 +309,34 @@
             return `faction-${++factionIdCounter}`;
         }
 
-        function addFaction() {
-            const factionName = prompt("Enter the name of the faction:", "New Faction");
-            if (factionName) {
-                const factionList = document.getElementById("faction-list");
-                const factionId = generateUniqueFactionId();
-                const factionDiv = createFactionElement(factionId, factionName, 0, 0);
-                factionList.appendChild(factionDiv);
-                addUndoAction({ action: 'add', factionId }); // Track addition for undo
-                redoStack = []; // Clear redo stack on new action
-                updateUndoRedoButtonState();
-                updateButtonState(factionId, 'vp', 0);
-                updateButtonState(factionId, 'cp', 0);
+        function showAddFactionModal() {
+            showModal(`
+                <h2>Add Faction</h2>
+                <input type="text" id="new-faction-name" placeholder="Faction Name">
+                <div>
+                    <button onclick="addFaction()">Add</button>
+                    <button onclick="closeModal()">Cancel</button>
+                </div>
+            `);
+        }
 
-                // Initialize history for the new faction
-                factionHistories[factionId] = [];
-                addHistory(factionId, 'Faction added');
-            }
+        function addFaction() {
+            const factionNameInput = document.getElementById("new-faction-name");
+            const factionName = factionNameInput.value.trim() || "New Faction";
+            closeModal();
+            const factionList = document.getElementById("faction-list");
+            const factionId = generateUniqueFactionId();
+            const factionDiv = createFactionElement(factionId, factionName, 0, 0);
+            factionList.appendChild(factionDiv);
+            addUndoAction({ action: 'add', factionId }); // Track addition for undo
+            redoStack = []; // Clear redo stack on new action
+            updateUndoRedoButtonState();
+            updateButtonState(factionId, 'vp', 0);
+            updateButtonState(factionId, 'cp', 0);
+
+            // Initialize history for the new faction
+            factionHistories[factionId] = [];
+            addHistory(factionId, 'Faction added');
         }
 
         function createFactionElement(factionId, name, vp, cp) {
@@ -313,9 +363,9 @@
                 <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
                 <div class="history-buttons">
                     <button class="history-button" onclick="toggleHistory('${factionId}')">Show History</button>
-                    <button class="history-button" onclick="editFactionName('${factionId}')">Edit Name</button>
+                    <button class="history-button" onclick="showEditFactionNameModal('${factionId}')">Edit Name</button>
                 </div>
-                <button class="critical-button" onclick="removeFaction('${factionId}')">Remove Faction</button>
+                <button class="critical-button" onclick="showRemoveFactionModal('${factionId}')">Remove Faction</button>
                 <div class="history" id="history-${factionId}">
                     <ul id="history-list-${factionId}"></ul>
                 </div>
@@ -426,17 +476,27 @@
             updateUndoRedoButtonState();
         }
 
+        function showRemoveFactionModal(factionId) {
+            showModal(`
+                <h2>Remove Faction</h2>
+                <p>Are you sure you want to remove this faction?</p>
+                <div>
+                    <button onclick="removeFaction('${factionId}')">Yes</button>
+                    <button onclick="closeModal()">No</button>
+                </div>
+            `);
+        }
+
         function removeFaction(factionId) {
-            if (confirm("Are you sure you want to remove this faction?")) {
-                const faction = document.getElementById(factionId);
-                const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
-                const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
-                const name = faction.querySelector(".faction-title").textContent;
-                addUndoAction({ action: 'remove', factionId, vp, cp, name }); // Track removal
-                redoStack = []; // Clear redo stack on new action
-                faction.remove();
-                updateUndoRedoButtonState();
-            }
+            closeModal();
+            const faction = document.getElementById(factionId);
+            const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
+            const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
+            const name = faction.querySelector(".faction-title").textContent;
+            addUndoAction({ action: 'remove', factionId, vp, cp, name }); // Track removal
+            redoStack = []; // Clear redo stack on new action
+            faction.remove();
+            updateUndoRedoButtonState();
         }
 
         function addHistory(id, type, delta) {
@@ -495,18 +555,32 @@
             }
         }
 
-        function editFactionName(id) {
+        function showEditFactionNameModal(id) {
             const factionTitleElem = document.getElementById(`faction-title-${id}`);
             const currentName = factionTitleElem.textContent;
-            const newName = prompt("Enter the new name for this faction:", currentName);
-            if (newName && newName.trim() !== '') {
-                const oldName = currentName;
+            showModal(`
+                <h2>Edit Faction Name</h2>
+                <input type="text" id="edit-faction-name" value="${currentName}">
+                <div>
+                    <button onclick="editFactionName('${id}')">Save</button>
+                    <button onclick="closeModal()">Cancel</button>
+                </div>
+            `);
+        }
+
+        function editFactionName(id) {
+            const factionTitleElem = document.getElementById(`faction-title-${id}`);
+            const factionNameInput = document.getElementById("edit-faction-name");
+            const newName = factionNameInput.value.trim();
+            if (newName && newName !== factionTitleElem.textContent) {
+                const oldName = factionTitleElem.textContent;
                 factionTitleElem.textContent = newName;
                 addUndoAction({ action: 'rename', factionId: id, oldName, newName });
                 redoStack = []; // Clear redo stack on new action
                 addHistory(id, `Name changed from "${oldName}" to "${newName}"`);
                 updateUndoRedoButtonState();
             }
+            closeModal();
         }
 
         function undo() {
@@ -590,13 +664,19 @@
             redoButton.disabled = redoStack.length === 0;
         }
 
-        function confirmResetAll() {
-            if (confirm("Are you sure you want to reset all factions?")) {
-                resetAll();
-            }
+        function showConfirmResetAllModal() {
+            showModal(`
+                <h2>Reset All</h2>
+                <p>Are you sure you want to reset all factions?</p>
+                <div>
+                    <button onclick="resetAll()">Yes</button>
+                    <button onclick="closeModal()">No</button>
+                </div>
+            `);
         }
 
         function resetAll() {
+            closeModal();
             const factionList = document.getElementById("faction-list");
             factionList.innerHTML = "";
             undoStack = [];
@@ -605,13 +685,19 @@
             updateUndoRedoButtonState();
         }
 
-        function confirmSaveData() {
-            if (confirm("Are you sure you want to save data?")) {
-                saveData();
-            }
+        function showConfirmSaveModal() {
+            showModal(`
+                <h2>Save Data</h2>
+                <p>Are you sure you want to save data?</p>
+                <div>
+                    <button onclick="saveData()">Yes</button>
+                    <button onclick="closeModal()">No</button>
+                </div>
+            `);
         }
 
         function saveData() {
+            closeModal();
             const factions = [];
             document.querySelectorAll(".faction").forEach(factionDiv => {
                 const factionName = factionDiv.querySelector(".faction-title").textContent;
@@ -626,15 +712,22 @@
                 factionOrder: Array.from(document.getElementById('faction-list').children).map(child => child.id)
             };
             localStorage.setItem("factionData", JSON.stringify(data));
+            alert("Data saved successfully!");
         }
 
-        function confirmLoadData() {
-            if (confirm("Are you sure you want to load saved data? This will overwrite current data.")) {
-                loadData();
-            }
+        function showConfirmLoadModal() {
+            showModal(`
+                <h2>Load Data</h2>
+                <p>Are you sure you want to load saved data? This will overwrite current data.</p>
+                <div>
+                    <button onclick="loadData()">Yes</button>
+                    <button onclick="closeModal()">No</button>
+                </div>
+            `);
         }
 
         function loadData() {
+            closeModal();
             const savedData = localStorage.getItem("factionData");
             if (savedData) {
                 try {
@@ -650,6 +743,7 @@
                             updateButtonState(factionId, 'cp', factionData.cp);
                         }
                     });
+                    alert("Data loaded successfully!");
                 } catch (error) {
                     alert("Failed to load saved data. The data might be corrupted.");
                     console.error("Error parsing saved data:", error);
@@ -766,6 +860,27 @@
             } else {
                 appearanceMenu.style.display = 'none';
                 appearanceButton.classList.remove('active-button');
+            }
+        }
+
+        // Modal Functions
+        function showModal(content) {
+            const modal = document.getElementById('modal');
+            const modalContent = document.getElementById('modal-content');
+            modalContent.innerHTML = content;
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside content
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
             }
         }
 
