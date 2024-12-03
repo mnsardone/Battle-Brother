@@ -167,12 +167,12 @@
             <button onclick="addFaction()">Add Faction</button>
             <button onclick="nextCommandPhase()">Next Command Phase</button>
             <button id="undo-button" onclick="undo()" disabled>Undo</button>
+            <button id="redo-button" onclick="redo()" disabled>Redo</button>
         </div>
         <div id="top-right-buttons">
             <button class="critical-button" onclick="confirmResetAll()">Reset All</button>
             <button onclick="confirmSaveData()">Save</button>
             <button onclick="confirmLoadData()">Load</button>
-            <!-- Moved Export and Import Buttons Here -->
             <button onclick="exportData()">Export Game</button>
             <button onclick="document.getElementById('import-file-input').click()">Import Game</button>
             <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
@@ -199,6 +199,7 @@
     <script>
         let factionIdCounter = 0;
         let undoStack = []; // Tracks actions for undo functionality
+        let redoStack = []; // Tracks actions for redo functionality
         const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
 
         function updateTime() {
@@ -221,7 +222,8 @@
                 const factionDiv = createFactionElement(factionId, factionName, 0, 0);
                 factionList.appendChild(factionDiv);
                 addUndoAction({ action: 'add', factionId }); // Track addition for undo
-                updateUndoButtonState();
+                redoStack = []; // Clear redo stack on new action
+                updateUndoRedoButtonState();
                 updateButtonState(factionId, 'vp', 0);
                 updateButtonState(factionId, 'cp', 0);
             }
@@ -260,10 +262,11 @@
             currentValue += delta;
             if (currentValue < 0) currentValue = 0; // Prevent negative values
             valueElem.textContent = `${currentValue} ${type.toUpperCase()}`;
-            addUndoAction({ action: 'change', factionId: id, type, oldValue }); // Track change
-            addHistory(id, `${type.toUpperCase()} changed by ${delta > 0 ? '+' : ''}${delta}`);
+            addUndoAction({ action: 'change', factionId: id, type, oldValue, newValue: currentValue }); // Track change
+            redoStack = []; // Clear redo stack on new action
+            addHistory(id, type, delta);
             updateButtonState(id, type, currentValue);
-            updateUndoButtonState();
+            updateUndoRedoButtonState();
         }
 
         function addUndoAction(action) {
@@ -271,7 +274,7 @@
             if (undoStack.length > UNDO_STACK_LIMIT) {
                 undoStack.shift(); // Remove the oldest action if stack exceeds limit
             }
-            updateUndoButtonState();
+            updateUndoRedoButtonState();
         }
 
         function updateButtonState(id, type, value) {
@@ -287,6 +290,8 @@
                 const factionId = faction.id;
                 changeValue(factionId, 'cp', 1); // Increment CP by 1
             });
+            redoStack = []; // Clear redo stack on new action
+            updateUndoRedoButtonState();
         }
 
         function removeFaction(factionId) {
@@ -296,14 +301,23 @@
                 const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
                 const name = faction.querySelector(".faction-title").textContent;
                 addUndoAction({ action: 'remove', factionId, vp, cp, name }); // Track removal
+                redoStack = []; // Clear redo stack on new action
                 faction.remove();
-                updateUndoButtonState();
+                updateUndoRedoButtonState();
             }
         }
 
-        function addHistory(id, action) {
+        function addHistory(id, type, delta) {
             const historyElem = document.getElementById(`history-${id}`);
-            historyElem.textContent = action;
+            let actionDescription = '';
+            if (type === 'vp') {
+                actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
+            } else if (type === 'cp') {
+                actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
+            } else if (type === 'faction') {
+                actionDescription = delta; // For faction actions like 'added' or 'restored'
+            }
+            historyElem.textContent = actionDescription;
         }
 
         function undo() {
@@ -312,6 +326,8 @@
                 alert("Nothing to undo!");
                 return;
             }
+
+            redoStack.push(lastAction); // Add action to redo stack
 
             if (lastAction.action === 'add') {
                 // Undo adding a faction
@@ -323,19 +339,54 @@
                 factionList.appendChild(factionDiv);
                 updateButtonState(lastAction.factionId, 'vp', lastAction.vp);
                 updateButtonState(lastAction.factionId, 'cp', lastAction.cp);
+                addHistory(lastAction.factionId, 'faction', 'restored');
             } else if (lastAction.action === 'change') {
                 // Undo a value change
                 const valueElem = document.getElementById(`${lastAction.type}-${lastAction.factionId}`);
                 valueElem.textContent = `${lastAction.oldValue} ${lastAction.type.toUpperCase()}`;
-                addHistory(lastAction.factionId, `${lastAction.type.toUpperCase()} reverted to ${lastAction.oldValue}`);
+                const delta = lastAction.oldValue - lastAction.newValue;
+                addHistory(lastAction.factionId, lastAction.type, delta);
                 updateButtonState(lastAction.factionId, lastAction.type, lastAction.oldValue);
             }
-            updateUndoButtonState();
+            updateUndoRedoButtonState();
         }
 
-        function updateUndoButtonState() {
+        function redo() {
+            const lastUndoneAction = redoStack.pop();
+            if (!lastUndoneAction) {
+                alert("Nothing to redo!");
+                return;
+            }
+
+            undoStack.push(lastUndoneAction); // Add action back to undo stack
+
+            if (lastUndoneAction.action === 'add') {
+                // Redo adding a faction
+                const factionList = document.getElementById("faction-list");
+                const factionDiv = createFactionElement(lastUndoneAction.factionId, lastUndoneAction.name, 0, 0);
+                factionList.appendChild(factionDiv);
+                updateButtonState(lastUndoneAction.factionId, 'vp', 0);
+                updateButtonState(lastUndoneAction.factionId, 'cp', 0);
+                addHistory(lastUndoneAction.factionId, 'faction', 'added');
+            } else if (lastUndoneAction.action === 'remove') {
+                // Redo removing a faction
+                document.getElementById(lastUndoneAction.factionId).remove();
+            } else if (lastUndoneAction.action === 'change') {
+                // Redo a value change
+                const valueElem = document.getElementById(`${lastUndoneAction.type}-${lastUndoneAction.factionId}`);
+                valueElem.textContent = `${lastUndoneAction.newValue} ${lastUndoneAction.type.toUpperCase()}`;
+                const delta = lastUndoneAction.newValue - lastUndoneAction.oldValue;
+                addHistory(lastUndoneAction.factionId, lastUndoneAction.type, delta);
+                updateButtonState(lastUndoneAction.factionId, lastUndoneAction.type, lastUndoneAction.newValue);
+            }
+            updateUndoRedoButtonState();
+        }
+
+        function updateUndoRedoButtonState() {
             const undoButton = document.getElementById("undo-button");
+            const redoButton = document.getElementById("redo-button");
             undoButton.disabled = undoStack.length === 0;
+            redoButton.disabled = redoStack.length === 0;
         }
 
         function confirmResetAll() {
@@ -348,7 +399,8 @@
             const factionList = document.getElementById("faction-list");
             factionList.innerHTML = "";
             undoStack = [];
-            updateUndoButtonState();
+            redoStack = [];
+            updateUndoRedoButtonState();
         }
 
         function confirmSaveData() {
@@ -394,7 +446,9 @@
             } else {
                 alert("No saved data found.");
             }
-            updateUndoButtonState();
+            undoStack = [];
+            redoStack = [];
+            updateUndoRedoButtonState();
         }
 
         function autoSaveData() {
@@ -459,7 +513,7 @@
                         updateButtonState(factionId, 'vp', faction.vp);
                         updateButtonState(factionId, 'cp', faction.cp);
                     });
-                    updateUndoButtonState();
+                    updateUndoRedoButtonState();
                     alert("Data imported successfully!");
                 } catch (error) {
                     alert("Failed to import data. The file might be corrupted or in an incorrect format.");
