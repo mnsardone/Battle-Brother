@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>40K Match Tracker v1.6</title>
+    <title>40K Match Tracker v1.8</title>
     <style>
+        /* CSS Styles */
+
         :root {
             --primary-color: black;
             --secondary-color: #f0f0f0;
@@ -26,11 +28,13 @@
             background-position: center;
             transition: background-image 0.3s ease-in-out;
         }
+
         header {
             text-align: center;
             position: relative;
             margin-bottom: 20px;
         }
+
         h1 {
             color: var(--primary-color);
             padding: 10px;
@@ -38,6 +42,7 @@
             font-family: 'Algerian', sans-serif;
             transition: color 0.3s ease-in-out;
         }
+
         #live-time {
             position: absolute;
             top: 0;
@@ -46,6 +51,7 @@
             color: var(--primary-color);
             transition: color 0.3s ease-in-out;
         }
+
         #top-right-buttons {
             position: absolute;
             top: 0;
@@ -55,18 +61,21 @@
             gap: 10px;
             align-items: flex-end;
         }
+
         #options-menu {
             display: none;
             flex-direction: column;
             gap: 10px;
             margin-top: 10px;
         }
+
         #controls {
             display: flex;
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
         }
+
         #faction-list {
             display: flex;
             flex-wrap: wrap;
@@ -74,6 +83,7 @@
             justify-content: center;
             margin-top: 20px;
         }
+
         .faction {
             margin-bottom: 30px;
             padding: 20px;
@@ -83,68 +93,81 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            flex: 1 1 250px; /* Responsive width */
+            flex: 1 1 250px;
             max-width: 300px;
             gap: 15px;
             box-sizing: border-box;
             position: relative;
             cursor: move;
         }
+
         .faction.dragging {
             opacity: 0.5;
         }
+
         .faction.over {
             border: 2px dashed #000;
         }
+
         .faction-title {
             font-size: 40px;
             font-weight: bold;
             margin-top: 10px;
             text-align: center;
         }
+
         .faction-values {
             display: flex;
             gap: 10px;
             flex-direction: column;
             align-items: center;
         }
+
         .faction-value {
             font-size: 30px;
             font-weight: bold;
         }
+
         .incrementer {
             display: flex;
             gap: 10px;
             justify-content: center;
         }
+
         .incrementer div {
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
+
         button {
             padding: 10px 20px;
             cursor: pointer;
             font-size: 14px;
         }
+
         .critical-button {
             background-color: var(--button-critical-bg);
             color: var(--secondary-color);
             border: 2px solid var(--primary-color);
             transition: background-color 0.3s ease;
         }
+
         .critical-button:hover {
             background-color: var(--button-hover-critical-bg);
         }
+
         .positive-button {
             background-color: var(--button-positive-bg);
             color: var(--primary-color);
             border: 2px solid var(--primary-color);
             transition: background-color 0.3s ease;
         }
+
         .positive-button:hover {
             background-color: var(--button-hover-positive-bg);
         }
+
         #appearance-controls {
             position: fixed;
             bottom: 20px;
@@ -153,6 +176,7 @@
             flex-direction: column;
             align-items: flex-end;
         }
+
         #background-upload {
             background-color: rgba(255, 255, 255, 0.8);
             padding: 10px;
@@ -161,6 +185,7 @@
             display: none;
             margin-top: 10px;
         }
+
         .latest-history {
             font-size: 14px;
             color: gray;
@@ -168,11 +193,13 @@
             margin-top: 10px;
             min-height: 20px;
         }
+
         .history-buttons {
             display: flex;
             gap: 10px;
             justify-content: center;
         }
+
         .history {
             margin-top: 10px;
             font-size: 0.9em;
@@ -184,15 +211,18 @@
             width: 100%;
             text-align: left;
         }
+
         .history ul {
             list-style-type: disc;
             margin: 0;
             padding-left: 20px;
         }
+
         .history-button {
             padding: 5px 10px;
             font-size: 12px;
         }
+
         #toggle-appearance-button,
         #toggle-options-button {
             padding: 10px 20px;
@@ -200,11 +230,11 @@
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
-        /* Styles for active state */
+
         .active-button {
             background-color: var(--button-active-bg);
         }
-        /* Modal Styles */
+
         .modal {
             display: none;
             position: fixed;
@@ -218,6 +248,7 @@
             justify-content: center;
             align-items: center;
         }
+
         .modal-content {
             background-color: var(--modal-content-bg);
             padding: 20px;
@@ -226,56 +257,93 @@
             max-width: 80%;
             text-align: center;
         }
+
         .modal input {
             width: 80%;
             padding: 8px;
             margin-bottom: 10px;
         }
+
         .modal button {
             margin: 5px;
         }
+
+        /* Notification Styles */
+        #notification-container {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+
+        .notification {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 5px;
+            opacity: 0.9;
+        }
+
+        .notification.success {
+            background-color: green;
+        }
+
+        .notification.error {
+            background-color: red;
+        }
+
         /* Responsive Design */
         @media (max-width: 1024px) {
             #faction-list {
                 justify-content: space-around;
             }
         }
+
         @media (max-width: 600px) {
             .faction {
                 flex: 1 1 100%;
                 max-width: none;
             }
+
             .faction-title {
                 font-size: 30px;
             }
+
             .faction-value {
                 font-size: 24px;
             }
+
             button {
                 font-size: 16px;
                 width: 100%;
                 box-sizing: border-box;
             }
+
             #live-time {
                 font-size: 24px;
                 position: static;
                 margin-bottom: 10px;
             }
+
             #controls,
             #top-right-buttons,
             #appearance-controls {
                 flex-direction: column;
                 align-items: center;
             }
+
             #top-right-buttons {
                 position: static;
                 margin-top: 20px;
             }
+
             #toggle-player-button {
                 position: fixed;
                 bottom: 20px;
                 left: 20px;
             }
+
             iframe {
                 position: fixed;
                 bottom: 60px;
@@ -292,20 +360,20 @@
         <div id="live-time"></div>
         <h1 id="page-title">40K Match Tracker</h1>
         <div id="controls">
-            <button onclick="showAddFactionModal()">Add Faction</button>
-            <button onclick="nextCommandPhase()">Next Command Phase</button>
-            <button id="undo-button" onclick="undo()" disabled>Undo</button>
-            <button id="redo-button" onclick="redo()" disabled>Redo</button>
+            <button id="add-faction-button">Add Faction</button>
+            <button id="next-command-phase-button">Next Command Phase</button>
+            <button id="undo-button" disabled>Undo</button>
+            <button id="redo-button" disabled>Redo</button>
         </div>
         <div id="top-right-buttons">
-            <button id="toggle-options-button" onclick="toggleOptionsMenu()">Options</button>
+            <button id="toggle-options-button">Options</button>
             <div id="options-menu">
-                <button class="critical-button" onclick="showConfirmResetAllModal()">Reset All</button>
-                <button onclick="showConfirmSaveModal()">Save</button>
-                <button onclick="showConfirmLoadModal()">Load</button>
-                <button onclick="exportData()">Export Game</button>
-                <button onclick="document.getElementById('import-file-input').click()">Import Game</button>
-                <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="critical-button" id="reset-all-button">Reset All</button>
+                <button id="save-data-button">Save</button>
+                <button id="load-data-button">Load</button>
+                <button id="export-data-button">Export Game</button>
+                <button id="import-data-button">Import Game</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
             </div>
         </div>
     </header>
@@ -313,15 +381,15 @@
     <div id="faction-list"></div>
 
     <div id="appearance-controls">
-        <button id="toggle-appearance-button" onclick="toggleAppearanceMenu()">Appearance</button>
+        <button id="toggle-appearance-button">Appearance</button>
         <div id="background-upload">
             <label>
-                Background: 
-                <input type="file" accept="image/*" onchange="setBackground(event)">
+                Background:
+                <input type="file" accept="image/*" id="background-file-input">
             </label>
             <label>
                 Contrast Fix:
-                <input type="checkbox" id="title-color-toggle" onchange="toggleTitleAndTimeColor()">
+                <input type="checkbox" id="title-color-toggle">
                 <span>White</span>
             </label>
         </div>
@@ -330,625 +398,878 @@
     <button id="toggle-player-button" style="position: fixed; bottom: 200px; left: 20px;">Hide Player</button>
     <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
 
+    <!-- Notification Container -->
+    <div id="notification-container" aria-live="polite"></div>
+
     <!-- Modal Structure -->
     <div id="modal" class="modal">
-        <div class="modal-content" id="modal-content">
+        <div class="modal-content" id="modal-content" tabindex="-1">
             <!-- Content will be injected dynamically -->
         </div>
     </div>
 
     <script>
-        let factionIdCounter = 0;
-        let undoStack = []; // Tracks actions for undo functionality
-        let redoStack = []; // Tracks actions for redo functionality
-        const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
-        let factionHistories = {}; // Stores detailed histories for each faction
+        (function () {
+            'use strict';
 
-        function updateTime() {
-            const liveTimeElement = document.getElementById("live-time");
-            const now = new Date();
-            liveTimeElement.textContent = now.toLocaleTimeString();
-            requestAnimationFrame(updateTime);
-        }
-        requestAnimationFrame(updateTime); // Use requestAnimationFrame for updating the time
-
-        function generateUniqueFactionId() {
-            return `faction-${++factionIdCounter}`;
-        }
-
-        function showAddFactionModal() {
-            showModal(`
-                <h2>Add Faction</h2>
-                <input type="text" id="new-faction-name" placeholder="Faction Name">
-                <div>
-                    <button onclick="addFaction()">Add</button>
-                    <button onclick="closeModal()">Cancel</button>
-                </div>
-            `);
-            document.getElementById("new-faction-name").focus();
-        }
-
-        function addFaction() {
-            const factionNameInput = document.getElementById("new-faction-name");
-            const factionName = factionNameInput.value.trim() || "New Faction";
-            closeModal();
-            const factionList = document.getElementById("faction-list");
-            const factionId = generateUniqueFactionId();
-            const factionDiv = createFactionElement(factionId, factionName, 0, 0);
-            factionList.appendChild(factionDiv);
-            addUndoAction({ action: 'add', factionId }); // Track addition for undo
-            redoStack = []; // Clear redo stack on new action
-            updateUndoRedoButtonState();
-            updateButtonState(factionId, 'vp', 0);
-            updateButtonState(factionId, 'cp', 0);
-
-            // Initialize history for the new faction
-            factionHistories[factionId] = [];
-            addHistory(factionId, 'Faction added');
-        }
-
-        function createFactionElement(factionId, name, vp, cp) {
-            const factionDiv = document.createElement("div");
-            factionDiv.className = "faction";
-            factionDiv.id = factionId;
-            factionDiv.draggable = true; // Enable dragging
-            factionDiv.innerHTML = `
-                <div class="faction-title" id="faction-title-${factionId}">${name}</div>
-                <div class="faction-values">
-                    <div class="faction-value" id="vp-${factionId}">${vp} VP</div>
-                    <div class="faction-value" id="cp-${factionId}">${cp} CP</div>
-                </div>
-                <div class="incrementer">
-                    <div>
-                        <button class="positive-button" onclick="changeValue('${factionId}', 'vp', 1)">+ VP</button>
-                        <button id="decrement-vp-${factionId}" onclick="changeValue('${factionId}', 'vp', -1)" ${vp <= 0 ? 'disabled' : ''}>- VP</button>
-                    </div>
-                    <div>
-                        <button class="positive-button" onclick="changeValue('${factionId}', 'cp', 1)">+ CP</button>
-                        <button id="decrement-cp-${factionId}" onclick="changeValue('${factionId}', 'cp', -1)" ${cp <= 0 ? 'disabled' : ''}>- CP</button>
-                    </div>
-                </div>
-                <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
-                <div class="history-buttons">
-                    <button class="history-button" onclick="toggleHistory('${factionId}')">Show History</button>
-                    <button class="history-button" onclick="showEditFactionNameModal('${factionId}')">Edit Name</button>
-                </div>
-                <button class="critical-button" onclick="showRemoveFactionModal('${factionId}')">Remove Faction</button>
-                <div class="history" id="history-${factionId}">
-                    <ul id="history-list-${factionId}"></ul>
-                </div>
-            `;
-
-            // Add drag-and-drop event listeners
-            addDragAndDropHandlers(factionDiv);
-
-            return factionDiv;
-        }
-
-        function addDragAndDropHandlers(factionDiv) {
-            factionDiv.addEventListener('dragstart', dragStart);
-            factionDiv.addEventListener('dragover', dragOver);
-            factionDiv.addEventListener('dragenter', dragEnter);
-            factionDiv.addEventListener('dragleave', dragLeave);
-            factionDiv.addEventListener('drop', dragDrop);
-            factionDiv.addEventListener('dragend', dragEnd);
-        }
-
-        function dragStart(e) {
-            e.dataTransfer.setData('text/plain', e.target.id);
-            e.currentTarget.classList.add('dragging');
-        }
-
-        function dragOver(e) {
-            e.preventDefault();
-        }
-
-        function dragEnter(e) {
-            e.preventDefault();
-            if (e.target.classList.contains('faction')) {
-                e.target.classList.add('over');
-            }
-        }
-
-        function dragLeave(e) {
-            if (e.target.classList.contains('faction')) {
-                e.target.classList.remove('over');
-            }
-        }
-
-        function dragDrop(e) {
-            e.preventDefault();
-            const draggedId = e.dataTransfer.getData('text/plain');
-            const targetId = e.currentTarget.id;
-
-            if (draggedId !== targetId) {
-                const factionList = document.getElementById('faction-list');
-                const draggedElement = document.getElementById(draggedId);
-                const targetElement = document.getElementById(targetId);
-
-                // Swap the elements
-                const draggedIndex = Array.from(factionList.children).indexOf(draggedElement);
-                const targetIndex = Array.from(factionList.children).indexOf(targetElement);
-
-                if (draggedIndex < targetIndex) {
-                    factionList.insertBefore(draggedElement, targetElement.nextSibling);
-                } else {
-                    factionList.insertBefore(draggedElement, targetElement);
-                }
-            }
-            e.currentTarget.classList.remove('over');
-        }
-
-        function dragEnd(e) {
-            e.currentTarget.classList.remove('dragging');
-            const factionElements = document.querySelectorAll('.faction');
-            factionElements.forEach(elem => elem.classList.remove('over'));
-        }
-
-        function changeValue(id, type, delta) {
-            const valueElem = document.getElementById(`${type}-${id}`);
-            let currentValue = parseInt(valueElem.textContent.split(' ')[0]);
-            const oldValue = currentValue; // Save old value for undo
-            currentValue += delta;
-            if (currentValue < 0) currentValue = 0; // Prevent negative values
-            valueElem.textContent = `${currentValue} ${type.toUpperCase()}`;
-            addUndoAction({ action: 'change', factionId: id, type, oldValue, newValue: currentValue }); // Track change
-            redoStack = []; // Clear redo stack on new action
-            addHistory(id, type, delta);
-            updateButtonState(id, type, currentValue);
-            updateUndoRedoButtonState();
-        }
-
-        function addUndoAction(action) {
-            undoStack.push(action);
-            if (undoStack.length > UNDO_STACK_LIMIT) {
-                undoStack.shift(); // Remove the oldest action if stack exceeds limit
-            }
-            updateUndoRedoButtonState();
-        }
-
-        function updateButtonState(id, type, value) {
-            const decrementButton = document.getElementById(`decrement-${type}-${id}`);
-            if (decrementButton) {
-                decrementButton.disabled = value <= 0;
-            }
-        }
-
-        function nextCommandPhase() {
-            const factions = document.querySelectorAll(".faction");
-            factions.forEach(faction => {
-                const factionId = faction.id;
-                changeValue(factionId, 'cp', 1); // Increment CP by 1
-            });
-            redoStack = []; // Clear redo stack on new action
-            updateUndoRedoButtonState();
-        }
-
-        function showRemoveFactionModal(factionId) {
-            showModal(`
-                <h2>Remove Faction</h2>
-                <p>Are you sure you want to remove this faction?</p>
-                <div>
-                    <button onclick="removeFaction('${factionId}')">Yes</button>
-                    <button onclick="closeModal()">No</button>
-                </div>
-            `);
-        }
-
-        function removeFaction(factionId) {
-            closeModal();
-            const faction = document.getElementById(factionId);
-            const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
-            const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
-            const name = faction.querySelector(".faction-title").textContent;
-            addUndoAction({ action: 'remove', factionId, vp, cp, name }); // Track removal
-            redoStack = []; // Clear redo stack on new action
-            faction.remove();
-            updateUndoRedoButtonState();
-        }
-
-        function addHistory(id, type, delta) {
-            let actionDescription = '';
-            if (type === 'vp') {
-                actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
-            } else if (type === 'cp') {
-                actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
-            } else if (type === 'faction') {
-                actionDescription = delta; // For faction actions like 'added' or 'restored'
-            } else {
-                actionDescription = type; // General action description
-            }
-
-            const timestamp = new Date().toLocaleTimeString();
-            const historyEntry = `[${timestamp}] ${actionDescription}`;
-
-            // Store in faction's history
-            if (!factionHistories[id]) {
-                factionHistories[id] = [];
-            }
-            factionHistories[id].push(historyEntry);
-
-            // Update latest history display
-            const latestHistoryElem = document.getElementById(`latest-history-${id}`);
-            latestHistoryElem.textContent = historyEntry;
-
-            // Update history display if visible
-            const historyList = document.getElementById(`history-list-${id}`);
-            if (historyList && historyList.parentElement.style.display !== 'none') {
-                const li = document.createElement('li');
-                li.textContent = historyEntry;
-                historyList.insertBefore(li, historyList.firstChild);
-            }
-        }
-
-        function toggleHistory(id) {
-            const historyDiv = document.getElementById(`history-${id}`);
-            const historyButton = historyDiv.previousElementSibling.querySelector('.history-button');
-            if (historyDiv.style.display === 'none' || historyDiv.style.display === '') {
-                historyDiv.style.display = 'block';
-                historyButton.textContent = 'Hide History';
-                // Load history entries
-                const historyList = document.getElementById(`history-list-${id}`);
-                historyList.innerHTML = ''; // Clear existing entries
-                if (factionHistories[id]) {
-                    factionHistories[id].slice().reverse().forEach(entry => {
-                        const li = document.createElement('li');
-                        li.textContent = entry;
-                        historyList.appendChild(li);
-                    });
-                }
-            } else {
-                historyDiv.style.display = 'none';
-                historyButton.textContent = 'Show History';
-            }
-        }
-
-        function showEditFactionNameModal(id) {
-            const factionTitleElem = document.getElementById(`faction-title-${id}`);
-            const currentName = factionTitleElem.textContent;
-            showModal(`
-                <h2>Edit Faction Name</h2>
-                <input type="text" id="edit-faction-name" value="${currentName}">
-                <div>
-                    <button onclick="editFactionName('${id}')">Save</button>
-                    <button onclick="closeModal()">Cancel</button>
-                </div>
-            `);
-            document.getElementById("edit-faction-name").focus();
-        }
-
-        function editFactionName(id) {
-            const factionTitleElem = document.getElementById(`faction-title-${id}`);
-            const factionNameInput = document.getElementById("edit-faction-name");
-            const newName = factionNameInput.value.trim();
-            if (newName && newName !== factionTitleElem.textContent) {
-                const oldName = factionTitleElem.textContent;
-                factionTitleElem.textContent = newName;
-                addUndoAction({ action: 'rename', factionId: id, oldName, newName });
-                redoStack = []; // Clear redo stack on new action
-                addHistory(id, `Name changed from "${oldName}" to "${newName}"`);
-                updateUndoRedoButtonState();
-            }
-            closeModal();
-        }
-
-        function undo() {
-            const lastAction = undoStack.pop();
-            if (!lastAction) {
-                alert("Nothing to undo!");
-                return;
-            }
-
-            redoStack.push(lastAction); // Add action to redo stack
-
-            if (lastAction.action === 'add') {
-                // Undo adding a faction
-                document.getElementById(lastAction.factionId).remove();
-            } else if (lastAction.action === 'remove') {
-                // Undo removing a faction
-                const factionList = document.getElementById("faction-list");
-                const factionDiv = createFactionElement(lastAction.factionId, lastAction.name, lastAction.vp, lastAction.cp);
-                factionList.appendChild(factionDiv);
-                updateButtonState(lastAction.factionId, 'vp', lastAction.vp);
-                updateButtonState(lastAction.factionId, 'cp', lastAction.cp);
-                factionHistories[lastAction.factionId] = lastAction.history || [];
-                addHistory(lastAction.factionId, 'faction', 'restored');
-            } else if (lastAction.action === 'change') {
-                // Undo a value change
-                const valueElem = document.getElementById(`${lastAction.type}-${lastAction.factionId}`);
-                valueElem.textContent = `${lastAction.oldValue} ${lastAction.type.toUpperCase()}`;
-                const delta = lastAction.oldValue - lastAction.newValue;
-                addHistory(lastAction.factionId, lastAction.type, delta);
-                updateButtonState(lastAction.factionId, lastAction.type, lastAction.oldValue);
-            } else if (lastAction.action === 'rename') {
-                // Undo renaming a faction
-                const factionTitleElem = document.getElementById(`faction-title-${lastAction.factionId}`);
-                factionTitleElem.textContent = lastAction.oldName;
-                addHistory(lastAction.factionId, `Name reverted to "${lastAction.oldName}"`);
-            }
-            updateUndoRedoButtonState();
-        }
-
-        function redo() {
-            const lastUndoneAction = redoStack.pop();
-            if (!lastUndoneAction) {
-                alert("Nothing to redo!");
-                return;
-            }
-
-            undoStack.push(lastUndoneAction); // Add action back to undo stack
-
-            if (lastUndoneAction.action === 'add') {
-                // Redo adding a faction
-                const factionList = document.getElementById("faction-list");
-                const factionDiv = createFactionElement(lastUndoneAction.factionId, lastUndoneAction.name, 0, 0);
-                factionList.appendChild(factionDiv);
-                updateButtonState(lastUndoneAction.factionId, 'vp', 0);
-                updateButtonState(lastUndoneAction.factionId, 'cp', 0);
-                factionHistories[lastUndoneAction.factionId] = [];
-                addHistory(lastUndoneAction.factionId, 'faction', 'added');
-            } else if (lastUndoneAction.action === 'remove') {
-                // Redo removing a faction
-                document.getElementById(lastUndoneAction.factionId).remove();
-            } else if (lastUndoneAction.action === 'change') {
-                // Redo a value change
-                const valueElem = document.getElementById(`${lastUndoneAction.type}-${lastUndoneAction.factionId}`);
-                valueElem.textContent = `${lastUndoneAction.newValue} ${lastUndoneAction.type.toUpperCase()}`;
-                const delta = lastUndoneAction.newValue - lastUndoneAction.oldValue;
-                addHistory(lastUndoneAction.factionId, lastUndoneAction.type, delta);
-                updateButtonState(lastUndoneAction.factionId, lastUndoneAction.type, lastUndoneAction.newValue);
-            } else if (lastUndoneAction.action === 'rename') {
-                // Redo renaming a faction
-                const factionTitleElem = document.getElementById(`faction-title-${lastUndoneAction.factionId}`);
-                factionTitleElem.textContent = lastUndoneAction.newName;
-                addHistory(lastUndoneAction.factionId, `Name changed to "${lastUndoneAction.newName}"`);
-            }
-            updateUndoRedoButtonState();
-        }
-
-        function updateUndoRedoButtonState() {
-            const undoButton = document.getElementById("undo-button");
-            const redoButton = document.getElementById("redo-button");
-            undoButton.disabled = undoStack.length === 0;
-            redoButton.disabled = redoStack.length === 0;
-        }
-
-        function showConfirmResetAllModal() {
-            showModal(`
-                <h2>Reset All</h2>
-                <p>Are you sure you want to reset all factions?</p>
-                <div>
-                    <button onclick="resetAll()">Yes</button>
-                    <button onclick="closeModal()">No</button>
-                </div>
-            `);
-        }
-
-        function resetAll() {
-            closeModal();
-            const factionList = document.getElementById("faction-list");
-            factionList.innerHTML = "";
-            undoStack = [];
-            redoStack = [];
-            factionHistories = {};
-            updateUndoRedoButtonState();
-        }
-
-        function showConfirmSaveModal() {
-            showModal(`
-                <h2>Save Data</h2>
-                <p>Are you sure you want to save data?</p>
-                <div>
-                    <button onclick="saveData()">Yes</button>
-                    <button onclick="closeModal()">No</button>
-                </div>
-            `);
-        }
-
-        function saveData() {
-            closeModal();
-            const factions = [];
-            document.querySelectorAll(".faction").forEach(factionDiv => {
-                const factionName = factionDiv.querySelector(".faction-title").textContent;
-                const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent.split(' ')[0]);
-                const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent.split(' ')[0]);
-                const factionId = factionDiv.id;
-                factions.push({ factionName, vp, cp, factionId });
-            });
-            const data = {
-                factions,
-                factionHistories,
-                factionOrder: Array.from(document.getElementById('faction-list').children).map(child => child.id)
-            };
-            localStorage.setItem("factionData", JSON.stringify(data));
-            alert("Data saved successfully!");
-        }
-
-        function showConfirmLoadModal() {
-            showModal(`
-                <h2>Load Data</h2>
-                <p>Are you sure you want to load saved data? This will overwrite current data.</p>
-                <div>
-                    <button onclick="loadData()">Yes</button>
-                    <button onclick="closeModal()">No</button>
-                </div>
-            `);
-        }
-
-        function loadData() {
-            closeModal();
-            const savedData = localStorage.getItem("factionData");
-            if (savedData) {
-                try {
-                    const data = JSON.parse(savedData);
-                    resetAll(); // Clear existing factions
-                    factionHistories = data.factionHistories || {};
-                    data.factionOrder.forEach(factionId => {
-                        const factionData = data.factions.find(f => f.factionId === factionId);
-                        if (factionData) {
-                            const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
-                            document.getElementById("faction-list").appendChild(factionDiv);
-                            updateButtonState(factionId, 'vp', factionData.vp);
-                            updateButtonState(factionId, 'cp', factionData.cp);
-                        }
-                    });
-                    alert("Data loaded successfully!");
-                } catch (error) {
-                    alert("Failed to load saved data. The data might be corrupted.");
-                    console.error("Error parsing saved data:", error);
-                }
-            } else {
-                alert("No saved data found.");
-            }
-            undoStack = [];
-            redoStack = [];
-            updateUndoRedoButtonState();
-        }
-
-        function autoSaveData() {
-            saveData();
-            console.log("Data auto-saved.");
-        }
-        setInterval(autoSaveData, 300000); // Auto-save every 5 minutes
-
-        function setBackground(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                document.body.style.backgroundImage = `url('${e.target.result}')`;
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function toggleTitleAndTimeColor() {
-            const title = document.getElementById("page-title");
-            const liveTime = document.getElementById("live-time");
-            const checkbox = document.getElementById("title-color-toggle");
-            const newColor = checkbox.checked ? "var(--secondary-color)" : "var(--primary-color)";
-            title.style.color = newColor;
-            liveTime.style.color = newColor;
-        }
-
-        // Export Data Function
-        function exportData() {
-            const factions = [];
-            document.querySelectorAll(".faction").forEach(factionDiv => {
-                const factionName = factionDiv.querySelector(".faction-title").textContent;
-                const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent.split(' ')[0]);
-                const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent.split(' ')[0]);
-                const factionId = factionDiv.id;
-                factions.push({ factionName, vp, cp, factionId });
-            });
-            const data = {
-                factions,
-                factionHistories,
-                factionOrder: Array.from(document.getElementById('faction-list').children).map(child => child.id)
-            };
-            const dataStr = JSON.stringify(data, null, 2);
-            const blob = new Blob([dataStr], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "factionData.json";
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        // Import Data Function
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = function (e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    resetAll(); // Clear existing factions
-                    factionHistories = data.factionHistories || {};
-                    data.factionOrder.forEach(factionId => {
-                        const factionData = data.factions.find(f => f.factionId === factionId);
-                        if (factionData) {
-                            const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
-                            document.getElementById("faction-list").appendChild(factionDiv);
-                            updateButtonState(factionId, 'vp', factionData.vp);
-                            updateButtonState(factionId, 'cp', factionData.cp);
-                        }
-                    });
-                    updateUndoRedoButtonState();
-                    alert("Data imported successfully!");
-                } catch (error) {
-                    alert("Failed to import data. The file might be corrupted or in an incorrect format.");
-                    console.error("Error parsing imported data:", error);
-                }
-            };
-            reader.readAsText(file);
-        }
-
-        // Toggle Options Menu
-        function toggleOptionsMenu() {
+            // Cached DOM elements
+            const liveTimeElement = document.getElementById('live-time');
+            const factionListElement = document.getElementById('faction-list');
+            const addFactionButton = document.getElementById('add-faction-button');
+            const nextCommandPhaseButton = document.getElementById('next-command-phase-button');
+            const undoButton = document.getElementById('undo-button');
+            const redoButton = document.getElementById('redo-button');
+            const toggleOptionsButton = document.getElementById('toggle-options-button');
             const optionsMenu = document.getElementById('options-menu');
-            const optionsButton = document.getElementById('toggle-options-button');
-            if (optionsMenu.style.display === 'none' || optionsMenu.style.display === '') {
-                optionsMenu.style.display = 'flex';
-                optionsButton.classList.add('active-button');
-            } else {
-                optionsMenu.style.display = 'none';
-                optionsButton.classList.remove('active-button');
-            }
-        }
-
-        // Toggle Appearance Menu
-        function toggleAppearanceMenu() {
-            const appearanceMenu = document.getElementById('background-upload');
-            const appearanceButton = document.getElementById('toggle-appearance-button');
-            if (appearanceMenu.style.display === 'none' || appearanceMenu.style.display === '') {
-                appearanceMenu.style.display = 'block';
-                appearanceButton.classList.add('active-button');
-            } else {
-                appearanceMenu.style.display = 'none';
-                appearanceButton.classList.remove('active-button');
-            }
-        }
-
-        // Modal Functions
-        function showModal(content) {
+            const resetAllButton = document.getElementById('reset-all-button');
+            const saveDataButton = document.getElementById('save-data-button');
+            const loadDataButton = document.getElementById('load-data-button');
+            const exportDataButton = document.getElementById('export-data-button');
+            const importDataButton = document.getElementById('import-data-button');
+            const importFileInput = document.getElementById('import-file-input');
+            const toggleAppearanceButton = document.getElementById('toggle-appearance-button');
+            const backgroundUpload = document.getElementById('background-upload');
+            const backgroundFileInput = document.getElementById('background-file-input');
+            const titleColorToggle = document.getElementById('title-color-toggle');
+            const togglePlayerButton = document.getElementById('toggle-player-button');
+            const youtubePlayer = document.querySelector('iframe');
+            const notificationContainer = document.getElementById('notification-container');
             const modal = document.getElementById('modal');
             const modalContent = document.getElementById('modal-content');
-            modalContent.innerHTML = content;
-            modal.style.display = 'flex';
-        }
 
-        function closeModal() {
-            const modal = document.getElementById('modal');
-            modal.style.display = 'none';
-        }
+            let factionIdCounter = 0;
+            let undoStack = []; // Tracks actions for undo functionality
+            let redoStack = []; // Tracks actions for redo functionality
+            const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
+            let factionHistories = {}; // Stores detailed histories for each faction
 
-        // Close modal when clicking outside content
-        window.onclick = function(event) {
-            const modal = document.getElementById('modal');
-            if (event.target == modal) {
+            /**
+             * Updates the live time display every second.
+             */
+            function updateTime() {
+                const now = new Date();
+                liveTimeElement.textContent = now.toLocaleTimeString();
+                requestAnimationFrame(updateTime);
+            }
+            requestAnimationFrame(updateTime); // Start updating the time
+
+            /**
+             * Generates a unique ID for a new faction.
+             * @returns {string} The unique faction ID.
+             */
+            function generateUniqueFactionId() {
+                return `faction-${++factionIdCounter}`;
+            }
+
+            /**
+             * Shows the modal dialog for adding a new faction.
+             */
+            function showAddFactionModal() {
+                showModal(`
+                    <h2>Add Faction</h2>
+                    <input type="text" id="new-faction-name" placeholder="Faction Name">
+                    <div>
+                        <button id="confirm-add-faction-button">Add</button>
+                        <button id="cancel-add-faction-button">Cancel</button>
+                    </div>
+                `);
+
+                const newFactionNameInput = document.getElementById('new-faction-name');
+                const confirmAddFactionButton = document.getElementById('confirm-add-faction-button');
+                const cancelAddFactionButton = document.getElementById('cancel-add-faction-button');
+
+                newFactionNameInput.focus();
+
+                confirmAddFactionButton.addEventListener('click', addFaction);
+                cancelAddFactionButton.addEventListener('click', closeModal);
+
+                // The keydown event is handled in showModal() via modalKeyDownHandler
+            }
+
+            /**
+             * Adds a new faction to the faction list.
+             */
+            function addFaction() {
+                const factionNameInput = document.getElementById('new-faction-name');
+                const factionName = factionNameInput.value.trim() || 'New Faction';
+                closeModal();
+
+                const factionId = generateUniqueFactionId();
+                const factionDiv = createFactionElement(factionId, factionName, 0, 0);
+                factionListElement.appendChild(factionDiv);
+                addUndoAction({ action: 'add', factionId }); // Track addition for undo
+                redoStack = []; // Clear redo stack on new action
+                updateUndoRedoButtonState();
+                updateButtonState(factionId, 'vp', 0);
+                updateButtonState(factionId, 'cp', 0);
+
+                // Initialize history for the new faction
+                factionHistories[factionId] = [];
+                addHistory(factionId, 'Faction added');
+            }
+
+            /**
+             * Creates a faction DOM element.
+             * @param {string} factionId - The unique ID of the faction.
+             * @param {string} name - The name of the faction.
+             * @param {number} vp - Victory points.
+             * @param {number} cp - Command points.
+             * @returns {HTMLElement} The faction DOM element.
+             */
+            function createFactionElement(factionId, name, vp, cp) {
+                const factionDiv = document.createElement('div');
+                factionDiv.className = 'faction';
+                factionDiv.id = factionId;
+                factionDiv.draggable = true; // Enable dragging
+
+                factionDiv.innerHTML = `
+                    <div class="faction-title" id="faction-title-${factionId}">${name}</div>
+                    <div class="faction-values">
+                        <div class="faction-value" id="vp-${factionId}">${vp} VP</div>
+                        <div class="faction-value" id="cp-${factionId}">${cp} CP</div>
+                    </div>
+                    <div class="incrementer">
+                        <div>
+                            <button class="positive-button increment-vp-button">+ VP</button>
+                            <button class="decrement-vp-button" ${vp <= 0 ? 'disabled' : ''}>- VP</button>
+                        </div>
+                        <div>
+                            <button class="positive-button increment-cp-button">+ CP</button>
+                            <button class="decrement-cp-button" ${cp <= 0 ? 'disabled' : ''}>- CP</button>
+                        </div>
+                    </div>
+                    <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
+                    <div class="history-buttons">
+                        <button class="history-button toggle-history-button" id="toggle-history-button-${factionId}">Show History</button>
+                        <button class="history-button edit-name-button">Edit Name</button>
+                    </div>
+                    <button class="critical-button remove-faction-button">Remove Faction</button>
+                    <div class="history" id="history-${factionId}">
+                        <ul id="history-list-${factionId}"></ul>
+                    </div>
+                `;
+
+                // Event Listeners for faction buttons
+                factionDiv.querySelector('.increment-vp-button').addEventListener('click', () => changeValue(factionId, 'vp', 1));
+                factionDiv.querySelector('.decrement-vp-button').addEventListener('click', () => changeValue(factionId, 'vp', -1));
+                factionDiv.querySelector('.increment-cp-button').addEventListener('click', () => changeValue(factionId, 'cp', 1));
+                factionDiv.querySelector('.decrement-cp-button').addEventListener('click', () => changeValue(factionId, 'cp', -1));
+                factionDiv.querySelector('.toggle-history-button').addEventListener('click', () => toggleHistory(factionId));
+                factionDiv.querySelector('.edit-name-button').addEventListener('click', () => showEditFactionNameModal(factionId));
+                factionDiv.querySelector('.remove-faction-button').addEventListener('click', () => showRemoveFactionModal(factionId));
+
+                // Add drag-and-drop event listeners
+                addDragAndDropHandlers(factionDiv);
+
+                return factionDiv;
+            }
+
+            /**
+             * Adds drag-and-drop event handlers to a faction element.
+             * @param {HTMLElement} factionDiv - The faction DOM element.
+             */
+            function addDragAndDropHandlers(factionDiv) {
+                factionDiv.addEventListener('dragstart', dragStart);
+                factionDiv.addEventListener('dragover', dragOver);
+                factionDiv.addEventListener('dragenter', dragEnter);
+                factionDiv.addEventListener('dragleave', dragLeave);
+                factionDiv.addEventListener('drop', dragDrop);
+                factionDiv.addEventListener('dragend', dragEnd);
+            }
+
+            /**
+             * Event handler for drag start.
+             * @param {DragEvent} e - The drag event.
+             */
+            function dragStart(e) {
+                e.dataTransfer.setData('text/plain', e.target.id);
+                e.currentTarget.classList.add('dragging');
+            }
+
+            /**
+             * Event handler for drag over.
+             * @param {DragEvent} e - The drag event.
+             */
+            function dragOver(e) {
+                e.preventDefault();
+            }
+
+            /**
+             * Event handler for drag enter.
+             * @param {DragEvent} e - The drag event.
+             */
+            function dragEnter(e) {
+                e.preventDefault();
+                if (e.target.classList.contains('faction')) {
+                    e.target.classList.add('over');
+                }
+            }
+
+            /**
+             * Event handler for drag leave.
+             * @param {DragEvent} e - The drag event.
+             */
+            function dragLeave(e) {
+                if (e.target.classList.contains('faction')) {
+                    e.target.classList.remove('over');
+                }
+            }
+
+            /**
+             * Event handler for drop.
+             * @param {DragEvent} e - The drag event.
+             */
+            function dragDrop(e) {
+                e.preventDefault();
+                const draggedId = e.dataTransfer.getData('text/plain');
+                const targetId = e.currentTarget.id;
+
+                if (draggedId !== targetId) {
+                    const draggedElement = document.getElementById(draggedId);
+                    const targetElement = document.getElementById(targetId);
+
+                    // Swap the elements
+                    const draggedIndex = Array.from(factionListElement.children).indexOf(draggedElement);
+                    const targetIndex = Array.from(factionListElement.children).indexOf(targetElement);
+
+                    if (draggedIndex < targetIndex) {
+                        factionListElement.insertBefore(draggedElement, targetElement.nextSibling);
+                    } else {
+                        factionListElement.insertBefore(draggedElement, targetElement);
+                    }
+                }
+                e.currentTarget.classList.remove('over');
+            }
+
+            /**
+             * Event handler for drag end.
+             * @param {DragEvent} e - The drag event.
+             */
+            function dragEnd(e) {
+                e.currentTarget.classList.remove('dragging');
+                const factionElements = document.querySelectorAll('.faction');
+                factionElements.forEach(elem => elem.classList.remove('over'));
+            }
+
+            /**
+             * Changes the value of VP or CP for a faction.
+             * @param {string} id - The faction ID.
+             * @param {string} type - 'vp' or 'cp'.
+             * @param {number} delta - The amount to change.
+             */
+            function changeValue(id, type, delta) {
+                const valueElem = document.getElementById(`${type}-${id}`);
+                let currentValue = parseInt(valueElem.textContent.split(' ')[0]);
+                const oldValue = currentValue; // Save old value for undo
+                currentValue += delta;
+                if (currentValue < 0) currentValue = 0; // Prevent negative values
+                valueElem.textContent = `${currentValue} ${type.toUpperCase()}`;
+                addUndoAction({ action: 'change', factionId: id, type, oldValue, newValue: currentValue }); // Track change
+                redoStack = []; // Clear redo stack on new action
+                addHistory(id, type, delta);
+                updateButtonState(id, type, currentValue);
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Adds an action to the undo stack.
+             * @param {Object} action - The action to add.
+             */
+            function addUndoAction(action) {
+                undoStack.push(action);
+                if (undoStack.length > UNDO_STACK_LIMIT) {
+                    undoStack.shift(); // Remove the oldest action if stack exceeds limit
+                }
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Updates the state of increment/decrement buttons based on the current value.
+             * @param {string} id - The faction ID.
+             * @param {string} type - 'vp' or 'cp'.
+             * @param {number} value - The current value.
+             */
+            function updateButtonState(id, type, value) {
+                const decrementButton = document.querySelector(`#${id} .decrement-${type}-button`);
+                if (decrementButton) {
+                    decrementButton.disabled = value <= 0;
+                }
+            }
+
+            /**
+             * Increments CP by 1 for all factions.
+             */
+            function nextCommandPhase() {
+                const factions = document.querySelectorAll('.faction');
+                factions.forEach(faction => {
+                    const factionId = faction.id;
+                    changeValue(factionId, 'cp', 1); // Increment CP by 1
+                });
+                redoStack = []; // Clear redo stack on new action
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Shows the modal to confirm faction removal.
+             * @param {string} factionId - The faction ID.
+             */
+            function showRemoveFactionModal(factionId) {
+                showModal(`
+                    <h2>Remove Faction</h2>
+                    <p>Are you sure you want to remove this faction?</p>
+                    <div>
+                        <button id="confirm-remove-faction-button">Yes</button>
+                        <button id="cancel-remove-faction-button">No</button>
+                    </div>
+                `);
+
+                document.getElementById('confirm-remove-faction-button').addEventListener('click', () => removeFaction(factionId));
+                document.getElementById('cancel-remove-faction-button').addEventListener('click', closeModal);
+            }
+
+            /**
+             * Removes a faction from the faction list.
+             * @param {string} factionId - The faction ID.
+             */
+            function removeFaction(factionId) {
+                closeModal();
+                const faction = document.getElementById(factionId);
+                const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
+                const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
+                const name = faction.querySelector('.faction-title').textContent;
+                addUndoAction({ action: 'remove', factionId, vp, cp, name }); // Track removal
+                redoStack = []; // Clear redo stack on new action
+                faction.remove();
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Adds an entry to a faction's history.
+             * @param {string} id - The faction ID.
+             * @param {string} type - The type of action.
+             * @param {number|string} delta - The change amount or description.
+             */
+            function addHistory(id, type, delta) {
+                let actionDescription = '';
+                if (type === 'vp') {
+                    actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
+                } else if (type === 'cp') {
+                    actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
+                } else if (type === 'faction') {
+                    actionDescription = delta; // For faction actions like 'added' or 'restored'
+                } else {
+                    actionDescription = type; // General action description
+                }
+
+                const timestamp = new Date().toLocaleTimeString();
+                const historyEntry = `[${timestamp}] ${actionDescription}`;
+
+                // Store in faction's history
+                if (!factionHistories[id]) {
+                    factionHistories[id] = [];
+                }
+                factionHistories[id].push(historyEntry);
+
+                // Update latest history display
+                const latestHistoryElem = document.getElementById(`latest-history-${id}`);
+                latestHistoryElem.textContent = historyEntry;
+
+                // Update history display if visible
+                const historyList = document.getElementById(`history-list-${id}`);
+                if (historyList && historyList.parentElement.style.display !== 'none') {
+                    const li = document.createElement('li');
+                    li.textContent = historyEntry;
+                    historyList.insertBefore(li, historyList.firstChild);
+                }
+            }
+
+            /**
+             * Toggles the visibility of a faction's history.
+             * @param {string} id - The faction ID.
+             */
+            function toggleHistory(id) {
+                const historyDiv = document.getElementById(`history-${id}`);
+                const historyButton = document.getElementById(`toggle-history-button-${id}`);
+                if (historyDiv.style.display === 'none' || historyDiv.style.display === '') {
+                    historyDiv.style.display = 'block';
+                    historyButton.textContent = 'Hide History';
+                    // Load history entries
+                    const historyList = document.getElementById(`history-list-${id}`);
+                    historyList.innerHTML = ''; // Clear existing entries
+                    if (factionHistories[id]) {
+                        factionHistories[id].slice().reverse().forEach(entry => {
+                            const li = document.createElement('li');
+                            li.textContent = entry;
+                            historyList.appendChild(li);
+                        });
+                    }
+                } else {
+                    historyDiv.style.display = 'none';
+                    historyButton.textContent = 'Show History';
+                }
+            }
+
+            /**
+             * Shows the modal to edit a faction's name.
+             * @param {string} id - The faction ID.
+             */
+            function showEditFactionNameModal(id) {
+                const factionTitleElem = document.getElementById(`faction-title-${id}`);
+                const currentName = factionTitleElem.textContent;
+                showModal(`
+                    <h2>Edit Faction Name</h2>
+                    <input type="text" id="edit-faction-name" value="${currentName}">
+                    <div>
+                        <button id="confirm-edit-name-button">Save</button>
+                        <button id="cancel-edit-name-button">Cancel</button>
+                    </div>
+                `);
+
+                const editFactionNameInput = document.getElementById('edit-faction-name');
+                editFactionNameInput.focus();
+
+                document.getElementById('confirm-edit-name-button').addEventListener('click', () => editFactionName(id));
+                document.getElementById('cancel-edit-name-button').addEventListener('click', closeModal);
+            }
+
+            /**
+             * Edits the name of a faction.
+             * @param {string} id - The faction ID.
+             */
+            function editFactionName(id) {
+                const factionTitleElem = document.getElementById(`faction-title-${id}`);
+                const factionNameInput = document.getElementById('edit-faction-name');
+                const newName = factionNameInput.value.trim();
+                if (newName && newName !== factionTitleElem.textContent) {
+                    const oldName = factionTitleElem.textContent;
+                    factionTitleElem.textContent = newName;
+                    addUndoAction({ action: 'rename', factionId: id, oldName, newName });
+                    redoStack = []; // Clear redo stack on new action
+                    addHistory(id, `Name changed from "${oldName}" to "${newName}"`);
+                    updateUndoRedoButtonState();
+                }
+                closeModal();
+            }
+
+            /**
+             * Undoes the last action.
+             */
+            function undo() {
+                const lastAction = undoStack.pop();
+                if (!lastAction) {
+                    showNotification('Nothing to undo!', 'error');
+                    return;
+                }
+
+                redoStack.push(lastAction); // Add action to redo stack
+
+                if (lastAction.action === 'add') {
+                    // Undo adding a faction
+                    document.getElementById(lastAction.factionId).remove();
+                } else if (lastAction.action === 'remove') {
+                    // Undo removing a faction
+                    const factionDiv = createFactionElement(lastAction.factionId, lastAction.name, lastAction.vp, lastAction.cp);
+                    factionListElement.appendChild(factionDiv);
+                    updateButtonState(lastAction.factionId, 'vp', lastAction.vp);
+                    updateButtonState(lastAction.factionId, 'cp', lastAction.cp);
+                    factionHistories[lastAction.factionId] = lastAction.history || [];
+                    addHistory(lastAction.factionId, 'faction', 'restored');
+                } else if (lastAction.action === 'change') {
+                    // Undo a value change
+                    const valueElem = document.getElementById(`${lastAction.type}-${lastAction.factionId}`);
+                    valueElem.textContent = `${lastAction.oldValue} ${lastAction.type.toUpperCase()}`;
+                    const delta = lastAction.oldValue - lastAction.newValue;
+                    addHistory(lastAction.factionId, lastAction.type, delta);
+                    updateButtonState(lastAction.factionId, lastAction.type, lastAction.oldValue);
+                } else if (lastAction.action === 'rename') {
+                    // Undo renaming a faction
+                    const factionTitleElem = document.getElementById(`faction-title-${lastAction.factionId}`);
+                    factionTitleElem.textContent = lastAction.oldName;
+                    addHistory(lastAction.factionId, `Name reverted to "${lastAction.oldName}"`);
+                }
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Redoes the last undone action.
+             */
+            function redo() {
+                const lastUndoneAction = redoStack.pop();
+                if (!lastUndoneAction) {
+                    showNotification('Nothing to redo!', 'error');
+                    return;
+                }
+
+                undoStack.push(lastUndoneAction); // Add action back to undo stack
+
+                if (lastUndoneAction.action === 'add') {
+                    // Redo adding a faction
+                    const factionDiv = createFactionElement(lastUndoneAction.factionId, lastUndoneAction.name, 0, 0);
+                    factionListElement.appendChild(factionDiv);
+                    updateButtonState(lastUndoneAction.factionId, 'vp', 0);
+                    updateButtonState(lastUndoneAction.factionId, 'cp', 0);
+                    factionHistories[lastUndoneAction.factionId] = [];
+                    addHistory(lastUndoneAction.factionId, 'faction', 'added');
+                } else if (lastUndoneAction.action === 'remove') {
+                    // Redo removing a faction
+                    document.getElementById(lastUndoneAction.factionId).remove();
+                } else if (lastUndoneAction.action === 'change') {
+                    // Redo a value change
+                    const valueElem = document.getElementById(`${lastUndoneAction.type}-${lastUndoneAction.factionId}`);
+                    valueElem.textContent = `${lastUndoneAction.newValue} ${lastUndoneAction.type.toUpperCase()}`;
+                    const delta = lastUndoneAction.newValue - lastUndoneAction.oldValue;
+                    addHistory(lastUndoneAction.factionId, lastUndoneAction.type, delta);
+                    updateButtonState(lastUndoneAction.factionId, lastUndoneAction.type, lastUndoneAction.newValue);
+                } else if (lastUndoneAction.action === 'rename') {
+                    // Redo renaming a faction
+                    const factionTitleElem = document.getElementById(`faction-title-${lastUndoneAction.factionId}`);
+                    factionTitleElem.textContent = lastUndoneAction.newName;
+                    addHistory(lastUndoneAction.factionId, `Name changed to "${lastUndoneAction.newName}"`);
+                }
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Updates the state of the undo and redo buttons.
+             */
+            function updateUndoRedoButtonState() {
+                undoButton.disabled = undoStack.length === 0;
+                redoButton.disabled = redoStack.length === 0;
+            }
+
+            /**
+             * Shows the modal to confirm resetting all factions.
+             */
+            function showConfirmResetAllModal() {
+                showModal(`
+                    <h2>Reset All</h2>
+                    <p>Are you sure you want to reset all factions?</p>
+                    <div>
+                        <button id="confirm-reset-all-button">Yes</button>
+                        <button id="cancel-reset-all-button">No</button>
+                    </div>
+                `);
+
+                document.getElementById('confirm-reset-all-button').addEventListener('click', resetAll);
+                document.getElementById('cancel-reset-all-button').addEventListener('click', closeModal);
+            }
+
+            /**
+             * Resets all factions by clearing the faction list.
+             */
+            function resetAll() {
+                closeModal();
+                factionListElement.innerHTML = '';
+                undoStack = [];
+                redoStack = [];
+                factionHistories = {};
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Shows the modal to confirm saving data.
+             */
+            function showConfirmSaveModal() {
+                showModal(`
+                    <h2>Save Data</h2>
+                    <p>Are you sure you want to save data?</p>
+                    <div>
+                        <button id="confirm-save-button">Yes</button>
+                        <button id="cancel-save-button">No</button>
+                    </div>
+                `);
+
+                document.getElementById('confirm-save-button').addEventListener('click', saveData);
+                document.getElementById('cancel-save-button').addEventListener('click', closeModal);
+            }
+
+            /**
+             * Saves the current state to localStorage.
+             */
+            function saveData() {
+                closeModal();
+                const data = {
+                    factions: getFactionData(),
+                    factionHistories,
+                    factionOrder: Array.from(factionListElement.children).map(child => child.id)
+                };
+                localStorage.setItem('factionData', JSON.stringify(data));
+                showNotification('Data saved successfully!', 'success');
+            }
+
+            /**
+             * Shows the modal to confirm loading data.
+             */
+            function showConfirmLoadModal() {
+                showModal(`
+                    <h2>Load Data</h2>
+                    <p>Are you sure you want to load saved data? This will overwrite current data.</p>
+                    <div>
+                        <button id="confirm-load-button">Yes</button>
+                        <button id="cancel-load-button">No</button>
+                    </div>
+                `);
+
+                document.getElementById('confirm-load-button').addEventListener('click', loadData);
+                document.getElementById('cancel-load-button').addEventListener('click', closeModal);
+            }
+
+            /**
+             * Loads saved data from localStorage.
+             */
+            function loadData() {
+                closeModal();
+                const savedData = localStorage.getItem('factionData');
+                if (savedData) {
+                    try {
+                        const data = JSON.parse(savedData);
+                        resetAll(); // Clear existing factions
+                        factionHistories = data.factionHistories || {};
+                        data.factionOrder.forEach(factionId => {
+                            const factionData = data.factions.find(f => f.factionId === factionId);
+                            if (factionData) {
+                                const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
+                                factionListElement.appendChild(factionDiv);
+                                updateButtonState(factionId, 'vp', factionData.vp);
+                                updateButtonState(factionId, 'cp', factionData.cp);
+                            }
+                        });
+                        showNotification('Data loaded successfully!', 'success');
+                    } catch (error) {
+                        showNotification('Failed to load saved data. The data might be corrupted.', 'error');
+                        console.error('Error parsing saved data:', error);
+                    }
+                } else {
+                    showNotification('No saved data found.', 'error');
+                }
+                undoStack = [];
+                redoStack = [];
+                updateUndoRedoButtonState();
+            }
+
+            /**
+             * Automatically saves data every 5 minutes.
+             */
+            function autoSaveData() {
+                saveData();
+                console.log('Data auto-saved.');
+            }
+            setInterval(autoSaveData, 300000); // Auto-save every 5 minutes
+
+            /**
+             * Sets the background image of the application.
+             * @param {Event} event - The change event.
+             */
+            function setBackground(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.body.style.backgroundImage = `url('${e.target.result}')`;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            /**
+             * Toggles the title and time color for contrast.
+             */
+            function toggleTitleAndTimeColor() {
+                const title = document.getElementById('page-title');
+                const newColor = titleColorToggle.checked ? 'var(--secondary-color)' : 'var(--primary-color)';
+                title.style.color = newColor;
+                liveTimeElement.style.color = newColor;
+            }
+
+            /**
+             * Exports the current game data to a JSON file.
+             */
+            function exportData() {
+                const data = {
+                    factions: getFactionData(),
+                    factionHistories,
+                    factionOrder: Array.from(factionListElement.children).map(child => child.id)
+                };
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'factionData.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+
+            /**
+             * Imports game data from a JSON file.
+             * @param {Event} event - The change event.
+             */
+            function importData(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        resetAll(); // Clear existing factions
+                        factionHistories = data.factionHistories || {};
+                        data.factionOrder.forEach(factionId => {
+                            const factionData = data.factions.find(f => f.factionId === factionId);
+                            if (factionData) {
+                                const factionDiv = createFactionElement(factionId, factionData.factionName, factionData.vp, factionData.cp);
+                                factionListElement.appendChild(factionDiv);
+                                updateButtonState(factionId, 'vp', factionData.vp);
+                                updateButtonState(factionId, 'cp', factionData.cp);
+                            }
+                        });
+                        updateUndoRedoButtonState();
+                        showNotification('Data imported successfully!', 'success');
+                    } catch (error) {
+                        showNotification('Failed to import data. The file might be corrupted or in an incorrect format.', 'error');
+                        console.error('Error parsing imported data:', error);
+                    }
+                };
+                reader.readAsText(file);
+            }
+
+            /**
+             * Toggles the visibility of the options menu.
+             */
+            function toggleOptionsMenu() {
+                if (optionsMenu.style.display === 'none' || optionsMenu.style.display === '') {
+                    optionsMenu.style.display = 'flex';
+                    toggleOptionsButton.classList.add('active-button');
+                } else {
+                    optionsMenu.style.display = 'none';
+                    toggleOptionsButton.classList.remove('active-button');
+                }
+            }
+
+            /**
+             * Toggles the visibility of the appearance menu.
+             */
+            function toggleAppearanceMenu() {
+                if (backgroundUpload.style.display === 'none' || backgroundUpload.style.display === '') {
+                    backgroundUpload.style.display = 'block';
+                    toggleAppearanceButton.classList.add('active-button');
+                } else {
+                    backgroundUpload.style.display = 'none';
+                    toggleAppearanceButton.classList.remove('active-button');
+                }
+            }
+
+            /**
+             * Shows the modal dialog with specified content.
+             * @param {string} content - The HTML content to display in the modal.
+             */
+            function showModal(content) {
+                modalContent.innerHTML = content;
+                modal.style.display = 'flex';
+
+                // Focus management for accessibility
+                const focusableElements = modalContent.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                if (focusableElements.length) {
+                    focusableElements[0].focus();
+                } else {
+                    modalContent.focus();
+                }
+
+                // Add event listener for Enter key to confirm action
+                modalContent.addEventListener('keydown', modalKeyDownHandler);
+            }
+
+            /**
+             * Handles keydown events in modals to allow pressing Enter to confirm.
+             * @param {KeyboardEvent} event - The keyboard event.
+             */
+            function modalKeyDownHandler(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    const confirmButton = modalContent.querySelector('button[id^="confirm"]');
+                    if (confirmButton) {
+                        confirmButton.click();
+                    }
+                } else if (event.key === 'Escape') {
+                    closeModal();
+                }
+            }
+
+            /**
+             * Closes the modal dialog.
+             */
+            function closeModal() {
                 modal.style.display = 'none';
+                // Remove the keydown event listener when modal is closed
+                modalContent.removeEventListener('keydown', modalKeyDownHandler);
             }
-        }
 
-        // Toggle YouTube Player
-        const toggleButton = document.getElementById('toggle-player-button');
-        const youtubePlayer = document.querySelector('iframe');
-        toggleButton.addEventListener('click', () => {
-            if (youtubePlayer.style.display === 'none') {
-                youtubePlayer.style.display = 'block';
-                toggleButton.style.position = 'fixed';
-                toggleButton.style.bottom = '200px';
-                toggleButton.textContent = 'Hide Player';
-            } else {
-                youtubePlayer.style.display = 'none';
-                toggleButton.style.position = 'fixed';
-                toggleButton.style.bottom = '20px';
-                toggleButton.textContent = 'Show Player';
+            // Close modal when clicking outside content
+            window.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            /**
+             * Shows a notification message.
+             * @param {string} message - The message to display.
+             * @param {string} [type='info'] - The type of notification ('info', 'success', 'error').
+             */
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.className = `notification ${type}`;
+                notification.textContent = message;
+                notificationContainer.appendChild(notification);
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
             }
-        });
+
+            /**
+             * Retrieves the current faction data.
+             * @returns {Array} An array of faction data objects.
+             */
+            function getFactionData() {
+                return Array.from(document.querySelectorAll('.faction')).map(factionDiv => {
+                    const factionName = factionDiv.querySelector('.faction-title').textContent;
+                    const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent);
+                    const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent);
+                    return { factionName, vp, cp, factionId: factionDiv.id };
+                });
+            }
+
+            // Event Listeners
+
+            addFactionButton.addEventListener('click', showAddFactionModal);
+            nextCommandPhaseButton.addEventListener('click', nextCommandPhase);
+            undoButton.addEventListener('click', undo);
+            redoButton.addEventListener('click', redo);
+            toggleOptionsButton.addEventListener('click', toggleOptionsMenu);
+            resetAllButton.addEventListener('click', showConfirmResetAllModal);
+            saveDataButton.addEventListener('click', showConfirmSaveModal);
+            loadDataButton.addEventListener('click', showConfirmLoadModal);
+            exportDataButton.addEventListener('click', exportData);
+            importDataButton.addEventListener('click', () => importFileInput.click());
+            importFileInput.addEventListener('change', importData);
+            toggleAppearanceButton.addEventListener('click', toggleAppearanceMenu);
+            backgroundFileInput.addEventListener('change', setBackground);
+            titleColorToggle.addEventListener('change', toggleTitleAndTimeColor);
+            togglePlayerButton.addEventListener('click', () => {
+                if (youtubePlayer.style.display === 'none') {
+                    youtubePlayer.style.display = 'block';
+                    togglePlayerButton.style.position = 'fixed';
+                    togglePlayerButton.style.bottom = '200px';
+                    togglePlayerButton.textContent = 'Hide Player';
+                } else {
+                    youtubePlayer.style.display = 'none';
+                    togglePlayerButton.style.position = 'fixed';
+                    togglePlayerButton.style.bottom = '20px';
+                    togglePlayerButton.textContent = 'Show Player';
+                }
+            });
+
+        })(); // End of IIFE
     </script>
 </body>
 </html>
