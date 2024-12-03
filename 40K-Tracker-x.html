@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>40K Match Tracker v1.5</title>
+    <title>40K Match Tracker v1.6</title>
     <style>
         :root {
             --primary-color: black;
@@ -83,7 +83,8 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 250px;
+            flex: 1 1 250px; /* Responsive width */
+            max-width: 300px;
             gap: 15px;
             box-sizing: border-box;
             position: relative;
@@ -233,9 +234,55 @@
         .modal button {
             margin: 5px;
         }
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            #faction-list {
+                justify-content: space-around;
+            }
+        }
         @media (max-width: 600px) {
             .faction {
+                flex: 1 1 100%;
+                max-width: none;
+            }
+            .faction-title {
+                font-size: 30px;
+            }
+            .faction-value {
+                font-size: 24px;
+            }
+            button {
+                font-size: 16px;
                 width: 100%;
+                box-sizing: border-box;
+            }
+            #live-time {
+                font-size: 24px;
+                position: static;
+                margin-bottom: 10px;
+            }
+            #controls,
+            #top-right-buttons,
+            #appearance-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            #top-right-buttons {
+                position: static;
+                margin-top: 20px;
+            }
+            #toggle-player-button {
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+            }
+            iframe {
+                position: fixed;
+                bottom: 60px;
+                left: 20px;
+                width: 90%;
+                height: auto;
+                max-height: 200px;
             }
         }
     </style>
@@ -318,6 +365,7 @@
                     <button onclick="closeModal()">Cancel</button>
                 </div>
             `);
+            document.getElementById("new-faction-name").focus();
         }
 
         function addFaction() {
@@ -566,6 +614,7 @@
                     <button onclick="closeModal()">Cancel</button>
                 </div>
             `);
+            document.getElementById("edit-faction-name").focus();
         }
 
         function editFactionName(id) {
