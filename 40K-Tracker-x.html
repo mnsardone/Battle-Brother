@@ -20,6 +20,7 @@
             --modal-content-bg: white;
             --status-box-bg: #d3d3d3;
             --version-font-size: 16px;
+            --history-font-color: #444; /* Darker font color for history */
         }
 
         body {
@@ -29,7 +30,10 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
+            background-attachment: fixed;
             transition: background-image 0.3s ease-in-out;
+            /* Placeholder background image */
+            background-image: url('YOUR_BACKGROUND_IMAGE_URL_HERE');
         }
 
         header {
@@ -38,20 +42,45 @@
             text-align: center;
         }
 
-        #live-time {
+        /* Clock Container Styling */
+        #time-container {
             position: absolute;
             top: 20px;
             left: 20px;
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(222, 184, 135, 0.8); /* Worn paper brown */
+            padding: 10px 20px;
+            border-radius: 15px;
+            background-image: url('https://www.transparenttextures.com/patterns/old-wall.png'); /* Worn paper texture */
+            background-size: cover;
+            background-repeat: repeat;
+        }
+
+        #live-time {
             font-size: 28px;
             color: var(--primary-color);
             transition: color 0.3s ease-in-out;
             font-family: 'Metal Mania', sans-serif;
+            margin: 0;
+        }
+
+        /* Title Container Styling */
+        #title-container {
+            display: inline-flex;
+            align-items: center;
+            background-color: rgba(222, 184, 135, 0.8); /* Worn paper brown */
+            padding: 10px 20px;
+            border-radius: 15px;
+            background-image: url('https://www.transparenttextures.com/patterns/old-wall.png'); /* Worn paper texture */
+            background-size: cover;
+            background-repeat: repeat;
+            margin: 10px auto;
         }
 
         h1 {
             color: var(--primary-color);
-            padding: 10px;
-            margin: 0;
+            margin: 0 10px;
             font-family: 'Metal Mania', sans-serif;
             transition: color 0.3s ease-in-out;
             font-size: 48px;
@@ -273,7 +302,7 @@
 
         .latest-history {
             font-size: 14px;
-            color: gray;
+            color: var(--history-font-color);
             text-align: center;
             margin-top: 10px;
             min-height: 20px;
@@ -282,7 +311,7 @@
         .history {
             margin-top: 10px;
             font-size: 0.9em;
-            color: gray;
+            color: var(--history-font-color);
             text-align: center;
             max-height: 100px;
             overflow-y: auto;
@@ -469,17 +498,6 @@
 </head>
 <body>
     <header>
-        <div id="live-time"></div>
-        <!-- Added Lightning Bolt Emoji to the Left of the Title -->
-        <span style="font-size: 48px;">⚡</span>
-        <h1 id="page-title">The Thunderdome</h1>
-        <span id="version-number">v1.1</span>
-        <div id="controls">
-            <button id="add-faction-button">Add Faction</button>
-            <button id="next-command-phase-button">Next Command Phase</button>
-            <button id="undo-button" disabled>Undo</button>
-            <button id="redo-button" disabled>Redo</button>
-        </div>
         <div id="top-right-buttons">
             <button id="toggle-options-button">Options</button>
             <div id="options-menu">
@@ -490,6 +508,21 @@
                 <button id="import-data-button">Import Game</button>
                 <input type="file" id="import-file-input" accept=".json" style="display: none;">
             </div>
+        </div>
+        <div id="time-container">
+            <div id="live-time">12:00 PM</div>
+        </div>
+        <div id="title-container">
+            <!-- Added Lightning Bolt Emoji to the Left of the Title -->
+            <span style="font-size: 48px;">⚡</span>
+            <h1 id="page-title">The Thunderdome</h1>
+            <span id="version-number">v1.1</span>
+        </div>
+        <div id="controls">
+            <button id="add-faction-button">Add Faction</button>
+            <button id="next-command-phase-button">Next Command Phase</button>
+            <button id="undo-button" disabled>Undo</button>
+            <button id="redo-button" disabled>Redo</button>
         </div>
     </header>
 
@@ -553,7 +586,9 @@
                 modal: document.getElementById('modal'),
                 modalContent: document.getElementById('modal-content'),
                 versionNumber: document.getElementById('version-number'),
-                pageTitle: document.getElementById('page-title')
+                pageTitle: document.getElementById('page-title'),
+                titleContainer: document.getElementById('title-container'),
+                timeContainer: document.getElementById('time-container')
             };
 
             const predefinedColors = [
@@ -751,6 +786,10 @@
                     const reader = new FileReader();
                     reader.onload = function (e) {
                         document.body.style.backgroundImage = `url('${e.target.result}')`;
+                        document.body.style.backgroundSize = 'cover';
+                        document.body.style.backgroundRepeat = 'no-repeat';
+                        document.body.style.backgroundPosition = 'center';
+                        document.body.style.backgroundAttachment = 'fixed';
                     };
                     reader.readAsDataURL(file);
                 },
@@ -906,7 +945,7 @@
                     faction.remove();
                     handlers.updateUndoRedoButtonState();
                 },
-                changeValue: (id, type, delta) => {
+                changeValue: (id, type, delta, isReverted = false) => {
                     const valueElem = document.getElementById(`${type}-${id}`);
                     let currentValue = parseInt(valueElem.textContent.split(' ')[0]);
                     const oldValue = currentValue;
@@ -915,7 +954,8 @@
                     valueElem.textContent = `${currentValue} ${type.toUpperCase()}`;
                     utils.addUndoAction({ action: 'change', factionId: id, type, oldValue, newValue: currentValue });
                     redoStack = [];
-                    factions.addHistory(id, type, delta);
+                    const actionType = isReverted ? 'reverted' : 'normal';
+                    factions.addHistory(id, type, delta, null, actionType);
                     factions.updateButtonState(id, type, currentValue);
                     handlers.updateUndoRedoButtonState();
                 },
@@ -931,15 +971,23 @@
                         }
                     }
                 },
-                addHistory: (id, type, delta, customMessage = null) => {
+                addHistory: (id, type, delta, customMessage = null, actionType = 'normal') => {
                     let actionDescription = '';
                     if (customMessage) {
                         actionDescription = customMessage;
                     } else {
                         if (type === 'vp') {
-                            actionDescription = delta > 0 ? `Gained ${delta} VP` : `Removed ${Math.abs(delta)} VP`;
+                            if (actionType === 'reverted') {
+                                actionDescription = 'Victory Points Reverted';
+                            } else {
+                                actionDescription = delta > 0 ? `Gained ${delta} VP` : `Removed ${Math.abs(delta)} VP`;
+                            }
                         } else if (type === 'cp') {
-                            actionDescription = delta > 0 ? `Gained ${delta} CP` : `Spent ${Math.abs(delta)} CP`;
+                            if (actionType === 'reverted') {
+                                actionDescription = 'Command Points Reverted';
+                            } else {
+                                actionDescription = delta > 0 ? `Gained ${delta} CP` : `Spent ${Math.abs(delta)} CP`;
+                            }
                         } else {
                             actionDescription = type;
                         }
@@ -1071,7 +1119,7 @@
                     const value = isUndo ? action.oldValue : action.newValue;
                     valueElem.textContent = `${value} ${action.type.toUpperCase()}`;
                     const delta = isUndo ? action.oldValue - action.newValue : action.newValue - action.oldValue;
-                    factions.addHistory(action.factionId, action.type, delta);
+                    factions.addHistory(action.factionId, action.type, delta, null, 'reverted');
                     factions.updateButtonState(action.factionId, action.type, value);
                 },
                 restoreEdit: (action, isUndo) => {
