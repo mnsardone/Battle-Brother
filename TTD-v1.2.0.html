@@ -1,1376 +1,1416 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>The Thunderdome</title>
     <!-- Included Google Font "Metal Mania" -->
-    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        /* CSS Styles */
-        :root {
-            --primary-color: black;
-            --secondary-color: #f0f0f0;
-            --background-color: #e0e0e0;
-            --button-positive-bg: lightgreen;
-            --button-critical-bg: red;
-            --button-hover-positive-bg: mediumseagreen;
-            --button-hover-critical-bg: darkred;
-            --button-active-bg: #cccccc;
-            --modal-bg: rgba(0, 0, 0, 0.5);
-            --modal-content-bg: white;
-            --status-box-bg: #d3d3d3;
-            --version-font-size: 16px;
-            --history-font-color: #444; /* Darker font color for history */
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            background-color: var(--background-color);
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-position: center;
-            background-attachment: fixed;
-            transition: background-image 0.3s ease-in-out;
-            /* Placeholder background image */
-            background-image: url('YOUR_BACKGROUND_IMAGE_URL_HERE');
-        }
-
-        header {
-            position: relative;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        /* Clock Container Styling */
-        #time-container {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            display: inline-flex;
-            align-items: center;
-            background-color: rgba(222, 184, 135, 0.8); /* Worn paper brown */
-            padding: 10px 20px;
-            border-radius: 15px;
-            background-image: url('https://www.transparenttextures.com/patterns/old-wall.png'); /* Worn paper texture */
-            background-size: cover;
-            background-repeat: repeat;
-        }
-
-        #live-time {
-            font-size: 28px;
-            color: var(--primary-color);
-            transition: color 0.3s ease-in-out;
-            font-family: 'Metal Mania', sans-serif;
-            margin: 0;
-        }
-
-        /* Title Container Styling */
-        #title-container {
-            display: inline-flex;
-            align-items: center;
-            background-color: rgba(222, 184, 135, 0.8); /* Worn paper brown */
-            padding: 10px 20px;
-            border-radius: 15px;
-            background-image: url('https://www.transparenttextures.com/patterns/old-wall.png'); /* Worn paper texture */
-            background-size: cover;
-            background-repeat: repeat;
-            margin: 10px auto;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            margin: 0 10px;
-            font-family: 'Metal Mania', sans-serif;
-            transition: color 0.3s ease-in-out;
-            font-size: 48px;
-            display: inline-block;
-        }
-
-        #version-number {
-            font-size: var(--version-font-size);
-            margin-left: 10px;
-            vertical-align: middle;
-            color: var(--primary-color);
-            font-family: 'Metal Mania', sans-serif;
-        }
-
-        #controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        #top-right-buttons {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: flex-end;
-            z-index: 100;
-        }
-
-        #options-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
-            border-radius: 5px;
-            position: absolute;
-            top: 40px;
-            right: 0;
-            z-index: 100;
-        }
-
-        #faction-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .faction {
-            margin-bottom: 30px;
-            padding: 20px;
-            border: 1px solid #333;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1 1 250px;
-            max-width: 300px;
-            gap: 15px;
-            box-sizing: border-box;
-            position: relative;
-            cursor: move;
-            transition: background-color 0.3s ease;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .faction.dragging {
-            opacity: 0.5;
-        }
-
-        .faction.over {
-            border: 2px dashed #000;
-        }
-
-        .skull-emoji {
-            font-size: 28px;
-            display: none;
-            position: absolute;
-            top: -10px;
-        }
-
-        .faction-title {
-            font-size: 40px;
-            font-weight: bold;
-            margin-top: 10px;
-            text-align: center;
-            overflow-wrap: break-word;
-            word-break: break-word;
-            font-family: 'Metal Mania', sans-serif;
-        }
-
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .status-dropdown {
-            font-size: 14px;
-            font-weight: lighter;
-            padding: 5px;
-            width: auto;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #fff;
-        }
-
-        .delete-option {
-            color: #ff4d4d;
-            font-weight: bold;
-        }
-
-        .faction-values {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .faction-value {
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .incrementer {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .incrementer input[type="number"] {
-            width: 40px;
-            padding: 5px;
-            font-size: 14px;
-            text-align: center;
-            border: 1px solid #ccc;
-            border-radius: 3px;
-        }
-
-        .incrementer button {
-            padding: 5px 10px;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        button {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .critical-button {
-            background-color: var(--button-critical-bg);
-            color: var(--secondary-color);
-            border: 2px solid var(--primary-color);
-            transition: background-color 0.3s ease;
-        }
-
-        .critical-button:hover {
-            background-color: var(--button-hover-critical-bg);
-        }
-
-        .positive-button {
-            background-color: var(--button-positive-bg);
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            transition: background-color 0.3s ease;
-        }
-
-        .positive-button:hover {
-            background-color: var(--button-hover-positive-bg);
-        }
-
-        .negative-button {
-            background-color: #f08080;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            transition: background-color 0.3s ease;
-        }
-
-        .negative-button:hover {
-            background-color: #e06666;
-        }
-
-        .disabled-button {
-            background-color: #ccc !important;
-            color: #666 !important;
-            cursor: not-allowed !important;
-        }
-
-        #appearance-controls {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
-        #background-upload {
-            background-color: rgba(255, 255, 255, 0.8);
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            display: none;
-            margin-top: 10px;
-        }
-
-        .latest-history {
-            font-size: 14px;
-            color: var(--history-font-color);
-            text-align: center;
-            margin-top: 10px;
-            min-height: 20px;
-        }
-
-        .history {
-            margin-top: 10px;
-            font-size: 0.9em;
-            color: var(--history-font-color);
-            text-align: center;
-            max-height: 100px;
-            overflow-y: auto;
-            display: none;
-            width: 100%;
-            text-align: left;
-        }
-
-        .history ul {
-            list-style-type: disc;
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        .history-button {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-
-        #toggle-appearance-button,
-        #toggle-options-button {
-            padding: 10px 20px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .active-button {
-            background-color: var(--button-active-bg);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: var(--modal-bg);
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background-color: var(--modal-content-bg);
-            padding: 20px;
-            border-radius: 5px;
-            width: 300px;
-            max-width: 80%;
-            text-align: center;
-        }
-
-        .modal input,
-        .modal select {
-            width: 80%;
-            padding: 8px;
-            margin-bottom: 10px;
-        }
-
-        .modal button {
-            margin: 5px;
-        }
-
-        /* Notification Styles */
-        #notification-container {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
-
-        .notification {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            margin-top: 5px;
-            border-radius: 5px;
-            opacity: 0.9;
-        }
-
-        .notification.success {
-            background-color: green;
-        }
-
-        .notification.error {
-            background-color: red;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            #faction-list {
-                justify-content: space-around;
-            }
-        }
-
-        @media (max-width: 600px) {
-            #live-time {
-                font-size: 24px;
-                position: static;
-                margin-bottom: 10px;
-            }
-
-            h1 {
-                font-size: 30px;
-            }
-
-            #controls,
-            #top-right-buttons,
-            #appearance-controls {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            #top-right-buttons {
-                position: static;
-                margin-top: 20px;
-            }
-
-            #options-menu {
-                position: static;
-                width: 100%;
-            }
-
-            .faction {
-                flex: 1 1 100%;
-                max-width: none;
-            }
-
-            .faction-title {
-                font-size: 30px;
-            }
-
-            .faction-value {
-                font-size: 24px;
-            }
-
-            .incrementer input[type="number"] {
-                width: 30px;
-            }
-
-            .incrementer button {
-                font-size: 12px;
-                padding: 5px;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-                gap: 5px;
-            }
-
-            .history-button {
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            .status-dropdown {
-                width: 100%;
-            }
-
-            button {
-                font-size: 16px;
-                width: 100%;
-                box-sizing: border-box;
-            }
-
-            #toggle-player-button {
-                position: fixed;
-                bottom: 20px;
-                left: 20px;
-            }
-
-            iframe {
-                position: fixed;
-                bottom: 60px;
-                left: 20px;
-                width: 90%;
-                height: auto;
-                max-height: 200px;
-            }
-        }
+      /* CSS Styles */
+      :root {
+          --primary-color: black;
+          --secondary-color: #f0f0f0;
+          --background-color: #e0e0e0;
+          --button-positive-bg: lightgreen;
+          --button-critical-bg: red;
+          --button-hover-positive-bg: mediumseagreen;
+          --button-hover-critical-bg: darkred;
+          --button-active-bg: #cccccc;
+          --modal-bg: rgba(0, 0, 0, 0.5);
+          --modal-content-bg: white;
+          --status-box-bg: #d3d3d3;
+          --version-font-size: 16px;
+          --history-font-color: #444; /* Darker font color for history */
+      }
+
+      body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          background-color: var(--background-color);
+          background-size: cover;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-attachment: fixed;
+          transition: background-image 0.3s ease-in-out;
+          /* Placeholder background image */
+          background-image: url('YOUR_BACKGROUND_IMAGE_URL_HERE');
+      }
+
+      header {
+          position: relative;
+          margin-bottom: 20px;
+          text-align: center;
+      }
+
+      /* Clock Container Styling */
+      #time-container {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          display: inline-flex;
+          align-items: center;
+          background-color: rgba(222, 184, 135, 0.8); /* Worn paper brown */
+          padding: 10px 20px;
+          border-radius: 15px;
+          background-image: url('https://www.transparenttextures.com/patterns/old-wall.png'); /* Worn paper texture */
+          background-size: cover;
+          background-repeat: repeat;
+      }
+
+      #live-time {
+          font-size: 28px;
+          color: var(--primary-color);
+          transition: color 0.3s ease-in-out;
+          font-family: 'Metal Mania', sans-serif;
+          margin: 0;
+      }
+
+      /* Title Container Styling */
+      #title-container {
+          display: inline-flex;
+          align-items: center;
+          background-color: rgba(222, 184, 135, 0.8); /* Worn paper brown */
+          padding: 10px 20px;
+          border-radius: 15px;
+          background-image: url('https://www.transparenttextures.com/patterns/old-wall.png'); /* Worn paper texture */
+          background-size: cover;
+          background-repeat: repeat;
+          margin: 10px auto;
+      }
+
+      h1 {
+          color: var(--primary-color);
+          margin: 0 10px;
+          font-family: 'Metal Mania', sans-serif;
+          transition: color 0.3s ease-in-out;
+          font-size: 48px;
+          display: inline-block;
+      }
+
+      #version-number {
+          font-size: var(--version-font-size);
+          margin-left: 10px;
+          vertical-align: middle;
+          color: var(--primary-color);
+          font-family: 'Metal Mania', sans-serif;
+      }
+
+      #controls {
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          flex-wrap: wrap;
+          margin-top: 20px;
+      }
+
+      #top-right-buttons {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          align-items: flex-end;
+          z-index: 100;
+      }
+
+      #options-menu {
+          display: none;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 10px;
+          background-color: rgba(255, 255, 255, 0.9);
+          padding: 10px;
+          border-radius: 5px;
+          position: absolute;
+          top: 40px;
+          right: 0;
+          z-index: 100;
+      }
+
+      #faction-list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 30px;
+          justify-content: center;
+          margin-top: 20px;
+      }
+
+      .faction {
+          margin-bottom: 30px;
+          padding: 20px;
+          border: 1px solid #333;
+          border-radius: 10px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          flex: 1 1 250px;
+          max-width: 300px;
+          gap: 15px;
+          box-sizing: border-box;
+          position: relative;
+          cursor: move;
+          transition: background-color 0.3s ease;
+          background-color: rgba(255, 255, 255, 0.9);
+      }
+
+      .faction.dragging {
+          opacity: 0.5;
+      }
+
+      .faction.over {
+          border: 2px dashed #000;
+      }
+
+      .skull-emoji {
+          font-size: 28px;
+          display: none;
+          position: absolute;
+          top: -10px;
+      }
+
+      .faction-title {
+          font-size: 40px;
+          font-weight: bold;
+          margin-top: 10px;
+          text-align: center;
+          overflow-wrap: break-word;
+          word-break: break-word;
+          font-family: 'Metal Mania', sans-serif;
+      }
+
+      .action-buttons {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          gap: 10px;
+          margin-top: 10px;
+      }
+
+      .status-dropdown {
+          font-size: 14px;
+          font-weight: lighter;
+          padding: 5px;
+          width: auto;
+          text-align: center;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          background-color: #fff;
+      }
+
+      .delete-option {
+          color: #ff4d4d;
+          font-weight: bold;
+      }
+
+      .faction-values {
+          display: flex;
+          gap: 10px;
+          flex-direction: column;
+          align-items: center;
+      }
+
+      .faction-value {
+          font-size: 30px;
+          font-weight: bold;
+      }
+
+      .incrementer {
+          display: flex;
+          gap: 5px;
+          justify-content: center;
+          align-items: center;
+      }
+
+      .incrementer input[type="number"] {
+          width: 40px;
+          padding: 5px;
+          font-size: 14px;
+          text-align: center;
+          border: 1px solid #ccc;
+          border-radius: 3px;
+      }
+
+      .incrementer button {
+          padding: 5px 10px;
+          font-size: 14px;
+          cursor: pointer;
+      }
+
+      button {
+          padding: 10px 20px;
+          cursor: pointer;
+          font-size: 14px;
+      }
+
+      .critical-button {
+          background-color: var(--button-critical-bg);
+          color: var(--secondary-color);
+          border: 2px solid var(--primary-color);
+          transition: background-color 0.3s ease;
+      }
+
+      .critical-button:hover {
+          background-color: var(--button-hover-critical-bg);
+      }
+
+      .positive-button {
+          background-color: var(--button-positive-bg);
+          color: var(--primary-color);
+          border: 2px solid var(--primary-color);
+          transition: background-color 0.3s ease;
+      }
+
+      .positive-button:hover {
+          background-color: var(--button-hover-positive-bg);
+      }
+
+      .negative-button {
+          background-color: #f08080;
+          color: var(--primary-color);
+          border: 2px solid var(--primary-color);
+          transition: background-color 0.3s ease;
+      }
+
+      .negative-button:hover {
+          background-color: #e06666;
+      }
+
+      .disabled-button {
+          background-color: #ccc !important;
+          color: #666 !important;
+          cursor: not-allowed !important;
+      }
+
+      #appearance-controls {
+          position: fixed;
+          bottom: 20px;
+          right: 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+      }
+
+      /* Corrected CSS for #background-upload */
+      #background-upload {
+          background-color: rgba(255, 255, 255, 0.8);
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          margin-top: 10px;
+          display: none; /* Ensure hidden by default */
+          flex-direction: column;
+          gap: 10px; /* Added for vertical spacing */
+      }
+
+      #background-upload label {
+          font-weight: bold; /* Bold labels */
+          display: flex;
+          flex-direction: row; /* Ensure inline alignment */
+          align-items: center;
+          gap: 5px;
+      }
+
+      .latest-history {
+          font-size: 14px;
+          color: var(--history-font-color);
+          text-align: center;
+          margin-top: 10px;
+          min-height: 20px;
+      }
+
+      .history {
+          margin-top: 10px;
+          font-size: 0.9em;
+          color: var(--history-font-color);
+          text-align: center;
+          max-height: 100px;
+          overflow-y: auto;
+          display: none;
+          width: 100%;
+          text-align: left;
+      }
+
+      .history ul {
+          list-style-type: disc;
+          margin: 0;
+          padding-left: 20px;
+      }
+
+      .history-button {
+          padding: 5px 10px;
+          font-size: 12px;
+      }
+
+      #toggle-appearance-button,
+      #toggle-options-button {
+          padding: 10px 20px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
+
+      .active-button {
+          background-color: var(--button-active-bg);
+      }
+
+      .modal {
+          display: none;
+          position: fixed;
+          z-index: 1000;
+          left: 0;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+          background-color: var(--modal-bg);
+          justify-content: center;
+          align-items: center;
+      }
+
+      .modal-content {
+          background-color: var(--modal-content-bg);
+          padding: 20px;
+          border-radius: 5px;
+          width: 300px;
+          max-width: 80%;
+          text-align: center;
+      }
+
+      .modal input,
+      .modal select {
+          width: 80%;
+          padding: 8px;
+          margin-bottom: 10px;
+      }
+
+      .modal button {
+          margin: 5px;
+      }
+
+      /* Notification Styles */
+      #notification-container {
+          position: fixed;
+          bottom: 10px;
+          right: 10px;
+          z-index: 1000;
+      }
+
+      .notification {
+          background-color: #333;
+          color: #fff;
+          padding: 10px;
+          margin-top: 5px;
+          border-radius: 5px;
+          opacity: 0.9;
+      }
+
+      .notification.success {
+          background-color: green;
+      }
+
+      .notification.error {
+          background-color: red;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 1024px) {
+          #faction-list {
+              justify-content: space-around;
+          }
+      }
+
+      @media (max-width: 600px) {
+          #live-time {
+              font-size: 24px;
+              position: static;
+              margin-bottom: 10px;
+          }
+
+          h1 {
+              font-size: 30px;
+          }
+
+          #controls,
+          #top-right-buttons,
+          #appearance-controls {
+              flex-direction: column;
+              align-items: center;
+          }
+
+          #top-right-buttons {
+              position: static;
+              margin-top: 20px;
+          }
+
+          #options-menu {
+              position: static;
+              width: 100%;
+          }
+
+          .faction {
+              flex: 1 1 100%;
+              max-width: none;
+          }
+
+          .faction-title {
+              font-size: 30px;
+          }
+
+          .faction-value {
+              font-size: 24px;
+          }
+
+          .incrementer input[type="number"] {
+              width: 30px;
+          }
+
+          .incrementer button {
+              font-size: 12px;
+              padding: 5px;
+          }
+
+          .action-buttons {
+              flex-direction: column;
+              gap: 5px;
+          }
+
+          .history-button {
+              width: 100%;
+              box-sizing: border-box;
+          }
+
+          .status-dropdown {
+              width: 100%;
+          }
+
+          button {
+              font-size: 16px;
+              width: 100%;
+              box-sizing: border-box;
+          }
+
+          #toggle-player-button {
+              position: fixed;
+              bottom: 20px;
+              left: 20px;
+          }
+
+          iframe {
+              position: fixed;
+              bottom: 60px;
+              left: 20px;
+              width: 90%;
+              height: auto;
+              max-height: 200px;
+          }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <div id="top-right-buttons">
-            <button id="toggle-options-button">Options</button>
-            <div id="options-menu">
-                <button class="critical-button" id="reset-all-button">Reset All</button>
-                <button id="save-data-button">Save</button>
-                <button id="load-data-button">Load</button>
-                <button id="export-data-button">Export Game</button>
-                <button id="import-data-button">Import Game</button>
-                <input type="file" id="import-file-input" accept=".json" style="display: none;">
-            </div>
+      <div id="top-right-buttons">
+        <button id="toggle-options-button">Options</button>
+        <div id="options-menu">
+          <button class="critical-button" id="reset-all-button">
+            Reset All
+          </button>
+          <button id="save-data-button">Save</button>
+          <button id="load-data-button">Load</button>
+          <button id="export-data-button">Export Game</button>
+          <button id="import-data-button">Import Game</button>
+          <input
+            type="file"
+            id="import-file-input"
+            accept=".json"
+            style="display: none;"
+          />
         </div>
-        <div id="time-container">
-            <div id="live-time">12:00 PM</div>
-        </div>
-        <div id="title-container">
-            <!-- Added Lightning Bolt Emoji to the Left of the Title -->
-            <span style="font-size: 48px;">⚡</span>
-            <h1 id="page-title">The Thunderdome</h1>
-            <span id="version-number">v1.2.0</span>
-        </div>
-        <div id="controls">
-            <button id="add-faction-button">Add Faction</button>
-            <button id="next-command-phase-button">Next Command Phase</button>
-            <button id="undo-button" disabled>Undo</button>
-            <button id="redo-button" disabled>Redo</button>
-        </div>
+      </div>
+      <div id="time-container">
+        <div id="live-time">12:00 PM</div>
+      </div>
+      <div id="title-container">
+        <!-- Added Lightning Bolt Emoji to the Left of the Title -->
+        <span style="font-size: 48px;">⚡</span>
+        <h1 id="page-title">The Thunderdome</h1>
+        <span id="version-number">v1.2.1</span>
+      </div>
+      <div id="controls">
+        <button id="add-faction-button">Add Faction</button>
+        <button id="next-command-phase-button">Next Command Phase</button>
+        <button id="undo-button" disabled>Undo</button>
+        <button id="redo-button" disabled>Redo</button>
+      </div>
     </header>
 
     <div id="faction-list"></div>
 
     <div id="appearance-controls">
-        <button id="toggle-appearance-button">Appearance</button>
-        <div id="background-upload">
-            <label>
-                Background:
-                <input type="file" accept="image/*" id="background-file-input">
-            </label>
-            <label>
-                Contrast Fix:
-                <input type="checkbox" id="title-color-toggle">
-                <span>White</span>
-            </label>
-        </div>
+      <button id="toggle-appearance-button">Appearance</button>
+      <div id="background-upload">
+        <label>
+          Background:
+          <input type="file" accept="image/*" id="background-file-input" />
+        </label>
+        <label>
+          Contrast Fix:
+          <input type="checkbox" id="title-color-toggle" />
+        </label>
+      </div>
     </div>
 
-    <button id="toggle-player-button" style="position: fixed; bottom: 20px; left: 20px;">Show Music</button>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px; display: none;"></iframe>
+    <button
+      id="toggle-player-button"
+      style="position: fixed; bottom: 20px; left: 20px;"
+    >
+      Show Music
+    </button>
+    <iframe
+      width="560"
+      height="315"
+      src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3"
+      title="YouTube video player"
+      frameborder="0"
+      allowfullscreen
+      style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px; display: none;"
+    ></iframe>
 
     <!-- Notification Container -->
     <div id="notification-container" aria-live="polite"></div>
 
     <!-- Modal Structure -->
     <div id="modal" class="modal" role="dialog" aria-modal="true">
-        <div class="modal-content" id="modal-content" tabindex="-1">
-            <!-- Content will be injected dynamically -->
-        </div>
+      <div class="modal-content" id="modal-content" tabindex="-1">
+        <!-- Content will be injected dynamically -->
+      </div>
     </div>
 
     <script>
-        (function () {
-            'use strict';
+      (function () {
+          'use strict';
 
-            // Cached DOM elements
-            const dom = {
-                liveTimeElement: document.getElementById('live-time'),
-                factionListElement: document.getElementById('faction-list'),
-                addFactionButton: document.getElementById('add-faction-button'),
-                nextCommandPhaseButton: document.getElementById('next-command-phase-button'),
-                undoButton: document.getElementById('undo-button'),
-                redoButton: document.getElementById('redo-button'),
-                toggleOptionsButton: document.getElementById('toggle-options-button'),
-                optionsMenu: document.getElementById('options-menu'),
-                resetAllButton: document.getElementById('reset-all-button'),
-                saveDataButton: document.getElementById('save-data-button'),
-                loadDataButton: document.getElementById('load-data-button'),
-                exportDataButton: document.getElementById('export-data-button'),
-                importDataButton: document.getElementById('import-data-button'),
-                importFileInput: document.getElementById('import-file-input'),
-                toggleAppearanceButton: document.getElementById('toggle-appearance-button'),
-                backgroundUpload: document.getElementById('background-upload'),
-                backgroundFileInput: document.getElementById('background-file-input'),
-                titleColorToggle: document.getElementById('title-color-toggle'),
-                togglePlayerButton: document.getElementById('toggle-player-button'),
-                youtubePlayer: document.querySelector('iframe'),
-                notificationContainer: document.getElementById('notification-container'),
-                modal: document.getElementById('modal'),
-                modalContent: document.getElementById('modal-content'),
-                versionNumber: document.getElementById('version-number'),
-                pageTitle: document.getElementById('page-title'),
-                titleContainer: document.getElementById('title-container'),
-                timeContainer: document.getElementById('time-container')
-            };
+          // Cached DOM elements
+          const dom = {
+              liveTimeElement: document.getElementById('live-time'),
+              factionListElement: document.getElementById('faction-list'),
+              addFactionButton: document.getElementById('add-faction-button'),
+              nextCommandPhaseButton: document.getElementById('next-command-phase-button'),
+              undoButton: document.getElementById('undo-button'),
+              redoButton: document.getElementById('redo-button'),
+              toggleOptionsButton: document.getElementById('toggle-options-button'),
+              optionsMenu: document.getElementById('options-menu'),
+              resetAllButton: document.getElementById('reset-all-button'),
+              saveDataButton: document.getElementById('save-data-button'),
+              loadDataButton: document.getElementById('load-data-button'),
+              exportDataButton: document.getElementById('export-data-button'),
+              importDataButton: document.getElementById('import-data-button'),
+              importFileInput: document.getElementById('import-file-input'),
+              toggleAppearanceButton: document.getElementById('toggle-appearance-button'),
+              backgroundUpload: document.getElementById('background-upload'),
+              backgroundFileInput: document.getElementById('background-file-input'),
+              titleColorToggle: document.getElementById('title-color-toggle'),
+              togglePlayerButton: document.getElementById('toggle-player-button'),
+              youtubePlayer: document.querySelector('iframe'),
+              notificationContainer: document.getElementById('notification-container'),
+              modal: document.getElementById('modal'),
+              modalContent: document.getElementById('modal-content'),
+              versionNumber: document.getElementById('version-number'),
+              pageTitle: document.getElementById('page-title'),
+              titleContainer: document.getElementById('title-container'),
+              timeContainer: document.getElementById('time-container')
+          };
 
-            const predefinedColors = [
-                '#B6B3F2', '#B0EDF0', '#BAF1B4', '#FCEDA8', '#FCA9C9',
-                '#F8AC8C', '#FBE4C4', '#F9F4F0', '#D2E4E8', '#DEACD1'
-            ];
+          const predefinedColors = [
+              '#B6B3F2', '#B0EDF0', '#BAF1B4', '#FCEDA8', '#FCA9C9',
+              '#F8AC8C', '#FBE4C4', '#F9F4F0', '#D2E4E8', '#DEACD1'
+          ];
 
-            let factionIdCounter = 0;
-            let undoStack = [];
-            let redoStack = [];
-            const UNDO_STACK_LIMIT = 50;
-            let factionHistories = {};
+          let factionIdCounter = 0;
+          let undoStack = [];
+          let redoStack = [];
+          const UNDO_STACK_LIMIT = 50;
+          let factionHistories = {};
 
-            // Utility Functions
-            const utils = {
-                hexToRgba: (hex, alpha = 0.90) => {
-                    let c;
-                    if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
-                        c = hex.substring(1).split('');
-                        if (c.length === 3) {
-                            c = [c[0], c[0], c[1], c[1], c[2], c[2]];
-                        }
-                        c = '0x' + c.join('');
-                        return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
-                    }
-                    throw new Error('Bad Hex');
-                },
-                rgbaToHex: (rgba) => {
-                    const parts = rgba.replace(/rgba?\(|\s+|\)/g, '').split(',');
-                    const r = parseInt(parts[0], 10).toString(16).padStart(2, '0');
-                    const g = parseInt(parts[1], 10).toString(16).padStart(2, '0');
-                    const b = parseInt(parts[2], 10).toString(16).padStart(2, '0');
-                    return `#${r}${g}${b}`.toUpperCase();
-                },
-                generateUniqueFactionId: () => `faction-${++factionIdCounter}`,
-                updateTime: () => {
-                    const now = new Date();
-                    dom.liveTimeElement.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-                    requestAnimationFrame(utils.updateTime);
-                },
-                showNotification: (message, type = 'info') => {
-                    const notification = document.createElement('div');
-                    notification.className = `notification ${type}`;
-                    notification.textContent = message;
-                    dom.notificationContainer.appendChild(notification);
-                    setTimeout(() => {
-                        notification.remove();
-                    }, 3000);
-                },
-                addUndoAction: (action) => {
-                    undoStack.push(action);
-                    if (undoStack.length > UNDO_STACK_LIMIT) {
-                        undoStack.shift();
-                    }
-                    handlers.updateUndoRedoButtonState();
-                }
-            };
+          // Utility Functions
+          const utils = {
+              hexToRgba: (hex, alpha = 0.90) => {
+                  let c;
+                  if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                      c = hex.substring(1).split('');
+                      if (c.length === 3) {
+                          c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                      }
+                      c = '0x' + c.join('');
+                      return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
+                  }
+                  throw new Error('Bad Hex');
+              },
+              rgbaToHex: (rgba) => {
+                  const parts = rgba.replace(/rgba?\(|\s+|\)/g, '').split(',');
+                  const r = parseInt(parts[0], 10).toString(16).padStart(2, '0');
+                  const g = parseInt(parts[1], 10).toString(16).padStart(2, '0');
+                  const b = parseInt(parts[2], 10).toString(16).padStart(2, '0');
+                  return `#${r}${g}${b}`.toUpperCase();
+              },
+              generateUniqueFactionId: () => `faction-${++factionIdCounter}`,
+              updateTime: () => {
+                  const now = new Date();
+                  dom.liveTimeElement.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                  requestAnimationFrame(utils.updateTime);
+              },
+              showNotification: (message, type = 'info') => {
+                  const notification = document.createElement('div');
+                  notification.className = `notification ${type}`;
+                  notification.textContent = message;
+                  dom.notificationContainer.appendChild(notification);
+                  setTimeout(() => {
+                      notification.remove();
+                  }, 3000);
+              },
+              addUndoAction: (action) => {
+                  undoStack.push(action);
+                  if (undoStack.length > UNDO_STACK_LIMIT) {
+                      undoStack.shift();
+                  }
+                  handlers.updateUndoRedoButtonState();
+              }
+          };
 
-            // Start updating the time
-            requestAnimationFrame(utils.updateTime);
+          // Start updating the time
+          requestAnimationFrame(utils.updateTime);
 
-            // Handlers and Event Listeners
-            const handlers = {
-                updateUndoRedoButtonState: () => {
-                    dom.undoButton.disabled = undoStack.length === 0;
-                    dom.redoButton.disabled = redoStack.length === 0;
-                },
-                addFaction: () => {
-                    const factionNameInput = document.getElementById('new-faction-name');
-                    const factionColorSelect = document.getElementById('new-faction-color');
-                    const factionName = factionNameInput.value.trim() || 'New Faction';
-                    const factionColorHex = factionColorSelect.value || '#FFFFFF';
-                    let factionColorRgba = '#FFFFFF';
+          // Handlers and Event Listeners
+          const handlers = {
+              updateUndoRedoButtonState: () => {
+                  dom.undoButton.disabled = undoStack.length === 0;
+                  dom.redoButton.disabled = redoStack.length === 0;
+              },
+              addFaction: () => {
+                  const factionNameInput = document.getElementById('new-faction-name');
+                  const factionColorSelect = document.getElementById('new-faction-color');
+                  const factionName = factionNameInput.value.trim() || 'New Faction';
+                  const factionColorHex = factionColorSelect.value || '#FFFFFF';
+                  let factionColorRgba = '#FFFFFF';
 
-                    try {
-                        factionColorRgba = utils.hexToRgba(factionColorHex, 0.90);
-                    } catch (error) {
-                        utils.showNotification('Invalid color selected. Defaulting to white.', 'error');
-                    }
+                  try {
+                      factionColorRgba = utils.hexToRgba(factionColorHex, 0.90);
+                  } catch (error) {
+                      utils.showNotification('Invalid color selected. Defaulting to white.', 'error');
+                  }
 
-                    modals.closeModal();
+                  modals.closeModal();
 
-                    const factionId = utils.generateUniqueFactionId();
-                    const factionDiv = factions.createFactionElement(factionId, factionName, 0, 0, factionColorRgba);
-                    dom.factionListElement.appendChild(factionDiv);
-                    utils.addUndoAction({ action: 'add', factionId, name: factionName, color: factionColorHex });
-                    redoStack = [];
-                    factions.updateButtonState(factionId, 'vp', 0);
-                    factions.updateButtonState(factionId, 'cp', 0);
+                  const factionId = utils.generateUniqueFactionId();
+                  const factionDiv = factions.createFactionElement(factionId, factionName, 0, 0, factionColorRgba);
+                  dom.factionListElement.appendChild(factionDiv);
+                  utils.addUndoAction({ action: 'add', factionId, name: factionName, color: factionColorHex });
+                  redoStack = [];
+                  factions.updateButtonState(factionId, 'vp', 0);
+                  factions.updateButtonState(factionId, 'cp', 0);
 
-                    factionHistories[factionId] = [];
-                    factions.addHistory(factionId, 'faction', 'Faction added');
-                },
-                nextCommandPhase: () => {
-                    const factionsElems = document.querySelectorAll('.faction');
-                    factionsElems.forEach(faction => {
-                        const factionId = faction.id;
-                        factions.changeValue(factionId, 'cp', 1);
-                    });
-                    redoStack = [];
-                    handlers.updateUndoRedoButtonState();
-                },
-                undo: () => {
-                    const lastAction = undoStack.pop();
-                    if (!lastAction) {
-                        utils.showNotification('Nothing to undo!', 'error');
-                        return;
-                    }
+                  factionHistories[factionId] = [];
+                  factions.addHistory(factionId, 'faction', 'Faction Added');
+              },
+              nextCommandPhase: () => {
+                  const factionsElems = document.querySelectorAll('.faction');
+                  factionsElems.forEach(faction => {
+                      const factionId = faction.id;
+                      factions.changeValue(factionId, 'cp', 1);
+                  });
+                  redoStack = [];
+                  handlers.updateUndoRedoButtonState();
+              },
+              undo: () => {
+                  const lastAction = undoStack.pop();
+                  if (!lastAction) {
+                      utils.showNotification('Nothing to undo!', 'error');
+                      return;
+                  }
 
-                    redoStack.push(lastAction);
+                  redoStack.push(lastAction);
 
-                    switch (lastAction.action) {
-                        case 'add':
-                            document.getElementById(lastAction.factionId).remove();
-                            break;
-                        case 'remove':
-                            factions.restoreFaction(lastAction);
-                            break;
-                        case 'change':
-                            factions.restoreValueChange(lastAction, true);
-                            break;
-                        case 'edit':
-                            factions.restoreEdit(lastAction, true);
-                            break;
-                    }
-                    handlers.updateUndoRedoButtonState();
-                },
-                redo: () => {
-                    const lastUndoneAction = redoStack.pop();
-                    if (!lastUndoneAction) {
-                        utils.showNotification('Nothing to redo!', 'error');
-                        return;
-                    }
+                  switch (lastAction.action) {
+                      case 'add':
+                          document.getElementById(lastAction.factionId).remove();
+                          break;
+                      case 'remove':
+                          factions.restoreFaction(lastAction);
+                          break;
+                      case 'change':
+                          factions.restoreValueChange(lastAction, true);
+                          break;
+                      case 'edit':
+                          factions.restoreEdit(lastAction, true);
+                          break;
+                  }
+                  handlers.updateUndoRedoButtonState();
+              },
+              redo: () => {
+                  const lastUndoneAction = redoStack.pop();
+                  if (!lastUndoneAction) {
+                      utils.showNotification('Nothing to redo!', 'error');
+                      return;
+                  }
 
-                    undoStack.push(lastUndoneAction);
+                  undoStack.push(lastUndoneAction);
 
-                    switch (lastUndoneAction.action) {
-                        case 'add':
-                            factions.restoreAdd(lastUndoneAction);
-                            break;
-                        case 'remove':
-                            document.getElementById(lastUndoneAction.factionId).remove();
-                            break;
-                        case 'change':
-                            factions.restoreValueChange(lastUndoneAction, false);
-                            break;
-                        case 'edit':
-                            factions.restoreEdit(lastUndoneAction, false);
-                            break;
-                    }
-                    handlers.updateUndoRedoButtonState();
-                },
-                saveData: () => {
-                    modals.closeModal();
-                    const data = {
-                        factions: factions.getFactionData(),
-                        factionHistories,
-                        factionOrder: Array.from(dom.factionListElement.children).map(child => child.id)
-                    };
-                    localStorage.setItem('factionData', JSON.stringify(data));
-                    utils.showNotification('Data saved successfully!', 'success');
-                },
-                loadData: () => {
-                    modals.closeModal();
-                    const savedData = localStorage.getItem('factionData');
-                    if (savedData) {
-                        try {
-                            const data = JSON.parse(savedData);
-                            factions.resetAll();
-                            factionHistories = data.factionHistories || {};
-                            data.factionOrder.forEach(factionId => {
-                                const factionData = data.factions.find(f => f.factionId === factionId);
-                                if (factionData) {
-                                    factions.restoreFactionData(factionData);
-                                }
-                            });
-                            utils.showNotification('Data loaded successfully!', 'success');
-                        } catch (error) {
-                            utils.showNotification('Failed to load saved data. The data might be corrupted.', 'error');
-                        }
-                    } else {
-                        utils.showNotification('No saved data found.', 'error');
-                    }
-                    undoStack = [];
-                    redoStack = [];
-                    handlers.updateUndoRedoButtonState();
-                },
-                autoSaveData: () => {
-                    handlers.saveData();
-                    console.log('Data auto-saved.');
-                },
-                setBackground: (event) => {
-                    const file = event.target.files[0];
-                    if (!file) return;
-                    const reader = new FileReader();
-                    reader.onload = function (e) {
-                        document.body.style.backgroundImage = `url('${e.target.result}')`;
-                        document.body.style.backgroundSize = 'cover';
-                        document.body.style.backgroundRepeat = 'no-repeat';
-                        document.body.style.backgroundPosition = 'center';
-                        document.body.style.backgroundAttachment = 'fixed';
-                    };
-                    reader.readAsDataURL(file);
-                },
-                toggleTitleAndTimeColor: () => {
-                    const newColor = dom.titleColorToggle.checked ? 'var(--secondary-color)' : 'var(--primary-color)';
-                    dom.pageTitle.style.color = newColor;
-                    dom.liveTimeElement.style.color = newColor;
-                    dom.versionNumber.style.color = newColor;
-                },
-                toggleOptionsMenu: () => {
-                    if (dom.optionsMenu.style.display === 'none' || dom.optionsMenu.style.display === '') {
-                        dom.optionsMenu.style.display = 'flex';
-                        dom.toggleOptionsButton.classList.add('active-button');
-                    } else {
-                        dom.optionsMenu.style.display = 'none';
-                        dom.toggleOptionsButton.classList.remove('active-button');
-                    }
-                },
-                toggleAppearanceMenu: () => {
-                    if (dom.backgroundUpload.style.display === 'none' || dom.backgroundUpload.style.display === '') {
-                        dom.backgroundUpload.style.display = 'block';
-                        dom.toggleAppearanceButton.classList.add('active-button');
-                    } else {
-                        dom.backgroundUpload.style.display = 'none';
-                        dom.toggleAppearanceButton.classList.remove('active-button');
-                    }
-                }
-            };
+                  switch (lastUndoneAction.action) {
+                      case 'add':
+                          factions.restoreAdd(lastUndoneAction);
+                          break;
+                      case 'remove':
+                          document.getElementById(lastUndoneAction.factionId).remove();
+                          break;
+                      case 'change':
+                          factions.restoreValueChange(lastUndoneAction, false);
+                          break;
+                      case 'edit':
+                          factions.restoreEdit(lastUndoneAction, false);
+                          break;
+                  }
+                  handlers.updateUndoRedoButtonState();
+              },
+              saveData: () => {
+                  modals.closeModal();
+                  const data = {
+                      factions: factions.getFactionData(),
+                      factionHistories,
+                      factionOrder: Array.from(dom.factionListElement.children).map(child => child.id)
+                  };
+                  localStorage.setItem('factionData', JSON.stringify(data));
+                  utils.showNotification('Data saved successfully!', 'success');
+              },
+              loadData: () => {
+                  modals.closeModal();
+                  const savedData = localStorage.getItem('factionData');
+                  if (savedData) {
+                      try {
+                          const data = JSON.parse(savedData);
+                          factions.resetAll();
+                          factionHistories = data.factionHistories || {};
+                          data.factionOrder.forEach(factionId => {
+                              const factionData = data.factions.find(f => f.factionId === factionId);
+                              if (factionData) {
+                                  factions.restoreFactionData(factionData);
+                              }
+                          });
+                          utils.showNotification('Data loaded successfully!', 'success');
+                      } catch (error) {
+                          utils.showNotification('Failed to load saved data. The data might be corrupted.', 'error');
+                      }
+                  } else {
+                      utils.showNotification('No saved data found.', 'error');
+                  }
+                  undoStack = [];
+                  redoStack = [];
+                  handlers.updateUndoRedoButtonState();
+              },
+              autoSaveData: () => {
+                  handlers.saveData();
+                  console.log('Data auto-saved.');
+              },
+              setBackground: (event) => {
+                  const file = event.target.files[0];
+                  if (!file) return;
+                  const reader = new FileReader();
+                  reader.onload = function (e) {
+                      document.body.style.backgroundImage = `url('${e.target.result}')`;
+                      document.body.style.backgroundSize = 'cover';
+                      document.body.style.backgroundRepeat = 'no-repeat';
+                      document.body.style.backgroundPosition = 'center';
+                      document.body.style.backgroundAttachment = 'fixed';
+                  };
+                  reader.readAsDataURL(file);
+              },
+              toggleTitleAndTimeColor: () => {
+                  const newColor = dom.titleColorToggle.checked ? 'var(--secondary-color)' : 'var(--primary-color)';
+                  dom.pageTitle.style.color = newColor;
+                  dom.liveTimeElement.style.color = newColor;
+                  dom.versionNumber.style.color = newColor;
+              },
+              toggleOptionsMenu: () => {
+                  if (dom.optionsMenu.style.display === 'none' || dom.optionsMenu.style.display === '') {
+                      dom.optionsMenu.style.display = 'flex';
+                      dom.toggleOptionsButton.classList.add('active-button');
+                  } else {
+                      dom.optionsMenu.style.display = 'none';
+                      dom.toggleOptionsButton.classList.remove('active-button');
+                  }
+              },
+              toggleAppearanceMenu: () => {
+                  if (dom.backgroundUpload.style.display === 'none' || dom.backgroundUpload.style.display === '') {
+                      dom.backgroundUpload.style.display = 'flex';
+                      dom.toggleAppearanceButton.classList.add('active-button');
+                  } else {
+                      dom.backgroundUpload.style.display = 'none';
+                      dom.toggleAppearanceButton.classList.remove('active-button');
+                  }
+              }
+          };
 
-            // Faction Related Functions
-            const factions = {
-                createFactionElement: (factionId, name, vp, cp, color) => {
-                    const factionDiv = document.createElement('div');
-                    factionDiv.className = 'faction';
-                    factionDiv.id = factionId;
-                    factionDiv.draggable = true;
-                    factionDiv.style.backgroundColor = color;
+          // Faction Related Functions
+          const factions = {
+              createFactionElement: (factionId, name, vp, cp, color) => {
+                  const factionDiv = document.createElement('div');
+                  factionDiv.className = 'faction';
+                  factionDiv.id = factionId;
+                  factionDiv.draggable = true;
+                  factionDiv.style.backgroundColor = color;
 
-                    factionDiv.innerHTML = `
-                        <span class="skull-emoji" id="skull-${factionId}">☠️</span>
-                        <div class="faction-title" id="faction-title-${factionId}">${name}</div>
-                        <div class="faction-values">
-                            <div class="faction-value" id="vp-${factionId}">${vp} VP</div>
-                            <div class="faction-value" id="cp-${factionId}">${cp} CP</div>
-                        </div>
-                        <div class="incrementer">
-                            <input type="number" min="1" id="vp-increment-${factionId}" value="1">
-                            <button class="positive-button increment-vp-button">+ VP</button>
-                            <button class="negative-button decrement-vp-button">-1VP</button>
-                        </div>
-                        <div class="incrementer">
-                            <input type="number" min="1" id="cp-increment-${factionId}" value="1">
-                            <button class="positive-button increment-cp-button">+ CP</button>
-                            <button class="negative-button decrement-cp-button">-1CP</button>
-                        </div>
-                        <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
-                        <div class="action-buttons">
-                            <select class="status-dropdown" id="status-dropdown-${factionId}">
-                                <option value="Active" selected>Active</option>
-                                <option value="Tabled">Tabled</option>
-                                <option value="Delete" class="delete-option">Delete</option>
-                            </select>
-                            <button class="history-button toggle-history-button" id="toggle-history-button-${factionId}">Show History</button>
-                            <button class="history-button edit-faction-button">Edit Faction</button>
-                        </div>
-                        <div class="history" id="history-${factionId}">
-                            <ul id="history-list-${factionId}"></ul>
-                        </div>
-                    `;
+                  factionDiv.innerHTML = `
+                      <span class="skull-emoji" id="skull-${factionId}">☠️</span>
+                      <div class="faction-title" id="faction-title-${factionId}">${name}</div>
+                      <div class="faction-values">
+                          <div class="faction-value" id="vp-${factionId}">${vp} VP</div>
+                          <div class="faction-value" id="cp-${factionId}">${cp} CP</div>
+                      </div>
+                      <div class="incrementer">
+                          <input type="number" min="1" id="vp-increment-${factionId}" value="1">
+                          <button class="positive-button increment-vp-button">+ VP</button>
+                          <button class="negative-button decrement-vp-button">-1 VP</button>
+                      </div>
+                      <div class="incrementer">
+                          <input type="number" min="1" id="cp-increment-${factionId}" value="1">
+                          <button class="positive-button increment-cp-button">+ CP</button>
+                          <button class="negative-button decrement-cp-button">-1 CP</button>
+                      </div>
+                      <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
+                      <div class="action-buttons">
+                          <select class="status-dropdown" id="status-dropdown-${factionId}">
+                              <option value="Active" selected>Active</option>
+                              <option value="Tabled">Tabled</option>
+                              <option value="Delete" class="delete-option">Delete</option>
+                          </select>
+                          <button class="history-button toggle-history-button" id="toggle-history-button-${factionId}">Show History</button>
+                          <button class="history-button edit-faction-button">Edit Faction</button>
+                      </div>
+                      <div class="history" id="history-${factionId}">
+                          <ul id="history-list-${factionId}"></ul>
+                      </div>
+                  `;
 
-                    factions.addFactionEventListeners(factionDiv, factionId);
-                    factions.addDragAndDropHandlers(factionDiv);
+                  factions.addFactionEventListeners(factionDiv, factionId);
+                  factions.addDragAndDropHandlers(factionDiv);
 
-                    return factionDiv;
-                },
-                addFactionEventListeners: (factionDiv, factionId) => {
-                    factionDiv.addEventListener('click', (e) => {
-                        if (e.target.classList.contains('increment-vp-button')) {
-                            const incrementValue = parseInt(document.getElementById(`vp-increment-${factionId}`).value) || 1;
-                            factions.changeValue(factionId, 'vp', incrementValue);
-                        } else if (e.target.classList.contains('decrement-vp-button')) {
-                            factions.changeValue(factionId, 'vp', -1);
-                        } else if (e.target.classList.contains('increment-cp-button')) {
-                            const incrementValue = parseInt(document.getElementById(`cp-increment-${factionId}`).value) || 1;
-                            factions.changeValue(factionId, 'cp', incrementValue);
-                        } else if (e.target.classList.contains('decrement-cp-button')) {
-                            factions.changeValue(factionId, 'cp', -1);
-                        } else if (e.target.classList.contains('toggle-history-button')) {
-                            factions.toggleHistory(factionId);
-                        } else if (e.target.classList.contains('edit-faction-button')) {
-                            modals.showEditFactionModal(factionId);
-                        }
-                    });
+                  return factionDiv;
+              },
+              addFactionEventListeners: (factionDiv, factionId) => {
+                  factionDiv.addEventListener('click', (e) => {
+                      if (e.target.classList.contains('increment-vp-button')) {
+                          const incrementValue = parseInt(document.getElementById(`vp-increment-${factionId}`).value) || 1;
+                          factions.changeValue(factionId, 'vp', incrementValue);
+                      } else if (e.target.classList.contains('decrement-vp-button')) {
+                          factions.changeValue(factionId, 'vp', -1);
+                      } else if (e.target.classList.contains('increment-cp-button')) {
+                          const incrementValue = parseInt(document.getElementById(`cp-increment-${factionId}`).value) || 1;
+                          factions.changeValue(factionId, 'cp', incrementValue);
+                      } else if (e.target.classList.contains('decrement-cp-button')) {
+                          factions.changeValue(factionId, 'cp', -1);
+                      } else if (e.target.classList.contains('toggle-history-button')) {
+                          factions.toggleHistory(factionId);
+                      } else if (e.target.classList.contains('edit-faction-button')) {
+                          modals.showEditFactionModal(factionId);
+                      }
+                  });
 
-                    const statusDropdown = factionDiv.querySelector(`#status-dropdown-${factionId}`);
-                    statusDropdown.addEventListener('change', (e) => {
-                        factions.handleStatusChange(factionId, e.target.value);
-                    });
-                },
-                editFaction: (id) => {
-                    const factionTitleElem = document.getElementById(`faction-title-${id}`);
-                    const factionDiv = document.getElementById(id);
-                    const factionNameInput = document.getElementById('edit-faction-name');
-                    const factionColorSelect = document.getElementById('edit-faction-color');
-                    const newName = factionNameInput.value.trim();
-                    const newColorHex = factionColorSelect.value || '#FFFFFF';
+                  const statusDropdown = factionDiv.querySelector(`#status-dropdown-${factionId}`);
+                  statusDropdown.addEventListener('change', (e) => {
+                      factions.handleStatusChange(factionId, e.target.value);
+                  });
+              },
+              editFaction: (id) => {
+                  const factionTitleElem = document.getElementById(`faction-title-${id}`);
+                  const factionDiv = document.getElementById(id);
+                  const factionNameInput = document.getElementById('edit-faction-name');
+                  const factionColorSelect = document.getElementById('edit-faction-color');
+                  const newName = factionNameInput.value.trim();
+                  const newColorHex = factionColorSelect.value || '#FFFFFF';
 
-                    const oldName = factionTitleElem.textContent;
-                    const oldColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
-                    const oldColorHex = utils.rgbaToHex(oldColorRgba);
+                  const oldName = factionTitleElem.textContent;
+                  const oldColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
+                  const oldColorHex = utils.rgbaToHex(oldColorRgba);
 
-                    let newColorRgba = oldColorRgba;
-                    if (newColorHex !== oldColorHex) {
-                        try {
-                            newColorRgba = utils.hexToRgba(newColorHex, 0.90);
-                        } catch (error) {
-                            utils.showNotification('Invalid color selected. Keeping the old color.', 'error');
-                        }
-                    }
+                  let newColorRgba = oldColorRgba;
+                  if (newColorHex !== oldColorHex) {
+                      try {
+                          newColorRgba = utils.hexToRgba(newColorHex, 0.90);
+                      } catch (error) {
+                          utils.showNotification('Invalid color selected. Keeping the old color.', 'error');
+                      }
+                  }
 
-                    let changesMade = false;
+                  let changesMade = false;
 
-                    if (newName && newName !== oldName) {
-                        factionTitleElem.textContent = newName;
-                        factions.addHistory(id, 'faction', `Name changed from "${oldName}" to "${newName}"`);
-                        changesMade = true;
-                    }
+                  if (newName && newName !== oldName) {
+                      factionTitleElem.textContent = newName;
+                      factions.addHistory(id, 'faction', `Name changed from "${oldName}" to "${newName}"`);
+                      changesMade = true;
+                  }
 
-                    if (newColorRgba !== oldColorRgba) {
-                        factionDiv.style.backgroundColor = newColorRgba;
-                        factions.addHistory(id, 'color', 1, 'Color Changed');
-                        changesMade = true;
-                    }
+                  if (newColorRgba !== oldColorRgba) {
+                      factionDiv.style.backgroundColor = newColorRgba;
+                      factions.addHistory(id, 'color', 'Color Changed');
+                      changesMade = true;
+                  }
 
-                    if (changesMade) {
-                        utils.addUndoAction({ action: 'edit', factionId: id, oldName, newName: newName || oldName, oldColor: oldColorHex, newColor: newColorHex });
-                        redoStack = [];
-                    }
+                  if (changesMade) {
+                      utils.addUndoAction({ action: 'edit', factionId: id, oldName, newName: newName || oldName, oldColor: oldColorHex, newColor: newColorHex });
+                      redoStack = [];
+                  }
 
-                    modals.closeModal();
-                    handlers.updateUndoRedoButtonState();
-                },
-                removeFaction: (factionId) => {
-                    modals.closeModal();
-                    const faction = document.getElementById(factionId);
-                    const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
-                    const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
-                    const name = faction.querySelector('.faction-title').textContent;
-                    const colorRgba = faction.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
-                    const colorHex = utils.rgbaToHex(colorRgba);
-                    utils.addUndoAction({ action: 'remove', factionId, vp, cp, name, color: colorHex });
-                    redoStack = [];
-                    faction.remove();
-                    handlers.updateUndoRedoButtonState();
-                },
-                changeValue: (id, type, delta, isReverted = false) => {
-                    const valueElem = document.getElementById(`${type}-${id}`);
-                    let currentValue = parseInt(valueElem.textContent.split(' ')[0]);
-                    const oldValue = currentValue;
-                    currentValue += delta;
-                    if (currentValue < 0) currentValue = 0;
-                    valueElem.textContent = `${currentValue} ${type.toUpperCase()}`;
-                    utils.addUndoAction({ action: 'change', factionId: id, type, oldValue, newValue: currentValue });
-                    redoStack = [];
-                    const actionType = isReverted ? 'reverted' : 'normal';
-                    factions.addHistory(id, type, delta, null, actionType);
-                    factions.updateButtonState(id, type, currentValue);
-                    handlers.updateUndoRedoButtonState();
-                },
-                updateButtonState: (id, type, value) => {
-                    const decrementButton = document.querySelector(`#${id} .decrement-${type}-button`);
-                    if (decrementButton) {
-                        if (value <= 0) {
-                            decrementButton.disabled = true;
-                            decrementButton.classList.add('disabled-button');
-                        } else {
-                            decrementButton.disabled = false;
-                            decrementButton.classList.remove('disabled-button');
-                        }
-                    }
-                },
-                addHistory: (id, type, delta, customMessage = null, actionType = 'normal') => {
-                    let actionDescription = '';
-                    if (customMessage) {
-                        actionDescription = customMessage;
-                    } else {
-                        if (type === 'vp') {
-                            if (actionType === 'reverted') {
-                                actionDescription = 'Victory Points Reverted';
-                            } else {
-                                actionDescription = delta > 0 ? `Gained ${delta} VP` : `Removed ${Math.abs(delta)} VP`;
-                            }
-                        } else if (type === 'cp') {
-                            if (actionType === 'reverted') {
-                                actionDescription = 'Command Points Reverted';
-                            } else {
-                                actionDescription = delta > 0 ? `Gained ${delta} CP` : `Spent ${Math.abs(delta)} CP`;
-                            }
-                        } else {
-                            actionDescription = type;
-                        }
-                    }
+                  modals.closeModal();
+                  handlers.updateUndoRedoButtonState();
+              },
+              removeFaction: (factionId) => {
+                  modals.closeModal();
+                  const faction = document.getElementById(factionId);
+                  const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
+                  const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
+                  const name = faction.querySelector('.faction-title').textContent;
+                  const colorRgba = faction.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
+                  const colorHex = utils.rgbaToHex(colorRgba);
+                  utils.addUndoAction({ action: 'remove', factionId, vp, cp, name, color: colorHex });
+                  redoStack = [];
+                  faction.remove();
+                  handlers.updateUndoRedoButtonState();
+              },
+              changeValue: (id, type, delta, isReverted = false) => {
+                  const valueElem = document.getElementById(`${type}-${id}`);
+                  let currentValue = parseInt(valueElem.textContent.split(' ')[0]);
+                  const oldValue = currentValue;
+                  currentValue += delta;
+                  if (currentValue < 0) currentValue = 0;
+                  valueElem.textContent = `${currentValue} ${type.toUpperCase()}`;
+                  utils.addUndoAction({ action: 'change', factionId: id, type, oldValue, newValue: currentValue });
+                  redoStack = [];
+                  const actionType = isReverted ? 'reverted' : 'normal';
+                  factions.addHistory(id, type, delta, null, actionType);
+                  factions.updateButtonState(id, type, currentValue);
+                  handlers.updateUndoRedoButtonState();
+              },
+              updateButtonState: (id, type, value) => {
+                  const decrementButton = document.querySelector(`#${id} .decrement-${type}-button`);
+                  if (decrementButton) {
+                      if (value <= 0) {
+                          decrementButton.disabled = true;
+                          decrementButton.classList.add('disabled-button');
+                      } else {
+                          decrementButton.disabled = false;
+                          decrementButton.classList.remove('disabled-button');
+                      }
+                  }
+              },
+              addHistory: (id, type, message, customMessage = null, actionType = 'normal') => {
+                  let actionDescription = '';
 
-                    const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-                    const historyEntry = `[${timestamp}] ${actionDescription}`;
+                  if (customMessage) {
+                      actionDescription = customMessage;
+                  } else {
+                      if (type === 'vp') {
+                          if (actionType === 'reverted') {
+                              actionDescription = 'Victory Points Reverted';
+                          } else {
+                              actionDescription = message > 0 ? `Gained ${message} VP` : `Removed ${Math.abs(message)} VP`;
+                          }
+                      } else if (type === 'cp') {
+                          if (actionType === 'reverted') {
+                              actionDescription = 'Command Points Reverted';
+                          } else {
+                              actionDescription = message > 0 ? `Gained ${message} CP` : `Spent ${Math.abs(message)} CP`;
+                          }
+                      } else if (type === 'status') {
+                          actionDescription = message;
+                      } else if (type === 'faction') {
+                          actionDescription = message;
+                      } else if (type === 'color') {
+                          actionDescription = message;
+                      }
+                  }
 
-                    if (!factionHistories[id]) {
-                        factionHistories[id] = [];
-                    }
-                    factionHistories[id].push(historyEntry);
+                  const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+                  const historyEntry = `[${timestamp}] ${actionDescription}`;
 
-                    const latestHistoryElem = document.getElementById(`latest-history-${id}`);
-                    latestHistoryElem.textContent = historyEntry;
+                  if (!factionHistories[id]) {
+                      factionHistories[id] = [];
+                  }
+                  factionHistories[id].push(historyEntry);
 
-                    const historyList = document.getElementById(`history-list-${id}`);
-                    if (historyList && historyList.parentElement.style.display !== 'none') {
-                        const li = document.createElement('li');
-                        li.textContent = historyEntry;
-                        historyList.insertBefore(li, historyList.firstChild);
-                    }
-                },
-                toggleHistory: (id) => {
-                    const historyDiv = document.getElementById(`history-${id}`);
-                    const historyButton = document.getElementById(`toggle-history-button-${id}`);
-                    if (historyDiv.style.display === 'none' || historyDiv.style.display === '') {
-                        historyDiv.style.display = 'block';
-                        historyButton.textContent = 'Hide History';
-                        const historyList = document.getElementById(`history-list-${id}`);
-                        historyList.innerHTML = '';
-                        if (factionHistories[id]) {
-                            factionHistories[id].slice().reverse().forEach(entry => {
-                                const li = document.createElement('li');
-                                li.textContent = entry;
-                                historyList.appendChild(li);
-                            });
-                        }
-                    } else {
-                        historyDiv.style.display = 'none';
-                        historyButton.textContent = 'Show History';
-                    }
-                },
-                handleStatusChange: (id, status) => {
-                    const skullElem = document.getElementById(`skull-${id}`);
-                    if (status === 'Tabled') {
-                        skullElem.style.display = 'block';
-                        factions.addHistory(id, 'status', `Status changed to Tabled`);
-                    } else if (status === 'Active') {
-                        skullElem.style.display = 'none';
-                        factions.addHistory(id, 'status', `Status changed to Active`);
-                    } else if (status === 'Delete') {
-                        modals.showRemoveFactionModal(id);
-                        const faction = document.getElementById(id);
-                        faction.querySelector(`#status-dropdown-${id}`).value = 'Active';
-                    }
-                },
-                addDragAndDropHandlers: (factionDiv) => {
-                    factionDiv.addEventListener('dragstart', factions.dragStart);
-                    factionDiv.addEventListener('dragover', factions.dragOver);
-                    factionDiv.addEventListener('dragenter', factions.dragEnter);
-                    factionDiv.addEventListener('dragleave', factions.dragLeave);
-                    factionDiv.addEventListener('drop', factions.dragDrop);
-                    factionDiv.addEventListener('dragend', factions.dragEnd);
-                },
-                dragStart: (e) => {
-                    e.dataTransfer.setData('text/plain', e.target.id);
-                    e.currentTarget.classList.add('dragging');
-                },
-                dragOver: (e) => {
-                    e.preventDefault();
-                },
-                dragEnter: (e) => {
-                    e.preventDefault();
-                    if (e.target.classList.contains('faction')) {
-                        e.target.classList.add('over');
-                    }
-                },
-                dragLeave: (e) => {
-                    if (e.target.classList.contains('faction')) {
-                        e.target.classList.remove('over');
-                    }
-                },
-                dragDrop: (e) => {
-                    e.preventDefault();
-                    const draggedId = e.dataTransfer.getData('text/plain');
-                    const targetId = e.currentTarget.id;
+                  const latestHistoryElem = document.getElementById(`latest-history-${id}`);
+                  latestHistoryElem.textContent = historyEntry;
 
-                    if (draggedId !== targetId) {
-                        const draggedElement = document.getElementById(draggedId);
-                        const targetElement = document.getElementById(targetId);
+                  const historyList = document.getElementById(`history-list-${id}`);
+                  if (historyList && historyList.parentElement.style.display !== 'none') {
+                      const li = document.createElement('li');
+                      li.textContent = historyEntry;
+                      historyList.insertBefore(li, historyList.firstChild);
+                  }
+              },
+              toggleHistory: (id) => {
+                  const historyDiv = document.getElementById(`history-${id}`);
+                  const historyButton = document.getElementById(`toggle-history-button-${id}`);
+                  if (historyDiv.style.display === 'none' || historyDiv.style.display === '') {
+                      historyDiv.style.display = 'block';
+                      historyButton.textContent = 'Hide History';
+                      const historyList = document.getElementById(`history-list-${id}`);
+                      historyList.innerHTML = '';
+                      if (factionHistories[id]) {
+                          factionHistories[id].slice().reverse().forEach(entry => {
+                              const li = document.createElement('li');
+                              li.textContent = entry;
+                              historyList.appendChild(li);
+                          });
+                      }
+                  } else {
+                      historyDiv.style.display = 'none';
+                      historyButton.textContent = 'Show History';
+                  }
+              },
+              handleStatusChange: (id, status) => {
+                  const skullElem = document.getElementById(`skull-${id}`);
+                  if (status === 'Tabled') {
+                      skullElem.style.display = 'block';
+                      factions.addHistory(id, 'status', 'Status changed to Tabled');
+                  } else if (status === 'Active') {
+                      skullElem.style.display = 'none';
+                      factions.addHistory(id, 'status', 'Status changed to Active');
+                  } else if (status === 'Delete') {
+                      factions.addHistory(id, 'status', 'Status changed to Delete'); // Added history entry
+                      modals.showRemoveFactionModal(id);
+                      const faction = document.getElementById(id);
+                      faction.querySelector(`#status-dropdown-${id}`).value = 'Active';
+                  }
+              },
+              addDragAndDropHandlers: (factionDiv) => {
+                  factionDiv.addEventListener('dragstart', factions.dragStart);
+                  factionDiv.addEventListener('dragover', factions.dragOver);
+                  factionDiv.addEventListener('dragenter', factions.dragEnter);
+                  factionDiv.addEventListener('dragleave', factions.dragLeave);
+                  factionDiv.addEventListener('drop', factions.dragDrop);
+                  factionDiv.addEventListener('dragend', factions.dragEnd);
+              },
+              dragStart: (e) => {
+                  e.dataTransfer.setData('text/plain', e.target.id);
+                  e.currentTarget.classList.add('dragging');
+              },
+              dragOver: (e) => {
+                  e.preventDefault();
+              },
+              dragEnter: (e) => {
+                  e.preventDefault();
+                  if (e.target.classList.contains('faction')) {
+                      e.target.classList.add('over');
+                  }
+              },
+              dragLeave: (e) => {
+                  if (e.target.classList.contains('faction')) {
+                      e.target.classList.remove('over');
+                  }
+              },
+              dragDrop: (e) => {
+                  e.preventDefault();
+                  const draggedId = e.dataTransfer.getData('text/plain');
+                  const targetId = e.currentTarget.id;
 
-                        const draggedIndex = Array.from(dom.factionListElement.children).indexOf(draggedElement);
-                        const targetIndex = Array.from(dom.factionListElement.children).indexOf(targetElement);
+                  if (draggedId !== targetId) {
+                      const draggedElement = document.getElementById(draggedId);
+                      const targetElement = document.getElementById(targetId);
 
-                        if (draggedIndex < targetIndex) {
-                            dom.factionListElement.insertBefore(draggedElement, targetElement.nextSibling);
-                        } else {
-                            dom.factionListElement.insertBefore(draggedElement, targetElement);
-                        }
-                    }
-                    e.currentTarget.classList.remove('over');
-                },
-                dragEnd: (e) => {
-                    e.currentTarget.classList.remove('dragging');
-                    const factionElements = document.querySelectorAll('.faction');
-                    factionElements.forEach(elem => elem.classList.remove('over'));
-                },
-                restoreFaction: (action) => {
-                    const factionColorRgba = utils.hexToRgba(action.color, 0.90);
-                    const factionDiv = factions.createFactionElement(action.factionId, action.name, action.vp, action.cp, factionColorRgba);
-                    dom.factionListElement.appendChild(factionDiv);
-                    factions.updateButtonState(action.factionId, 'vp', action.vp);
-                    factions.updateButtonState(action.factionId, 'cp', action.cp);
-                    factionHistories[action.factionId] = action.history || [];
-                    factions.addHistory(action.factionId, 'faction', 'Faction restored');
-                },
-                restoreAdd: (action) => {
-                    const factionColorRgba = utils.hexToRgba(action.color, 0.90);
-                    const factionDiv = factions.createFactionElement(action.factionId, action.name, 0, 0, factionColorRgba);
-                    dom.factionListElement.appendChild(factionDiv);
-                    factions.updateButtonState(action.factionId, 'vp', 0);
-                    factions.updateButtonState(action.factionId, 'cp', 0);
-                    factionHistories[action.factionId] = [];
-                    factions.addHistory(action.factionId, 'faction', 'Faction added');
-                },
-                restoreValueChange: (action, isUndo) => {
-                    const valueElem = document.getElementById(`${action.type}-${action.factionId}`);
-                    const value = isUndo ? action.oldValue : action.newValue;
-                    valueElem.textContent = `${value} ${action.type.toUpperCase()}`;
-                    const delta = isUndo ? action.oldValue - action.newValue : action.newValue - action.oldValue;
-                    factions.addHistory(action.factionId, action.type, delta, null, 'reverted');
-                    factions.updateButtonState(action.factionId, action.type, value);
-                },
-                restoreEdit: (action, isUndo) => {
-                    const factionTitleElem = document.getElementById(`faction-title-${action.factionId}`);
-                    const factionDiv = document.getElementById(action.factionId);
-                    if (isUndo) {
-                        factionTitleElem.textContent = action.oldName;
-                        factionDiv.style.backgroundColor = utils.hexToRgba(action.oldColor, 0.90);
-                        factions.addHistory(action.factionId, 'color', -1, 'Color Reverted');
-                        factions.addHistory(action.factionId, 'faction', `Name reverted to "${action.oldName}"`);
-                    } else {
-                        factionTitleElem.textContent = action.newName;
-                        factionDiv.style.backgroundColor = utils.hexToRgba(action.newColor, 0.90);
-                        factions.addHistory(action.factionId, 'color', 1, 'Color Changed');
-                        factions.addHistory(action.factionId, 'faction', `Name changed to "${action.newName}"`);
-                    }
-                },
-                resetAll: () => {
-                    dom.factionListElement.innerHTML = '';
-                    undoStack = [];
-                    redoStack = [];
-                    factionHistories = {};
-                    handlers.updateUndoRedoButtonState();
-                },
-                getFactionData: () => {
-                    return Array.from(document.querySelectorAll('.faction')).map(factionDiv => {
-                        const factionName = factionDiv.querySelector('.faction-title').textContent;
-                        const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent);
-                        const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent);
-                        const color = utils.rgbaToHex(factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)');
-                        return { factionName, vp, cp, color, factionId: factionDiv.id };
-                    });
-                },
-                restoreFactionData: (factionData) => {
-                    const factionColorRgba = utils.hexToRgba(factionData.color, 0.90);
-                    const factionDiv = factions.createFactionElement(factionData.factionId, factionData.factionName, factionData.vp, factionData.cp, factionColorRgba);
-                    dom.factionListElement.appendChild(factionDiv);
-                    factions.updateButtonState(factionData.factionId, 'vp', factionData.vp);
-                    factions.updateButtonState(factionData.factionId, 'cp', factionData.cp);
-                }
-            };
+                      const draggedIndex = Array.from(dom.factionListElement.children).indexOf(draggedElement);
+                      const targetIndex = Array.from(dom.factionListElement.children).indexOf(targetElement);
 
-            // Modal Management
-            const modals = {
-                showModal: (content) => {
-                    dom.modalContent.innerHTML = content;
-                    dom.modal.style.display = 'flex';
-                    const focusableElements = dom.modalContent.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
-                    if (focusableElements.length) {
-                        focusableElements[0].focus();
-                    } else {
-                        dom.modalContent.focus();
-                    }
-                    dom.modalContent.addEventListener('keydown', modals.modalKeyDownHandler);
-                },
-                closeModal: () => {
-                    dom.modal.style.display = 'none';
-                    dom.modalContent.removeEventListener('keydown', modals.modalKeyDownHandler);
-                },
-                modalKeyDownHandler: (event) => {
-                    if (event.key === 'Enter') {
-                        event.preventDefault();
-                        const confirmButton = dom.modalContent.querySelector('button[id^="confirm"]');
-                        if (confirmButton) {
-                            confirmButton.click();
-                        }
-                    } else if (event.key === 'Escape') {
-                        modals.closeModal();
-                    }
-                },
-                showAddFactionModal: () => {
-                    modals.showModal(`
-                        <h2>Add Faction</h2>
-                        <input type="text" id="new-faction-name" placeholder="Faction Name">
-                        <select id="new-faction-color">
-                            <option value="" disabled selected>Select Color</option>
-                            ${predefinedColors.map(color => `
-                                <option value="${color}" style="background-color: ${color}; color: #000;">${color}</option>
-                            `).join('')}
-                        </select>
-                        <div>
-                            <button id="confirm-add-faction-button">Add</button>
-                            <button id="cancel-add-faction-button">Cancel</button>
-                        </div>
-                    `);
+                      if (draggedIndex < targetIndex) {
+                          dom.factionListElement.insertBefore(draggedElement, targetElement.nextSibling);
+                      } else {
+                          dom.factionListElement.insertBefore(draggedElement, targetElement);
+                      }
+                  }
+                  e.currentTarget.classList.remove('over');
+              },
+              dragEnd: (e) => {
+                  e.currentTarget.classList.remove('dragging');
+                  const factionElements = document.querySelectorAll('.faction');
+                  factionElements.forEach(elem => elem.classList.remove('over'));
+              },
+              restoreFaction: (action) => {
+                  const factionColorRgba = utils.hexToRgba(action.color, 0.90);
+                  const factionDiv = factions.createFactionElement(action.factionId, action.name, action.vp, action.cp, factionColorRgba);
+                  dom.factionListElement.appendChild(factionDiv);
+                  factions.updateButtonState(action.factionId, 'vp', action.vp);
+                  factions.updateButtonState(action.factionId, 'cp', action.cp);
+                  factionHistories[action.factionId] = action.history || [];
+                  factions.addHistory(action.factionId, 'faction', 'Faction Restored');
+              },
+              restoreAdd: (action) => {
+                  const factionColorRgba = utils.hexToRgba(action.color, 0.90);
+                  const factionDiv = factions.createFactionElement(action.factionId, action.name, 0, 0, factionColorRgba);
+                  dom.factionListElement.appendChild(factionDiv);
+                  factions.updateButtonState(action.factionId, 'vp', 0);
+                  factions.updateButtonState(action.factionId, 'cp', 0);
+                  factionHistories[action.factionId] = [];
+                  factions.addHistory(action.factionId, 'faction', 'Faction Added');
+              },
+              restoreValueChange: (action, isUndo) => {
+                  const valueElem = document.getElementById(`${action.type}-${action.factionId}`);
+                  const value = isUndo ? action.oldValue : action.newValue;
+                  valueElem.textContent = `${value} ${action.type.toUpperCase()}`;
+                  const delta = isUndo ? action.oldValue - action.newValue : action.newValue - action.oldValue;
+                  const actionType = isUndo ? 'reverted' : 'normal';
+                  factions.addHistory(action.factionId, action.type, delta, null, actionType);
+                  factions.updateButtonState(action.factionId, action.type, value);
+              },
+              restoreEdit: (action, isUndo) => {
+                  const factionTitleElem = document.getElementById(`faction-title-${action.factionId}`);
+                  const factionDiv = document.getElementById(action.factionId);
+                  if (isUndo) {
+                      factionTitleElem.textContent = action.oldName;
+                      factionDiv.style.backgroundColor = utils.hexToRgba(action.oldColor, 0.90);
+                      factions.addHistory(action.factionId, 'color', 'Color Reverted');
+                      factions.addHistory(action.factionId, 'faction', `Name reverted to "${action.oldName}"`);
+                  } else {
+                      factionTitleElem.textContent = action.newName;
+                      factionDiv.style.backgroundColor = utils.hexToRgba(action.newColor, 0.90);
+                      factions.addHistory(action.factionId, 'color', 'Color Changed');
+                      factions.addHistory(action.factionId, 'faction', `Name changed to "${action.newName}"`);
+                  }
+              },
+              resetAll: () => {
+                  dom.factionListElement.innerHTML = '';
+                  undoStack = [];
+                  redoStack = [];
+                  factionHistories = {};
+                  handlers.updateUndoRedoButtonState();
+              },
+              getFactionData: () => {
+                  return Array.from(document.querySelectorAll('.faction')).map(factionDiv => {
+                      const factionName = factionDiv.querySelector('.faction-title').textContent;
+                      const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent);
+                      const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent);
+                      const color = utils.rgbaToHex(factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)');
+                      return { factionName, vp, cp, color, factionId: factionDiv.id };
+                  });
+              },
+              restoreFactionData: (factionData) => {
+                  const factionColorRgba = utils.hexToRgba(factionData.color, 0.90);
+                  const factionDiv = factions.createFactionElement(factionData.factionId, factionData.factionName, factionData.vp, factionData.cp, factionColorRgba);
+                  dom.factionListElement.appendChild(factionDiv);
+                  factions.updateButtonState(factionData.factionId, 'vp', factionData.vp);
+                  factions.updateButtonState(factionData.factionId, 'cp', factionData.cp);
+              }
+          };
 
-                    document.getElementById('new-faction-name').focus();
-                    document.getElementById('confirm-add-faction-button').addEventListener('click', handlers.addFaction);
-                    document.getElementById('cancel-add-faction-button').addEventListener('click', modals.closeModal);
-                },
-                showEditFactionModal: (id) => {
-                    const factionTitleElem = document.getElementById(`faction-title-${id}`);
-                    const factionDiv = document.getElementById(id);
-                    const currentName = factionTitleElem.textContent;
-                    const currentColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
-                    const currentColorHex = utils.rgbaToHex(currentColorRgba);
+          // Modal Management
+          const modals = {
+              showModal: (content) => {
+                  dom.modalContent.innerHTML = content;
+                  dom.modal.style.display = 'flex';
+                  const focusableElements = dom.modalContent.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+                  if (focusableElements.length) {
+                      focusableElements[0].focus();
+                  } else {
+                      dom.modalContent.focus();
+                  }
+                  dom.modalContent.addEventListener('keydown', modals.modalKeyDownHandler);
+              },
+              closeModal: () => {
+                  dom.modal.style.display = 'none';
+                  dom.modalContent.removeEventListener('keydown', modals.modalKeyDownHandler);
+              },
+              modalKeyDownHandler: (event) => {
+                  if (event.key === 'Enter') {
+                      event.preventDefault();
+                      const confirmButton = dom.modalContent.querySelector('button[id^="confirm"]');
+                      if (confirmButton) {
+                          confirmButton.click();
+                      }
+                  } else if (event.key === 'Escape') {
+                      modals.closeModal();
+                  }
+              },
+              showAddFactionModal: () => {
+                  modals.showModal(`
+                      <h2>Add Faction</h2>
+                      <input type="text" id="new-faction-name" placeholder="Faction Name">
+                      <select id="new-faction-color">
+                          <option value="" disabled selected>Select Color</option>
+                          ${predefinedColors.map(color => `
+                              <option value="${color}" style="background-color: ${color}; color: #000;">${color}</option>
+                          `).join('')}
+                      </select>
+                      <div>
+                          <button id="confirm-add-faction-button">Add</button>
+                          <button id="cancel-add-faction-button">Cancel</button>
+                      </div>
+                  `);
 
-                    modals.showModal(`
-                        <h2>Edit Faction</h2>
-                        <input type="text" id="edit-faction-name" value="${currentName}">
-                        <select id="edit-faction-color">
-                            <option value="" disabled>Select Color</option>
-                            ${predefinedColors.map(color => `
-                                <option value="${color}" style="background-color: ${color}; color: #000;" ${color === currentColorHex ? 'selected' : ''}>${color}</option>
-                            `).join('')}
-                        </select>
-                        <div>
-                            <button id="confirm-edit-faction-button">Save</button>
-                            <button id="cancel-edit-faction-button">Cancel</button>
-                        </div>
-                    `);
+                  document.getElementById('new-faction-name').focus();
+                  document.getElementById('confirm-add-faction-button').addEventListener('click', handlers.addFaction);
+                  document.getElementById('cancel-add-faction-button').addEventListener('click', modals.closeModal);
+              },
+              showEditFactionModal: (id) => {
+                  const factionTitleElem = document.getElementById(`faction-title-${id}`);
+                  const factionDiv = document.getElementById(id);
+                  const currentName = factionTitleElem.textContent;
+                  const currentColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
+                  const currentColorHex = utils.rgbaToHex(currentColorRgba);
 
-                    document.getElementById('edit-faction-name').focus();
-                    document.getElementById('confirm-edit-faction-button').addEventListener('click', () => factions.editFaction(id));
-                    document.getElementById('cancel-edit-faction-button').addEventListener('click', modals.closeModal);
-                },
-                showRemoveFactionModal: (id) => {
-                    modals.showModal(`
-                        <h2>Delete Faction</h2>
-                        <p>Are you sure you want to delete this faction?</p>
-                        <div>
-                            <button id="confirm-remove-faction-button" class="critical-button">Delete</button>
-                            <button id="cancel-remove-faction-button">Cancel</button>
-                        </div>
-                    `);
+                  modals.showModal(`
+                      <h2>Edit Faction</h2>
+                      <input type="text" id="edit-faction-name" value="${currentName}">
+                      <select id="edit-faction-color">
+                          <option value="" disabled>Select Color</option>
+                          ${predefinedColors.map(color => `
+                              <option value="${color}" style="background-color: ${color}; color: #000;" ${color === currentColorHex ? 'selected' : ''}>${color}</option>
+                          `).join('')}
+                      </select>
+                      <div>
+                          <button id="confirm-edit-faction-button">Save</button>
+                          <button id="cancel-edit-faction-button">Cancel</button>
+                      </div>
+                  `);
 
-                    document.getElementById('confirm-remove-faction-button').addEventListener('click', () => factions.removeFaction(id));
-                    document.getElementById('cancel-remove-faction-button').addEventListener('click', modals.closeModal);
-                },
-                showConfirmResetAllModal: () => {
-                    modals.showModal(`
-                        <h2>Reset All</h2>
-                        <p>Are you sure you want to reset all factions?</p>
-                        <div>
-                            <button id="confirm-reset-all-button">Yes</button>
-                            <button id="cancel-reset-all-button">No</button>
-                        </div>
-                    `);
+                  document.getElementById('edit-faction-name').focus();
+                  document.getElementById('confirm-edit-faction-button').addEventListener('click', () => factions.editFaction(id));
+                  document.getElementById('cancel-edit-faction-button').addEventListener('click', modals.closeModal);
+              },
+              showRemoveFactionModal: (id) => {
+                  modals.showModal(`
+                      <h2>Delete Faction</h2>
+                      <p>Are you sure you want to delete this faction?</p>
+                      <div>
+                          <button id="confirm-remove-faction-button" class="critical-button">Delete</button>
+                          <button id="cancel-remove-faction-button">Cancel</button>
+                      </div>
+                  `);
 
-                    document.getElementById('confirm-reset-all-button').addEventListener('click', () => {
-                        modals.closeModal();
-                        factions.resetAll();
-                    });
-                    document.getElementById('cancel-reset-all-button').addEventListener('click', modals.closeModal);
-                },
-                showConfirmSaveModal: () => {
-                    modals.showModal(`
-                        <h2>Save Data</h2>
-                        <p>Are you sure you want to save data?</p>
-                        <div>
-                            <button id="confirm-save-button">Yes</button>
-                            <button id="cancel-save-button">No</button>
-                        </div>
-                    `);
+                  document.getElementById('confirm-remove-faction-button').addEventListener('click', () => factions.removeFaction(id));
+                  document.getElementById('cancel-remove-faction-button').addEventListener('click', modals.closeModal);
+              },
+              showConfirmResetAllModal: () => {
+                  modals.showModal(`
+                      <h2>Reset All</h2>
+                      <p>Are you sure you want to reset all factions?</p>
+                      <div>
+                          <button id="confirm-reset-all-button">Yes</button>
+                          <button id="cancel-reset-all-button">No</button>
+                      </div>
+                  `);
 
-                    document.getElementById('confirm-save-button').addEventListener('click', handlers.saveData);
-                    document.getElementById('cancel-save-button').addEventListener('click', modals.closeModal);
-                },
-                showConfirmLoadModal: () => {
-                    modals.showModal(`
-                        <h2>Load Data</h2>
-                        <p>Are you sure you want to load saved data? This will overwrite current data.</p>
-                        <div>
-                            <button id="confirm-load-button">Yes</button>
-                            <button id="cancel-load-button">No</button>
-                        </div>
-                    `);
+                  document.getElementById('confirm-reset-all-button').addEventListener('click', () => {
+                      modals.closeModal();
+                      factions.resetAll();
+                  });
+                  document.getElementById('cancel-reset-all-button').addEventListener('click', modals.closeModal);
+              },
+              showConfirmSaveModal: () => {
+                  modals.showModal(`
+                      <h2>Save Data</h2>
+                      <p>Are you sure you want to save data?</p>
+                      <div>
+                          <button id="confirm-save-button">Yes</button>
+                          <button id="cancel-save-button">No</button>
+                      </div>
+                  `);
 
-                    document.getElementById('confirm-load-button').addEventListener('click', handlers.loadData);
-                    document.getElementById('cancel-load-button').addEventListener('click', modals.closeModal);
-                }
-            };
+                  document.getElementById('confirm-save-button').addEventListener('click', handlers.saveData);
+                  document.getElementById('cancel-save-button').addEventListener('click', modals.closeModal);
+              },
+              showConfirmLoadModal: () => {
+                  modals.showModal(`
+                      <h2>Load Data</h2>
+                      <p>Are you sure you want to load saved data? This will overwrite current data.</p>
+                      <div>
+                          <button id="confirm-load-button">Yes</button>
+                          <button id="cancel-load-button">No</button>
+                      </div>
+                  `);
 
-            // Close modal when clicking outside content
-            window.addEventListener('click', function (event) {
-                if (event.target === dom.modal) {
-                    modals.closeModal();
-                }
-            });
+                  document.getElementById('confirm-load-button').addEventListener('click', handlers.loadData);
+                  document.getElementById('cancel-load-button').addEventListener('click', modals.closeModal);
+              }
+          };
 
-            // Event Listeners
-            dom.addFactionButton.addEventListener('click', modals.showAddFactionModal);
-            dom.nextCommandPhaseButton.addEventListener('click', handlers.nextCommandPhase);
-            dom.undoButton.addEventListener('click', handlers.undo);
-            dom.redoButton.addEventListener('click', handlers.redo);
-            dom.toggleOptionsButton.addEventListener('click', handlers.toggleOptionsMenu);
-            dom.resetAllButton.addEventListener('click', modals.showConfirmResetAllModal);
-            dom.saveDataButton.addEventListener('click', modals.showConfirmSaveModal);
-            dom.loadDataButton.addEventListener('click', modals.showConfirmLoadModal);
-            dom.exportDataButton.addEventListener('click', () => {
-                const data = {
-                    factions: factions.getFactionData(),
-                    factionHistories,
-                    factionOrder: Array.from(dom.factionListElement.children).map(child => child.id)
-                };
-                const dataStr = JSON.stringify(data, null, 2);
-                const blob = new Blob([dataStr], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
+          // Close modal when clicking outside content
+          window.addEventListener('click', function (event) {
+              if (event.target === dom.modal) {
+                  modals.closeModal();
+              }
+          });
 
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = 'factionData.json';
-                a.click();
-                URL.revokeObjectURL(url);
-            });
-            dom.importDataButton.addEventListener('click', () => dom.importFileInput.click());
-            dom.importFileInput.addEventListener('change', (event) => {
-                const file = event.target.files[0];
-                if (!file) return;
+          // Event Listeners
+          dom.addFactionButton.addEventListener('click', modals.showAddFactionModal);
+          dom.nextCommandPhaseButton.addEventListener('click', handlers.nextCommandPhase);
+          dom.undoButton.addEventListener('click', handlers.undo);
+          dom.redoButton.addEventListener('click', handlers.redo);
+          dom.toggleOptionsButton.addEventListener('click', handlers.toggleOptionsMenu);
+          dom.resetAllButton.addEventListener('click', modals.showConfirmResetAllModal);
+          dom.saveDataButton.addEventListener('click', modals.showConfirmSaveModal);
+          dom.loadDataButton.addEventListener('click', modals.showConfirmLoadModal);
+          dom.exportDataButton.addEventListener('click', () => {
+              const data = {
+                  factions: factions.getFactionData(),
+                  factionHistories,
+                  factionOrder: Array.from(dom.factionListElement.children).map(child => child.id)
+              };
+              const dataStr = JSON.stringify(data, null, 2);
+              const blob = new Blob([dataStr], { type: 'application/json' });
+              const url = URL.createObjectURL(blob);
 
-                const reader = new FileReader();
-                reader.onload = function (e) {
-                    try {
-                        const data = JSON.parse(e.target.result);
-                        factions.resetAll();
-                        factionHistories = data.factionHistories || {};
-                        data.factionOrder.forEach(factionId => {
-                            const factionData = data.factions.find(f => f.factionId === factionId);
-                            if (factionData) {
-                                factions.restoreFactionData(factionData);
-                            }
-                        });
-                        handlers.updateUndoRedoButtonState();
-                        utils.showNotification('Data imported successfully!', 'success');
-                    } catch (error) {
-                        utils.showNotification('Failed to import data. The file might be corrupted or in an incorrect format.', 'error');
-                    }
-                };
-                reader.readAsText(file);
-            });
-            dom.toggleAppearanceButton.addEventListener('click', handlers.toggleAppearanceMenu);
-            dom.backgroundFileInput.addEventListener('change', handlers.setBackground);
-            dom.titleColorToggle.addEventListener('change', handlers.toggleTitleAndTimeColor);
-            dom.togglePlayerButton.addEventListener('click', () => {
-                if (dom.youtubePlayer.style.display === 'none') {
-                    dom.youtubePlayer.style.display = 'block';
-                    dom.togglePlayerButton.style.position = 'fixed';
-                    dom.togglePlayerButton.style.bottom = '200px';
-                    dom.togglePlayerButton.textContent = 'Hide Music';
-                } else {
-                    dom.youtubePlayer.style.display = 'none';
-                    dom.togglePlayerButton.style.position = 'fixed';
-                    dom.togglePlayerButton.style.bottom = '20px';
-                    dom.togglePlayerButton.textContent = 'Show Music';
-                }
-            });
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'factionData.json';
+              a.click();
+              URL.revokeObjectURL(url);
+          });
+          dom.importDataButton.addEventListener('click', () => dom.importFileInput.click());
+          dom.importFileInput.addEventListener('change', (event) => {
+              const file = event.target.files[0];
+              if (!file) return;
 
-            // Auto-save data every 5 minutes
-            setInterval(handlers.autoSaveData, 300000);
+              const reader = new FileReader();
+              reader.onload = function (e) {
+                  try {
+                      const data = JSON.parse(e.target.result);
+                      factions.resetAll();
+                      factionHistories = data.factionHistories || {};
+                      data.factionOrder.forEach(factionId => {
+                          const factionData = data.factions.find(f => f.factionId === factionId);
+                          if (factionData) {
+                              factions.restoreFactionData(factionData);
+                          }
+                      });
+                      handlers.updateUndoRedoButtonState();
+                      utils.showNotification('Data imported successfully!', 'success');
+                  } catch (error) {
+                      utils.showNotification('Failed to import data. The file might be corrupted or in an incorrect format.', 'error');
+                  }
+              };
+              reader.readAsText(file);
+          });
+          dom.toggleAppearanceButton.addEventListener('click', handlers.toggleAppearanceMenu);
+          dom.backgroundFileInput.addEventListener('change', handlers.setBackground);
+          dom.titleColorToggle.addEventListener('change', handlers.toggleTitleAndTimeColor);
+          dom.togglePlayerButton.addEventListener('click', () => {
+              if (dom.youtubePlayer.style.display === 'none') {
+                  dom.youtubePlayer.style.display = 'block';
+                  dom.togglePlayerButton.style.position = 'fixed';
+                  dom.togglePlayerButton.style.bottom = '200px';
+                  dom.togglePlayerButton.textContent = 'Hide Music';
+              } else {
+                  dom.youtubePlayer.style.display = 'none';
+                  dom.togglePlayerButton.style.position = 'fixed';
+                  dom.togglePlayerButton.style.bottom = '20px';
+                  dom.togglePlayerButton.textContent = 'Show Music';
+              }
+          });
 
-        })(); // End of IIFE
+          // Auto-save data every 5 minutes
+          setInterval(handlers.autoSaveData, 300000);
+
+      })(); // End of IIFE
     </script>
-</body>
+  </body>
 </html>
