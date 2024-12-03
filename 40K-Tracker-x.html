@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>40K Match Tracker v1.9</title>
+    <title>The Thunderdome</title>
+    <!-- Included Google Font "Metal Mania" -->
+    <link href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap" rel="stylesheet">
     <style>
         /* CSS Styles */
 
@@ -17,6 +19,7 @@
             --button-active-bg: #cccccc;
             --modal-bg: rgba(0, 0, 0, 0.5);
             --modal-content-bg: white;
+            --status-box-bg: #d3d3d3; /* Light grey background */
         }
 
         body {
@@ -30,56 +33,28 @@
         }
 
         header {
-            text-align: center;
             position: relative;
             margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #live-time {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            font-size: 28px; /* Decreased from 32px */
+            color: var(--primary-color);
+            transition: color 0.3s ease-in-out;
+            font-family: 'Metal Mania', sans-serif; /* Applied the new font */
         }
 
         h1 {
             color: var(--primary-color);
             padding: 10px;
             margin: 0;
-            font-family: 'Algerian', sans-serif;
+            font-family: 'Metal Mania', sans-serif; /* Applied the new font */
             transition: color 0.3s ease-in-out;
-        }
-
-        #live-time {
-            position: absolute;
-            top: 0;
-            left: 20px;
-            font-size: 32px;
-            color: var(--primary-color);
-            transition: color 0.3s ease-in-out;
-        }
-
-        #status-box {
-            position: absolute;
-            top: 50px;
-            left: 20px;
-            font-size: 20px;
-            color: var(--primary-color);
-            transition: color 0.3s ease-in-out;
-        }
-
-        #status-box p {
-            margin: 5px 0;
-        }
-
-        #top-right-buttons {
-            position: absolute;
-            top: 0;
-            right: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: flex-end;
-        }
-
-        #options-menu {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
+            font-size: 48px;
         }
 
         #controls {
@@ -87,6 +62,32 @@
             justify-content: center;
             gap: 10px;
             flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        #top-right-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: flex-end;
+            z-index: 100; /* Ensure it displays on top */
+        }
+
+        #options-menu {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            z-index: 100; /* Ensure it displays on top */
         }
 
         #faction-list {
@@ -127,6 +128,9 @@
             font-weight: bold;
             margin-top: 10px;
             text-align: center;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            font-family: 'Metal Mania', sans-serif; /* Applied the new font */
         }
 
         .faction-values {
@@ -314,6 +318,33 @@
         }
 
         @media (max-width: 600px) {
+            #live-time {
+                font-size: 24px;
+                position: static;
+                margin-bottom: 10px;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            #controls,
+            #top-right-buttons,
+            #appearance-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #top-right-buttons {
+                position: static;
+                margin-top: 20px;
+            }
+
+            #options-menu {
+                position: static;
+                width: 100%;
+            }
+
             .faction {
                 flex: 1 1 100%;
                 max-width: none;
@@ -331,29 +362,6 @@
                 font-size: 16px;
                 width: 100%;
                 box-sizing: border-box;
-            }
-
-            #live-time {
-                font-size: 24px;
-                position: static;
-                margin-bottom: 10px;
-            }
-
-            #status-box {
-                position: static;
-                margin-bottom: 10px;
-            }
-
-            #controls,
-            #top-right-buttons,
-            #appearance-controls {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            #top-right-buttons {
-                position: static;
-                margin-top: 20px;
             }
 
             #toggle-player-button {
@@ -376,17 +384,8 @@
 <body>
     <header>
         <div id="live-time"></div>
-        <div id="status-box">
-            <p id="terrain-status">Terrain: None</p>
-            <p id="primary-objective-status">Primary Objective: None</p>
-        </div>
-        <h1 id="page-title">40K Match Tracker</h1>
-        <div id="controls">
-            <button id="add-faction-button">Add Faction</button>
-            <button id="next-command-phase-button">Next Command Phase</button>
-            <button id="undo-button" disabled>Undo</button>
-            <button id="redo-button" disabled>Redo</button>
-        </div>
+        <h1 id="page-title">The Thunderdome</h1>
+        <!-- Removed status box and terrain status -->
         <div id="top-right-buttons">
             <button id="toggle-options-button">Options</button>
             <div id="options-menu">
@@ -396,9 +395,14 @@
                 <button id="export-data-button">Export Game</button>
                 <button id="import-data-button">Import Game</button>
                 <input type="file" id="import-file-input" accept=".json" style="display: none;">
+                <!-- Removed Add Terrain button -->
             </div>
-            <button id="add-terrain-button">Add Terrain</button>
-            <button id="add-primary-objective-button">Add Primary Objective</button>
+        </div>
+        <div id="controls">
+            <button id="add-faction-button">Add Faction</button>
+            <button id="next-command-phase-button">Next Command Phase</button>
+            <button id="undo-button" disabled>Undo</button>
+            <button id="redo-button" disabled>Redo</button>
         </div>
     </header>
 
@@ -419,8 +423,8 @@
         </div>
     </div>
 
-    <button id="toggle-player-button" style="position: fixed; bottom: 200px; left: 20px;">Hide Player</button>
-    <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
+    <button id="toggle-player-button" style="position: fixed; bottom: 20px; left: 20px;">Show Player</button>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px; display: none;"></iframe>
 
     <!-- Notification Container -->
     <div id="notification-container" aria-live="polite"></div>
@@ -460,102 +464,22 @@
             const notificationContainer = document.getElementById('notification-container');
             const modal = document.getElementById('modal');
             const modalContent = document.getElementById('modal-content');
-            const addTerrainButton = document.getElementById('add-terrain-button');
-            const addPrimaryObjectiveButton = document.getElementById('add-primary-objective-button');
-            const terrainStatus = document.getElementById('terrain-status');
-            const primaryObjectiveStatus = document.getElementById('primary-objective-status');
 
             let factionIdCounter = 0;
             let undoStack = []; // Tracks actions for undo functionality
             let redoStack = []; // Tracks actions for redo functionality
             const UNDO_STACK_LIMIT = 50; // Limit for undo stack size
             let factionHistories = {}; // Stores detailed histories for each faction
-            let terrainValue = 'None';
-            let primaryObjectiveValue = 'None';
 
             /**
              * Updates the live time display every second.
              */
             function updateTime() {
                 const now = new Date();
-                liveTimeElement.textContent = now.toLocaleTimeString();
+                liveTimeElement.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
                 requestAnimationFrame(updateTime);
             }
             requestAnimationFrame(updateTime); // Start updating the time
-
-            // Add event listeners for the new buttons
-            addTerrainButton.addEventListener('click', showAddTerrainModal);
-            addPrimaryObjectiveButton.addEventListener('click', showAddPrimaryObjectiveModal);
-
-            /**
-             * Shows the modal to add or edit Terrain.
-             */
-            function showAddTerrainModal() {
-                showModal(`
-                    <h2>${terrainValue === 'None' ? 'Add Terrain' : 'Edit Terrain'}</h2>
-                    <input type="text" id="terrain-input" value="${terrainValue === 'None' ? '' : terrainValue}" placeholder="Enter Terrain">
-                    <div>
-                        <button id="confirm-add-terrain-button">${terrainValue === 'None' ? 'Add' : 'Save'}</button>
-                        <button id="cancel-add-terrain-button">Cancel</button>
-                    </div>
-                `);
-
-                const terrainInput = document.getElementById('terrain-input');
-                const confirmAddTerrainButton = document.getElementById('confirm-add-terrain-button');
-                const cancelAddTerrainButton = document.getElementById('cancel-add-terrain-button');
-
-                terrainInput.focus();
-
-                confirmAddTerrainButton.addEventListener('click', () => {
-                    const newTerrainValue = terrainInput.value.trim() || 'None';
-                    terrainValue = newTerrainValue;
-                    terrainStatus.textContent = `Terrain: ${terrainValue}`;
-                    closeModal();
-                    // Update button text
-                    if (terrainValue !== 'None') {
-                        addTerrainButton.textContent = 'Edit Terrain';
-                    } else {
-                        addTerrainButton.textContent = 'Add Terrain';
-                    }
-                });
-
-                cancelAddTerrainButton.addEventListener('click', closeModal);
-            }
-
-            /**
-             * Shows the modal to add or edit Primary Objective.
-             */
-            function showAddPrimaryObjectiveModal() {
-                showModal(`
-                    <h2>${primaryObjectiveValue === 'None' ? 'Add Primary Objective' : 'Edit Primary Objective'}</h2>
-                    <input type="text" id="primary-objective-input" value="${primaryObjectiveValue === 'None' ? '' : primaryObjectiveValue}" placeholder="Enter Primary Objective">
-                    <div>
-                        <button id="confirm-add-primary-objective-button">${primaryObjectiveValue === 'None' ? 'Add' : 'Save'}</button>
-                        <button id="cancel-add-primary-objective-button">Cancel</button>
-                    </div>
-                `);
-
-                const primaryObjectiveInput = document.getElementById('primary-objective-input');
-                const confirmAddPrimaryObjectiveButton = document.getElementById('confirm-add-primary-objective-button');
-                const cancelAddPrimaryObjectiveButton = document.getElementById('cancel-add-primary-objective-button');
-
-                primaryObjectiveInput.focus();
-
-                confirmAddPrimaryObjectiveButton.addEventListener('click', () => {
-                    const newPrimaryObjectiveValue = primaryObjectiveInput.value.trim() || 'None';
-                    primaryObjectiveValue = newPrimaryObjectiveValue;
-                    primaryObjectiveStatus.textContent = `Primary Objective: ${primaryObjectiveValue}`;
-                    closeModal();
-                    // Update button text
-                    if (primaryObjectiveValue !== 'None') {
-                        addPrimaryObjectiveButton.textContent = 'Edit Primary Objective';
-                    } else {
-                        addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
-                    }
-                });
-
-                cancelAddPrimaryObjectiveButton.addEventListener('click', closeModal);
-            }
 
             /**
              * Generates a unique ID for a new faction.
@@ -599,7 +523,7 @@
                 const factionId = generateUniqueFactionId();
                 const factionDiv = createFactionElement(factionId, factionName, 0, 0);
                 factionListElement.appendChild(factionDiv);
-                addUndoAction({ action: 'add', factionId }); // Track addition for undo
+                addUndoAction({ action: 'add', factionId, name: factionName }); // Added name for redo functionality
                 redoStack = []; // Clear redo stack on new action
                 updateUndoRedoButtonState();
                 updateButtonState(factionId, 'vp', 0);
@@ -850,20 +774,25 @@
              * @param {string} id - The faction ID.
              * @param {string} type - The type of action.
              * @param {number|string} delta - The change amount or description.
+             * @param {string} [customMessage=null] - Optional custom message for the history entry.
              */
-            function addHistory(id, type, delta) {
+            function addHistory(id, type, delta, customMessage = null) {
                 let actionDescription = '';
-                if (type === 'vp') {
-                    actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
-                } else if (type === 'cp') {
-                    actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
-                } else if (type === 'faction') {
-                    actionDescription = delta; // For faction actions like 'added' or 'restored'
+                if (customMessage) {
+                    actionDescription = customMessage;
                 } else {
-                    actionDescription = type; // General action description
+                    if (type === 'vp') {
+                        actionDescription = delta > 0 ? 'Victory Point Gained' : 'Victory Point Removed';
+                    } else if (type === 'cp') {
+                        actionDescription = delta > 0 ? 'Command Point Gained' : 'Command Point Spent';
+                    } else if (type === 'faction') {
+                        actionDescription = delta; // For faction actions like 'added' or 'restored'
+                    } else {
+                        actionDescription = type; // General action description
+                    }
                 }
 
-                const timestamp = new Date().toLocaleTimeString();
+                const timestamp = new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
                 const historyEntry = `[${timestamp}] ${actionDescription}`;
 
                 // Store in faction's history
@@ -975,13 +904,19 @@
                     updateButtonState(lastAction.factionId, 'vp', lastAction.vp);
                     updateButtonState(lastAction.factionId, 'cp', lastAction.cp);
                     factionHistories[lastAction.factionId] = lastAction.history || [];
-                    addHistory(lastAction.factionId, 'faction', 'restored');
+                    addHistory(lastAction.factionId, 'faction', 'Faction restored');
                 } else if (lastAction.action === 'change') {
                     // Undo a value change
                     const valueElem = document.getElementById(`${lastAction.type}-${lastAction.factionId}`);
                     valueElem.textContent = `${lastAction.oldValue} ${lastAction.type.toUpperCase()}`;
                     const delta = lastAction.oldValue - lastAction.newValue;
-                    addHistory(lastAction.factionId, lastAction.type, delta);
+                    let customMessage = '';
+                    if (lastAction.type === 'vp') {
+                        customMessage = 'Victory Points Reverted';
+                    } else if (lastAction.type === 'cp') {
+                        customMessage = 'Command Points Reverted';
+                    }
+                    addHistory(lastAction.factionId, lastAction.type, delta, customMessage);
                     updateButtonState(lastAction.factionId, lastAction.type, lastAction.oldValue);
                 } else if (lastAction.action === 'rename') {
                     // Undo renaming a faction
@@ -1011,7 +946,7 @@
                     updateButtonState(lastUndoneAction.factionId, 'vp', 0);
                     updateButtonState(lastUndoneAction.factionId, 'cp', 0);
                     factionHistories[lastUndoneAction.factionId] = [];
-                    addHistory(lastUndoneAction.factionId, 'faction', 'added');
+                    addHistory(lastUndoneAction.factionId, 'faction', 'Faction added');
                 } else if (lastUndoneAction.action === 'remove') {
                     // Redo removing a faction
                     document.getElementById(lastUndoneAction.factionId).remove();
@@ -1057,7 +992,7 @@
             }
 
             /**
-             * Resets all factions and status values.
+             * Resets all factions.
              */
             function resetAll() {
                 closeModal();
@@ -1065,13 +1000,6 @@
                 undoStack = [];
                 redoStack = [];
                 factionHistories = {};
-                terrainValue = 'None';
-                primaryObjectiveValue = 'None';
-                terrainStatus.textContent = 'Terrain: None';
-                primaryObjectiveStatus.textContent = 'Primary Objective: None';
-                // Reset button texts
-                addTerrainButton.textContent = 'Add Terrain';
-                addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
                 updateUndoRedoButtonState();
             }
 
@@ -1100,9 +1028,7 @@
                 const data = {
                     factions: getFactionData(),
                     factionHistories,
-                    factionOrder: Array.from(factionListElement.children).map(child => child.id),
-                    terrainValue,
-                    primaryObjectiveValue
+                    factionOrder: Array.from(factionListElement.children).map(child => child.id)
                 };
                 localStorage.setItem('factionData', JSON.stringify(data));
                 showNotification('Data saved successfully!', 'success');
@@ -1145,22 +1071,6 @@
                                 updateButtonState(factionId, 'cp', factionData.cp);
                             }
                         });
-                        // Load terrain and primary objective values
-                        terrainValue = data.terrainValue || 'None';
-                        primaryObjectiveValue = data.primaryObjectiveValue || 'None';
-                        terrainStatus.textContent = `Terrain: ${terrainValue}`;
-                        primaryObjectiveStatus.textContent = `Primary Objective: ${primaryObjectiveValue}`;
-                        // Update button texts
-                        if (terrainValue !== 'None') {
-                            addTerrainButton.textContent = 'Edit Terrain';
-                        } else {
-                            addTerrainButton.textContent = 'Add Terrain';
-                        }
-                        if (primaryObjectiveValue !== 'None') {
-                            addPrimaryObjectiveButton.textContent = 'Edit Primary Objective';
-                        } else {
-                            addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
-                        }
                         showNotification('Data loaded successfully!', 'success');
                     } catch (error) {
                         showNotification('Failed to load saved data. The data might be corrupted.', 'error');
@@ -1205,8 +1115,6 @@
                 const newColor = titleColorToggle.checked ? 'var(--secondary-color)' : 'var(--primary-color)';
                 title.style.color = newColor;
                 liveTimeElement.style.color = newColor;
-                terrainStatus.style.color = newColor;
-                primaryObjectiveStatus.style.color = newColor;
             }
 
             /**
@@ -1216,9 +1124,7 @@
                 const data = {
                     factions: getFactionData(),
                     factionHistories,
-                    factionOrder: Array.from(factionListElement.children).map(child => child.id),
-                    terrainValue,
-                    primaryObjectiveValue
+                    factionOrder: Array.from(factionListElement.children).map(child => child.id)
                 };
                 const dataStr = JSON.stringify(data, null, 2);
                 const blob = new Blob([dataStr], { type: 'application/json' });
@@ -1254,22 +1160,6 @@
                                 updateButtonState(factionId, 'cp', factionData.cp);
                             }
                         });
-                        // Load terrain and primary objective values
-                        terrainValue = data.terrainValue || 'None';
-                        primaryObjectiveValue = data.primaryObjectiveValue || 'None';
-                        terrainStatus.textContent = `Terrain: ${terrainValue}`;
-                        primaryObjectiveStatus.textContent = `Primary Objective: ${primaryObjectiveValue}`;
-                        // Update button texts
-                        if (terrainValue !== 'None') {
-                            addTerrainButton.textContent = 'Edit Terrain';
-                        } else {
-                            addTerrainButton.textContent = 'Add Terrain';
-                        }
-                        if (primaryObjectiveValue !== 'None') {
-                            addPrimaryObjectiveButton.textContent = 'Edit Primary Objective';
-                        } else {
-                            addPrimaryObjectiveButton.textContent = 'Add Primary Objective';
-                        }
                         updateUndoRedoButtonState();
                         showNotification('Data imported successfully!', 'success');
                     } catch (error) {
