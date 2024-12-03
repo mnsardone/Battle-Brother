@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>40K Match Tracker v1.0</title>
     <style>
         :root {
@@ -173,6 +172,10 @@
             <button class="critical-button" onclick="confirmResetAll()">Reset All</button>
             <button onclick="confirmSaveData()">Save</button>
             <button onclick="confirmLoadData()">Load</button>
+            <!-- Moved Export and Import Buttons Here -->
+            <button onclick="exportData()">Export Game</button>
+            <button onclick="document.getElementById('import-file-input').click()">Import Game</button>
+            <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importData(event)">
         </div>
     </header>
 
@@ -189,6 +192,9 @@
             <span>White</span>
         </label>
     </div>
+
+    <button id="toggle-player-button" style="position: fixed; bottom: 200px; left: 20px;">Hide Player</button>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
 
     <script>
         let factionIdCounter = 0;
@@ -415,27 +421,70 @@
             title.style.color = newColor;
             liveTime.style.color = newColor;
         }
+
+        // Export Data Function
+        function exportData() {
+            const factions = [];
+            document.querySelectorAll(".faction").forEach(factionDiv => {
+                const factionName = factionDiv.querySelector(".faction-title").textContent;
+                const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent.split(' ')[0]);
+                const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent.split(' ')[0]);
+                factions.push({ factionName, vp, cp });
+            });
+            const dataStr = JSON.stringify(factions, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "factionData.json";
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Import Data Function
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const factions = JSON.parse(e.target.result);
+                    resetAll(); // Clear existing factions
+                    factions.forEach(faction => {
+                        const factionId = generateUniqueFactionId();
+                        const factionDiv = createFactionElement(factionId, faction.factionName, faction.vp, faction.cp);
+                        document.getElementById("faction-list").appendChild(factionDiv);
+                        updateButtonState(factionId, 'vp', faction.vp);
+                        updateButtonState(factionId, 'cp', faction.cp);
+                    });
+                    updateUndoButtonState();
+                    alert("Data imported successfully!");
+                } catch (error) {
+                    alert("Failed to import data. The file might be corrupted or in an incorrect format.");
+                    console.error("Error parsing imported data:", error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Toggle YouTube Player
+        const toggleButton = document.getElementById('toggle-player-button');
+        const youtubePlayer = document.querySelector('iframe');
+        toggleButton.addEventListener('click', () => {
+            if (youtubePlayer.style.display === 'none') {
+                youtubePlayer.style.display = 'block';
+                toggleButton.style.position = 'fixed';
+                toggleButton.style.bottom = '200px';
+                toggleButton.textContent = 'Hide Player';
+            } else {
+                youtubePlayer.style.display = 'none';
+                toggleButton.style.position = 'fixed';
+                toggleButton.style.bottom = '20px';
+                toggleButton.textContent = 'Show Player';
+            }
+        });
     </script>
-<button id="toggle-player-button" style="position: fixed; bottom: 200px; left: 20px;">Hide Player</button>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px;"></iframe>
-
-<script>
-    const toggleButton = document.getElementById('toggle-player-button');
-const youtubePlayer = document.querySelector('iframe');
-toggleButton.addEventListener('click', () => {
-    if (youtubePlayer.style.display === 'none') {
-        youtubePlayer.style.display = 'block';
-        toggleButton.style.position = 'fixed';
-        toggleButton.style.bottom = '200px';
-        toggleButton.textContent = 'Hide Player';
-    } else {
-        youtubePlayer.style.display = 'none';
-        toggleButton.style.position = 'fixed';
-        toggleButton.style.bottom = '20px';
-        toggleButton.textContent = 'Show Player';
-    }
-});
-</script>
-
 </body>
 </html>
