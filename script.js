@@ -426,22 +426,14 @@
                 actionDescription = customMessage;
             } else {
                 if (type === 'vp') {
-                    if (actionType === 'reverted') {
-                        actionDescription = 'Victory Points Reverted';
-                    } else {
-                        actionDescription = message > 0 ? `Gained ${message} VP` : `Removed ${Math.abs(message)} VP`;
-                    }
+                    actionDescription = actionType === 'reverted' ? 'Victory Points Reverted' :
+                        (message > 0 ? `Gained ${message} VP` : `Removed ${Math.abs(message)} VP`);
                 } else if (type === 'cp') {
-                    if (actionType === 'reverted') {
-                        actionDescription = 'Command Points Reverted';
-                    } else {
-                        actionDescription = message > 0 ? `Gained ${message} CP` : `Spent ${Math.abs(message)} CP`;
-                    }
+                    actionDescription = actionType === 'reverted' ? 'Command Points Reverted' :
+                        (message > 0 ? `Gained ${message} CP` : `Spent ${Math.abs(message)} CP`);
                 } else if (type === 'status') {
                     actionDescription = message;
-                } else if (type === 'faction') {
-                    actionDescription = message;
-                } else if (type === 'color') {
+                } else if (type === 'faction' || type === 'color') {
                     actionDescription = message;
                 }
             }
@@ -549,48 +541,6 @@
             e.currentTarget.classList.remove('dragging');
             const factionElements = document.querySelectorAll('.faction');
             factionElements.forEach(elem => elem.classList.remove('over'));
-        },
-        restoreFaction: (action) => {
-            const factionColorRgba = utils.hexToRgba(action.color, 0.90);
-            const factionDiv = factions.createFactionElement(action.factionId, action.name, action.vp, action.cp, factionColorRgba);
-            dom.factionListElement.appendChild(factionDiv);
-            factions.updateButtonState(action.factionId, 'vp', action.vp);
-            factions.updateButtonState(action.factionId, 'cp', action.cp);
-            factionHistories[action.factionId] = action.history || [];
-            factions.addHistory(action.factionId, 'faction', 'Faction Restored');
-        },
-        restoreAdd: (action) => {
-            const factionColorRgba = utils.hexToRgba(action.color, 0.90);
-            const factionDiv = factions.createFactionElement(action.factionId, action.name, 0, 0, factionColorRgba);
-            dom.factionListElement.appendChild(factionDiv);
-            factions.updateButtonState(action.factionId, 'vp', 0);
-            factions.updateButtonState(action.factionId, 'cp', 0);
-            factionHistories[action.factionId] = [];
-            factions.addHistory(action.factionId, 'faction', 'Faction Added');
-        },
-        restoreValueChange: (action, isUndo) => {
-            const valueElem = document.getElementById(`${action.type}-${action.factionId}`);
-            const value = isUndo ? action.oldValue : action.newValue;
-            valueElem.textContent = `${value} ${action.type.toUpperCase()}`;
-            const delta = isUndo ? action.oldValue - action.newValue : action.newValue - action.oldValue;
-            const actionType = isUndo ? 'reverted' : 'normal';
-            factions.addHistory(action.factionId, action.type, delta, null, actionType);
-            factions.updateButtonState(action.factionId, action.type, value);
-        },
-        restoreEdit: (action, isUndo) => {
-            const factionTitleElem = document.getElementById(`faction-title-${action.factionId}`);
-            const factionDiv = document.getElementById(action.factionId);
-            if (isUndo) {
-                factionTitleElem.textContent = action.oldName;
-                factionDiv.style.backgroundColor = utils.hexToRgba(action.oldColor, 0.90);
-                factions.addHistory(action.factionId, 'color', 'Color Reverted');
-                factions.addHistory(action.factionId, 'faction', `Name reverted to "${action.oldName}"`);
-            } else {
-                factionTitleElem.textContent = action.newName;
-                factionDiv.style.backgroundColor = utils.hexToRgba(action.newColor, 0.90);
-                factions.addHistory(action.factionId, 'color', 'Color Changed');
-                factions.addHistory(action.factionId, 'faction', `Name changed to "${action.newName}"`);
-            }
         },
         resetAll: () => {
             dom.factionListElement.innerHTML = '';
@@ -810,13 +760,10 @@
     dom.togglePlayerButton.addEventListener('click', () => {
         if (dom.youtubePlayer.style.display === 'none') {
             dom.youtubePlayer.style.display = 'block';
-            dom.togglePlayerButton.style.position = 'fixed';
-            dom.togglePlayerButton.style.bottom = '200px';
+            // Footer expands as iframe is now inside the footer container
             dom.togglePlayerButton.textContent = 'Hide Music';
         } else {
             dom.youtubePlayer.style.display = 'none';
-            dom.togglePlayerButton.style.position = 'fixed';
-            dom.togglePlayerButton.style.bottom = '20px';
             dom.togglePlayerButton.textContent = 'Show Music';
         }
     });

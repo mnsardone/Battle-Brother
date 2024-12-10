@@ -1,4 +1,5 @@
 /* style.css */
+
 :root {
     --primary-color: black;
     --secondary-color: #f0f0f0;
@@ -13,11 +14,13 @@
     --status-box-bg: #d3d3d3;
     --version-font-size: 16px;
     --history-font-color: #444;
+    --footer-min-height: 60px;
 }
 
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    margin: 0;
+    padding: 0;
     background-color: var(--background-color);
     background-size: cover;
     background-repeat: no-repeat;
@@ -25,15 +28,20 @@ body {
     background-attachment: fixed;
     transition: background-image 0.3s ease-in-out;
     background-image: url('YOUR_BACKGROUND_IMAGE_URL_HERE');
+
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
     position: relative;
-    margin-bottom: 20px;
     text-align: center;
+    padding: 20px;
+    background: none;
+    z-index: 10;
 }
 
-/* Clock Container Styling */
 #time-container {
     position: absolute;
     top: 20px;
@@ -56,7 +64,6 @@ header {
     margin: 0;
 }
 
-/* Title Container Styling */
 #title-container {
     display: inline-flex;
     align-items: center;
@@ -117,6 +124,22 @@ h1 {
     top: 40px;
     right: 0;
     z-index: 100;
+}
+
+/* The divider line is now its own element */
+.divider-line {
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(to right, #333, #999, #333);
+}
+
+/* Main area is scrollable */
+main {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    position: relative;
+    padding: 20px;
+    margin-bottom: var(--footer-min-height);
 }
 
 #faction-list {
@@ -276,34 +299,6 @@ button {
     cursor: not-allowed !important;
 }
 
-#appearance-controls {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-#background-upload {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 10px;
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-}
-
-#background-upload label {
-    font-weight: bold;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 5px;
-}
-
 .latest-history {
     font-size: 14px;
     color: var(--history-font-color);
@@ -406,37 +401,93 @@ button {
     background-color: red;
 }
 
+/* Footer styling */
+#fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: rgba(222, 184, 135, 0.8);
+    border-top: 2px solid #333;
+    z-index: 200;
+    background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
+    background-size: cover;
+    background-repeat: repeat;
+    padding: 5px 10px;
+    transition: height 0.3s ease;
+    display: flex;
+    justify-content: center;
+}
+
+#footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+}
+
+#footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+#footer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    padding-right: 10px; /* Added padding to create a buffer on the right side */
+}
+
+#appearance-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    position: relative;
+    padding-right: 10px; /* Add padding here to create a gap on the right side */
+}
+
+#background-upload {
+    background-color: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+}
+
 /* Dark Mode Styles */
 body.dark-mode {
-    /* Dark mode with a dimmer background texture */
     background-color: #121212;
     background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
     background-size: cover;
     background-repeat: repeat;
-    --primary-color: black; /* Black text as requested */
+    --primary-color: black;
     --secondary-color: #f0f0f0;
-    --button-positive-bg: lightgreen; /* keep original +VP/+CP color */
+    --button-positive-bg: lightgreen;
     --button-critical-bg: red;
     --button-hover-positive-bg: mediumseagreen;
     --button-hover-critical-bg: darkred;
     --button-active-bg: #333333;
     --modal-bg: rgba(0,0,0,0.8);
-    --modal-content-bg: #e0e0e0; /* Lighter for black text */
-    --history-font-color: black; /* Black for history text */
+    --modal-content-bg: #e0e0e0;
+    --history-font-color: black;
 }
 
-/* In dark mode, UI containers get a lighter gray background so black text is visible */
 body.dark-mode #title-container,
 body.dark-mode #time-container,
 body.dark-mode #options-menu,
-body.dark-mode #appearance-controls,
 body.dark-mode #background-upload,
-body.dark-mode #notification-container {
+body.dark-mode #notification-container,
+body.dark-mode #fixed-footer {
     background-color: #e0e0e0;
     border: 1px solid #aaa;
 }
 
-/* Ensure readable black text on UI elements in dark mode */
 body.dark-mode h1,
 body.dark-mode #live-time,
 body.dark-mode #version-number,
@@ -455,7 +506,6 @@ body.dark-mode button {
     color: black;
 }
 
-/* Critical and Negative Buttons in dark mode */
 body.dark-mode .critical-button {
     border: none;
     background-color: red;
@@ -463,7 +513,7 @@ body.dark-mode .critical-button {
 }
 
 body.dark-mode .positive-button {
-    background-color: lightgreen; /* Original color for +VP/+CP */
+    background-color: lightgreen;
     color: black;
     border: 2px solid black;
 }
@@ -474,7 +524,6 @@ body.dark-mode .negative-button {
     border: 2px solid black;
 }
 
-/* Dark mode faction styling: a subtle box with black text */
 body.dark-mode .faction {
     background-color: #fafafa;
     color: black;
@@ -526,8 +575,7 @@ body.dark-mode .modal select {
     }
 
     #controls,
-    #top-right-buttons,
-    #appearance-controls {
+    #top-right-buttons {
         flex-direction: column;
         align-items: center;
     }
@@ -582,20 +630,5 @@ body.dark-mode .modal select {
         font-size: 16px;
         width: 100%;
         box-sizing: border-box;
-    }
-
-    #toggle-player-button {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-    }
-
-    iframe {
-        position: fixed;
-        bottom: 60px;
-        left: 20px;
-        width: 90%;
-        height: auto;
-        max-height: 200px;
     }
 }

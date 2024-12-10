@@ -48,42 +48,55 @@
       </div>
     </header>
 
-    <div id="faction-list"></div>
+    <!-- Static dividing line placed outside of main scrollable area -->
+    <div class="divider-line"></div>
 
-    <div id="appearance-controls">
-      <button id="toggle-appearance-button">Appearance</button>
-      <div id="background-upload">
-        <label>
-          Background:
-          <input type="file" accept="image/*" id="background-file-input" />
-        </label>
-        <label>
-          Contrast Fix:
-          <input type="checkbox" id="title-color-toggle" />
-        </label>
-        <!-- Dark Mode Toggle -->
-        <label>
-          Dark Mode:
-          <input type="checkbox" id="dark-mode-toggle" />
-        </label>
+    <!-- Main content area that is scrollable -->
+    <main>
+      <div id="faction-list"></div>
+    </main>
+
+    <!-- Fixed footer area -->
+    <footer id="fixed-footer">
+      <div id="footer-content">
+        <!-- Music Section on the bottom left -->
+        <div id="footer-left">
+          <button id="toggle-player-button">Show Music</button>
+          <!-- Embedded Youtube video inside footer for dynamic resizing -->
+          <iframe
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3"
+            title="YouTube video player"
+            frameborder="0"
+            allowfullscreen
+            style="display: none; width: 300px; height: 170px;"
+          ></iframe>
+        </div>
+
+        <!-- Appearance Controls on the bottom right -->
+        <div id="footer-right">
+          <div id="appearance-controls">
+            <button id="toggle-appearance-button">Appearance</button>
+            <div id="background-upload">
+              <label>
+                Background:
+                <input type="file" accept="image/*" id="background-file-input" />
+              </label>
+              <label>
+                Contrast Fix:
+                <input type="checkbox" id="title-color-toggle" />
+              </label>
+              <!-- Dark Mode Toggle -->
+              <label>
+                Dark Mode:
+                <input type="checkbox" id="dark-mode-toggle" />
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-
-    <button
-      id="toggle-player-button"
-      style="position: fixed; bottom: 20px; left: 20px;"
-    >
-      Show Music
-    </button>
-    <iframe
-      width="560"
-      height="315"
-      src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3"
-      title="YouTube video player"
-      frameborder="0"
-      allowfullscreen
-      style="position: fixed; bottom: 20px; left: 20px; width: 300px; height: 170px; display: none;"
-    ></iframe>
+    </footer>
 
     <!-- Notification Container -->
     <div id="notification-container" aria-live="polite"></div>
