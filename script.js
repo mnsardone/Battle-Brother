@@ -1,4 +1,3 @@
-// script.js
 (function () {
     'use strict';
 
@@ -31,12 +30,44 @@
         pageTitle: document.getElementById('page-title'),
         titleContainer: document.getElementById('title-container'),
         timeContainer: document.getElementById('time-container'),
-        darkModeToggle: document.getElementById('dark-mode-toggle')
+        darkModeToggle: document.getElementById('dark-mode-toggle'),
+        inquisitionImagesToggle: document.getElementById('inquisition-images-toggle')
     };
 
-    const predefinedColors = [
-        '#B6B3F2', '#B0EDF0', '#BAF1B4', '#FCEDA8', '#FCA9C9',
-        '#F8AC8C', '#FBE4C4', '#F9F4F0', '#D2E4E8', '#DEACD1'
+    // Predefined factions with colors
+    const predefinedFactions = [
+        { name: "Ad Mech", color: "#FFC3C3" },
+        { name: "Black Templars", color: "#D1D1E9" },
+        { name: "Blood Angels", color: "#FFC3C3" },
+        { name: "Chaos Daemons", color: "#FFC3C3" },
+        { name: "Chaos Knights", color: "#D1D1E9" },
+        { name: "Chaos Marines", color: "#D1D1E9" },
+        { name: "Craftworlds", color: "#A3C4FF" },
+        { name: "Custodes", color: "#FFEAB6" },
+        { name: "Dark Angels", color: "#A4D4A5" },
+        { name: "Death Guard", color: "#A4D4A5" },
+        { name: "Deathwatch", color: "#D1D1E9" },
+        { name: "Drukhari", color: "#D1D1E9" },
+        { name: "Genestealer Cults", color: "#D8B4E8" },
+        { name: "Grey Knights", color: "#D7D7FF" },
+        { name: "Harlequins", color: "#FBEFFF" },
+        { name: "Imperial Fists", color: "#FFF4B1" },
+        { name: "Imperial Guard", color: "#C9E5C6" },
+        { name: "Imperial Knights", color: "#A3C4FF" },
+        { name: "Leagues of Votann", color: "#D8D8E4" },
+        { name: "Necrons", color: "#D7D7FF" },
+        { name: "Orks", color: "#C9E5C6" },
+        { name: "Raven Guard", color: "#D1D1E9" },
+        { name: "Salamanders", color: "#A4D4A5" },
+        { name: "Sisters of Battle", color: "#D1D1E9" },
+        { name: "Space Wolves", color: "#D0DDFE" },
+        { name: "T'au", color: "#A3C4FF" }, // Corrected spelling
+        { name: "Thousand Sons", color: "#A3C4FF" },
+        { name: "Tyranids", color: "#D8B4E8" },
+        { name: "Ultramarines", color: "#A3C4FF" },
+        { name: "White Scars", color: "#FFFFFF" },
+        { name: "World Eaters", color: "#FFC3C3" },
+        { name: "Ynnari", color: "#FFFFFF" }
     ];
 
     let factionIdCounter = 0;
@@ -45,7 +76,21 @@
     const UNDO_STACK_LIMIT = 50;
     let factionHistories = {};
 
-    // Utility Functions
+    const inquisitionImages = [
+        'https://i.imgur.com/A4RTXAO.jpeg',
+        'https://i.imgur.com/P6ffFgW.jpeg',
+        'https://i.imgur.com/E3aM62V.jpeg',
+        'https://i.imgur.com/sOvxYr7.jpeg',
+        'https://i.imgur.com/GAkipoY.jpeg',
+        'https://i.imgur.com/Fzy2xSe.jpeg',
+        'https://i.imgur.com/xy9lSp4.jpeg',
+        'https://i.imgur.com/6wcThhC.jpeg',
+        'https://i.imgur.com/6y43Q3M.jpeg',
+        'https://i.imgur.com/3xmVBVW.jpeg'
+    ];
+
+    let previousBackground = document.body.style.backgroundImage;
+
     const utils = {
         hexToRgba: (hex, alpha = 0.90) => {
             let c;
@@ -87,10 +132,13 @@
                 undoStack.shift();
             }
             handlers.updateUndoRedoButtonState();
-        }
+        },
+        getFactionByName: (name) => {
+            return predefinedFactions.find(f => f.name === name);
+        },
+        fallbackFaction: () => predefinedFactions[0], // If no match found, default to "Ad Mech"
     };
 
-    // Start updating the time
     requestAnimationFrame(utils.updateTime);
 
     const handlers = {
@@ -99,24 +147,16 @@
             dom.redoButton.disabled = redoStack.length === 0;
         },
         addFaction: () => {
-            const factionNameInput = document.getElementById('new-faction-name');
-            const factionColorSelect = document.getElementById('new-faction-color');
-            const factionName = factionNameInput.value.trim() || 'New Faction';
-            const factionColorHex = factionColorSelect.value || '#FFFFFF';
-            let factionColorRgba = '#FFFFFF';
-
-            try {
-                factionColorRgba = utils.hexToRgba(factionColorHex, 0.90);
-            } catch (error) {
-                utils.showNotification('Invalid color selected. Defaulting to white.', 'error');
-            }
-
+            const factionSelect = document.getElementById('new-faction-select');
+            const selectedFactionName = factionSelect.value;
+            const factionObj = utils.getFactionByName(selectedFactionName) || utils.fallbackFaction();
             modals.closeModal();
 
             const factionId = utils.generateUniqueFactionId();
-            const factionDiv = factions.createFactionElement(factionId, factionName, 0, 0, factionColorRgba);
+            const factionColorRgba = utils.hexToRgba(factionObj.color, 0.90);
+            const factionDiv = factions.createFactionElement(factionId, factionObj.name, 0, 0, factionColorRgba);
             dom.factionListElement.appendChild(factionDiv);
-            utils.addUndoAction({ action: 'add', factionId, name: factionName, color: factionColorHex });
+            utils.addUndoAction({ action: 'add', factionId, name: factionObj.name, color: factionObj.color });
             redoStack = [];
             factions.updateButtonState(factionId, 'vp', 0);
             factions.updateButtonState(factionId, 'cp', 0);
@@ -139,7 +179,6 @@
                 utils.showNotification('Nothing to undo!', 'error');
                 return;
             }
-
             redoStack.push(lastAction);
 
             switch (lastAction.action) {
@@ -164,7 +203,6 @@
                 utils.showNotification('Nothing to redo!', 'error');
                 return;
             }
-
             undoStack.push(lastUndoneAction);
 
             switch (lastUndoneAction.action) {
@@ -227,11 +265,19 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function (e) {
-                document.body.style.backgroundImage = `url('${e.target.result}')`;
+                // Turn off inquisition images if on
+                if (dom.inquisitionImagesToggle.checked) {
+                    dom.inquisitionImagesToggle.checked = false;
+                }
+
+                previousBackground = `url('${e.target.result}')`;
+                document.body.style.backgroundImage = previousBackground;
                 document.body.style.backgroundSize = 'cover';
                 document.body.style.backgroundRepeat = 'no-repeat';
                 document.body.style.backgroundPosition = 'center';
                 document.body.style.backgroundAttachment = 'fixed';
+
+                updateDividerLineAppearance();
             };
             reader.readAsDataURL(file);
         },
@@ -261,10 +307,38 @@
         },
         toggleDarkMode: () => {
             if (dom.darkModeToggle.checked) {
+                // Turn off inquisition images if on
+                if (dom.inquisitionImagesToggle.checked) {
+                    dom.inquisitionImagesToggle.checked = false;
+                    document.body.style.backgroundImage = previousBackground;
+                }
                 document.body.classList.add('dark-mode');
             } else {
                 document.body.classList.remove('dark-mode');
             }
+            updateDividerLineAppearance();
+        },
+        toggleInquisitionImages: () => {
+            if (dom.inquisitionImagesToggle.checked) {
+                // Turn off dark mode if on
+                if (dom.darkModeToggle.checked) {
+                    dom.darkModeToggle.checked = false;
+                    document.body.classList.remove('dark-mode');
+                }
+                // Store current background
+                previousBackground = document.body.style.backgroundImage;
+                // Choose random image
+                const randomImage = inquisitionImages[Math.floor(Math.random() * inquisitionImages.length)];
+                document.body.style.backgroundImage = `url('${randomImage}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundRepeat = 'no-repeat';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            } else {
+                // Restore previous background
+                document.body.style.backgroundImage = previousBackground;
+            }
+            updateDividerLineAppearance();
         }
     };
 
@@ -295,13 +369,13 @@
                 </div>
                 <div class="latest-history" id="latest-history-${factionId}">No recent actions.</div>
                 <div class="action-buttons">
+                    <button class="history-button toggle-history-button" id="toggle-history-button-${factionId}">Show History</button>
+                    <button class="history-button edit-faction-button">Edit Faction</button>
                     <select class="status-dropdown" id="status-dropdown-${factionId}">
                         <option value="Active" selected>Active</option>
                         <option value="Tabled">Tabled</option>
                         <option value="Delete" class="delete-option">Delete</option>
                     </select>
-                    <button class="history-button toggle-history-button" id="toggle-history-button-${factionId}">Show History</button>
-                    <button class="history-button edit-faction-button">Edit Faction</button>
                 </div>
                 <div class="history" id="history-${factionId}">
                     <ul id="history-list-${factionId}"></ul>
@@ -338,42 +412,30 @@
             });
         },
         editFaction: (id) => {
+            const factionSelect = document.getElementById('edit-faction-select');
+            const selectedFactionName = factionSelect.value;
+            if (!selectedFactionName) {
+                utils.showNotification('Please choose a faction before saving.', 'error');
+                return;
+            }
+            const factionObj = utils.getFactionByName(selectedFactionName) || utils.fallbackFaction();
+
             const factionTitleElem = document.getElementById(`faction-title-${id}`);
             const factionDiv = document.getElementById(id);
-            const factionNameInput = document.getElementById('edit-faction-name');
-            const factionColorSelect = document.getElementById('edit-faction-color');
-            const newName = factionNameInput.value.trim();
-            const newColorHex = factionColorSelect.value || '#FFFFFF';
-
             const oldName = factionTitleElem.textContent;
-            const oldColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
-            const oldColorHex = utils.rgbaToHex(oldColorRgba);
+            const oldFaction = utils.getFactionByName(oldName);
+            const oldColor = oldFaction ? oldFaction.color : '#FFFFFF';
 
-            let newColorRgba = oldColorRgba;
-            if (newColorHex !== oldColorHex) {
-                try {
-                    newColorRgba = utils.hexToRgba(newColorHex, 0.90);
-                } catch (error) {
-                    utils.showNotification('Invalid color selected. Keeping the old color.', 'error');
-                }
-            }
+            const newName = factionObj.name;
+            const newColor = factionObj.color;
+            const oldColorHex = oldColor;
+            const newColorHex = newColor;
 
-            let changesMade = false;
-
-            if (newName && newName !== oldName) {
+            if (newName !== oldName || newColorHex !== oldColorHex) {
                 factionTitleElem.textContent = newName;
-                factions.addHistory(id, 'faction', `Name changed from "${oldName}" to "${newName}"`);
-                changesMade = true;
-            }
-
-            if (newColorRgba !== oldColorRgba) {
-                factionDiv.style.backgroundColor = newColorRgba;
-                factions.addHistory(id, 'color', 'Color Changed');
-                changesMade = true;
-            }
-
-            if (changesMade) {
-                utils.addUndoAction({ action: 'edit', factionId: id, oldName, newName: newName || oldName, oldColor: oldColorHex, newColor: newColorHex });
+                factionDiv.style.backgroundColor = utils.hexToRgba(newColorHex, 0.90);
+                factions.addHistory(id, 'faction', `Changed to ${newName}`);
+                utils.addUndoAction({ action: 'edit', factionId: id, oldName, newName, oldColor: oldColorHex, newColor: newColorHex });
                 redoStack = [];
             }
 
@@ -386,8 +448,8 @@
             const vp = parseInt(faction.querySelector(`#vp-${factionId}`).textContent, 10);
             const cp = parseInt(faction.querySelector(`#cp-${factionId}`).textContent, 10);
             const name = faction.querySelector('.faction-title').textContent;
-            const colorRgba = faction.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
-            const colorHex = utils.rgbaToHex(colorRgba);
+            const factionObj = utils.getFactionByName(name);
+            const colorHex = factionObj ? factionObj.color : '#FFFFFF';
             utils.addUndoAction({ action: 'remove', factionId, vp, cp, name, color: colorHex });
             redoStack = [];
             faction.remove();
@@ -431,9 +493,7 @@
                 } else if (type === 'cp') {
                     actionDescription = actionType === 'reverted' ? 'Command Points Reverted' :
                         (message > 0 ? `Gained ${message} CP` : `Spent ${Math.abs(message)} CP`);
-                } else if (type === 'status') {
-                    actionDescription = message;
-                } else if (type === 'faction' || type === 'color') {
+                } else {
                     actionDescription = message;
                 }
             }
@@ -554,16 +614,49 @@
                 const factionName = factionDiv.querySelector('.faction-title').textContent;
                 const vp = parseInt(factionDiv.querySelector(`#vp-${factionDiv.id}`).textContent);
                 const cp = parseInt(factionDiv.querySelector(`#cp-${factionDiv.id}`).textContent);
-                const color = utils.rgbaToHex(factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)');
-                return { factionName, vp, cp, color, factionId: factionDiv.id };
+                // If factionName not found in predefined list, fallback
+                const factionObj = utils.getFactionByName(factionName) || utils.fallbackFaction();
+                return { factionName: factionObj.name, vp, cp, color: factionObj.color, factionId: factionDiv.id };
             });
         },
         restoreFactionData: (factionData) => {
-            const factionColorRgba = utils.hexToRgba(factionData.color, 0.90);
-            const factionDiv = factions.createFactionElement(factionData.factionId, factionData.factionName, factionData.vp, factionData.cp, factionColorRgba);
+            const factionObj = utils.getFactionByName(factionData.factionName) || utils.fallbackFaction();
+            const factionColorRgba = utils.hexToRgba(factionObj.color, 0.90);
+            const factionDiv = factions.createFactionElement(factionData.factionId, factionObj.name, factionData.vp, factionData.cp, factionColorRgba);
             dom.factionListElement.appendChild(factionDiv);
             factions.updateButtonState(factionData.factionId, 'vp', factionData.vp);
             factions.updateButtonState(factionData.factionId, 'cp', factionData.cp);
+        },
+        restoreFaction: (action) => {
+            const factionObj = utils.getFactionByName(action.name) || utils.fallbackFaction();
+            const factionColorRgba = utils.hexToRgba(factionObj.color, 0.90);
+            const factionDiv = factions.createFactionElement(action.factionId, factionObj.name, action.vp, action.cp, factionColorRgba);
+            dom.factionListElement.appendChild(factionDiv);
+            factions.updateButtonState(action.factionId, 'vp', action.vp);
+            factions.updateButtonState(action.factionId, 'cp', action.cp);
+        },
+        restoreValueChange: (action, isUndo) => {
+            const valueElem = document.getElementById(`${action.type}-${action.factionId}`);
+            valueElem.textContent = `${(isUndo ? action.oldValue : action.newValue)} ${action.type.toUpperCase()}`;
+            factions.updateButtonState(action.factionId, action.type, (isUndo ? action.oldValue : action.newValue));
+            factions.addHistory(action.factionId, action.type, null, null, 'reverted');
+        },
+        restoreAdd: (action) => {
+            const factionObj = utils.getFactionByName(action.name) || utils.fallbackFaction();
+            const factionColorRgba = utils.hexToRgba(factionObj.color, 0.90);
+            const factionDiv = factions.createFactionElement(action.factionId, factionObj.name, 0, 0, factionColorRgba);
+            dom.factionListElement.appendChild(factionDiv);
+            factions.updateButtonState(action.factionId, 'vp', 0);
+            factions.updateButtonState(action.factionId, 'cp', 0);
+        },
+        restoreEdit: (action, isUndo) => {
+            const factionDiv = document.getElementById(action.factionId);
+            const factionTitleElem = factionDiv.querySelector(`#faction-title-${action.factionId}`);
+            const oldName = isUndo ? action.oldName : action.newName;
+            const oldFactionObj = utils.getFactionByName(oldName) || utils.fallbackFaction();
+            factionTitleElem.textContent = oldFactionObj.name;
+            factionDiv.style.backgroundColor = utils.hexToRgba(oldFactionObj.color, 0.90);
+            factions.addHistory(action.factionId, 'faction', 'Edit Reverted');
         }
     };
 
@@ -595,14 +688,12 @@
             }
         },
         showAddFactionModal: () => {
+            const factionOptions = predefinedFactions.map(f => `<option value="${f.name}">${f.name}</option>`).join('');
             modals.showModal(`
                 <h2>Add Faction</h2>
-                <input type="text" id="new-faction-name" placeholder="Faction Name">
-                <select id="new-faction-color">
-                    <option value="" disabled selected>Select Color</option>
-                    ${predefinedColors.map(color => `
-                        <option value="${color}" style="background-color: ${color}; color: #000;">${color}</option>
-                    `).join('')}
+                <select id="new-faction-select">
+                    <option value="" disabled selected>Choose your faction</option>
+                    ${factionOptions}
                 </select>
                 <div>
                     <button id="confirm-add-faction-button">Add</button>
@@ -610,25 +701,27 @@
                 </div>
             `);
 
-            document.getElementById('new-faction-name').focus();
-            document.getElementById('confirm-add-faction-button').addEventListener('click', handlers.addFaction);
+            document.getElementById('confirm-add-faction-button').addEventListener('click', () => {
+                const factionSelect = document.getElementById('new-faction-select');
+                const selectedFactionName = factionSelect.value;
+                if (!selectedFactionName) {
+                    utils.showNotification('Please choose a faction before adding.', 'error');
+                    return;
+                }
+                handlers.addFaction();
+            });
             document.getElementById('cancel-add-faction-button').addEventListener('click', modals.closeModal);
         },
         showEditFactionModal: (id) => {
             const factionTitleElem = document.getElementById(`faction-title-${id}`);
-            const factionDiv = document.getElementById(id);
             const currentName = factionTitleElem.textContent;
-            const currentColorRgba = factionDiv.style.backgroundColor || 'rgba(255, 255, 255, 0.90)';
-            const currentColorHex = utils.rgbaToHex(currentColorRgba);
+            const factionOptions = predefinedFactions.map(f => `<option value="${f.name}" ${f.name === currentName ? 'selected' : ''}>${f.name}</option>`).join('');
 
             modals.showModal(`
                 <h2>Edit Faction</h2>
-                <input type="text" id="edit-faction-name" value="${currentName}">
-                <select id="edit-faction-color">
-                    <option value="" disabled>Select Color</option>
-                    ${predefinedColors.map(color => `
-                        <option value="${color}" style="background-color: ${color}; color: #000;" ${color === currentColorHex ? 'selected' : ''}>${color}</option>
-                    `).join('')}
+                <select id="edit-faction-select">
+                    <option value="" disabled ${!utils.getFactionByName(currentName) ? 'selected' : ''}>Choose your faction</option>
+                    ${factionOptions}
                 </select>
                 <div>
                     <button id="confirm-edit-faction-button">Save</button>
@@ -636,8 +729,15 @@
                 </div>
             `);
 
-            document.getElementById('edit-faction-name').focus();
-            document.getElementById('confirm-edit-faction-button').addEventListener('click', () => factions.editFaction(id));
+            document.getElementById('confirm-edit-faction-button').addEventListener('click', () => {
+                const factionSelect = document.getElementById('edit-faction-select');
+                const selectedFactionName = factionSelect.value;
+                if (!selectedFactionName) {
+                    utils.showNotification('Please choose a faction before saving.', 'error');
+                    return;
+                }
+                factions.editFaction(id);
+            });
             document.getElementById('cancel-edit-faction-button').addEventListener('click', modals.closeModal);
         },
         showRemoveFactionModal: (id) => {
@@ -697,12 +797,36 @@
         }
     };
 
-    // Close modal when clicking outside content
     window.addEventListener('click', function (event) {
         if (event.target === dom.modal) {
             modals.closeModal();
         }
     });
+
+    function updateDividerLineAppearance() {
+        const divider = document.querySelector('.divider-line');
+        const currentBG = document.body.style.backgroundImage;
+        const hasCustomBG = currentBG && currentBG !== 'none' && !dom.inquisitionImagesToggle.checked;
+
+        // If inquisition images active OR custom background set: line invisible
+        if (dom.inquisitionImagesToggle.checked || hasCustomBG) {
+            divider.style.display = 'none';
+            return;
+        }
+
+        // If dark mode and no inquisition/custom background
+        if (dom.darkModeToggle.checked) {
+            divider.style.display = 'block';
+            divider.style.background = 'white';
+            divider.style.backgroundImage = 'none';
+        } else {
+            // Default: match footer style
+            divider.style.display = 'block';
+            divider.style.background = "rgba(222, 184, 135, 0.8) url('https://www.transparenttextures.com/patterns/old-wall.png')";
+            divider.style.backgroundSize = 'cover';
+            divider.style.backgroundRepeat = 'repeat';
+        }
+    }
 
     // Event Listeners
     dom.addFactionButton.addEventListener('click', modals.showAddFactionModal);
@@ -760,7 +884,6 @@
     dom.togglePlayerButton.addEventListener('click', () => {
         if (dom.youtubePlayer.style.display === 'none') {
             dom.youtubePlayer.style.display = 'block';
-            // Footer expands as iframe is now inside the footer container
             dom.togglePlayerButton.textContent = 'Hide Music';
         } else {
             dom.youtubePlayer.style.display = 'none';
@@ -768,9 +891,24 @@
         }
     });
 
-    // Dark Mode Toggle
-    dom.darkModeToggle.addEventListener('change', handlers.toggleDarkMode);
+    dom.darkModeToggle.addEventListener('change', () => {
+        handlers.toggleDarkMode();
+        if (dom.darkModeToggle.checked && dom.inquisitionImagesToggle.checked) {
+            dom.inquisitionImagesToggle.checked = false;
+            document.body.style.backgroundImage = previousBackground;
+        }
+        updateDividerLineAppearance();
+    });
 
-    // Auto-save data every 5 minutes
+    dom.inquisitionImagesToggle.addEventListener('change', () => {
+        handlers.toggleInquisitionImages();
+        if (dom.inquisitionImagesToggle.checked && dom.darkModeToggle.checked) {
+            dom.darkModeToggle.checked = false;
+            document.body.classList.remove('dark-mode');
+        }
+        updateDividerLineAppearance();
+    });
+
     setInterval(handlers.autoSaveData, 300000);
+    updateDividerLineAppearance();
 })();
