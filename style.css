@@ -76,6 +76,27 @@ header {
     margin: 10px auto;
 }
 
+.iframe-container {
+    position: relative;
+    /*width: 800px; /* Visible width */
+    /*height: 600px; /* Visible height */
+}
+
+#embedded-frame {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    border: 5px solid #000;
+}
+
+#mission-container {
+    position: absolute;
+    top: 0px;   /* Adjust as needed for vertical spacing below the Mission button */
+    right: 100px;    /* Aligns to the right edge of the parent container */
+    display: none; 
+    z-index: 200; /* Ensure it appears above other elements if needed */
+}
+
 h1 {
     color: var(--primary-color);
     margin: 0 10px;
