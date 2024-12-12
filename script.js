@@ -22,7 +22,7 @@
         backgroundFileInput: document.getElementById('background-file-input'),
         titleColorToggle: document.getElementById('title-color-toggle'),
         togglePlayerButton: document.getElementById('toggle-player-button'),
-        youtubePlayer: document.querySelector('iframe'),
+        youtubePlayer: document.getElementById('youtube-player'),
         notificationContainer: document.getElementById('notification-container'),
         modal: document.getElementById('modal'),
         modalContent: document.getElementById('modal-content'),
@@ -36,39 +36,39 @@
 
     // Predefined factions with colors
     const predefinedFactions = [
-        { name: "Ad Mech", color: "#FFC3C3" },
-        { name: "Black Templars", color: "#D1D1E9" },
-        { name: "Blood Angels", color: "#FFC3C3" },
-        { name: "Chaos Daemons", color: "#FFC3C3" },
-        { name: "Chaos Knights", color: "#D1D1E9" },
-        { name: "Chaos Marines", color: "#D1D1E9" },
-        { name: "Craftworlds", color: "#A3C4FF" },
-        { name: "Custodes", color: "#FFEAB6" },
-        { name: "Dark Angels", color: "#A4D4A5" },
-        { name: "Death Guard", color: "#A4D4A5" },
-        { name: "Deathwatch", color: "#D1D1E9" },
-        { name: "Drukhari", color: "#D1D1E9" },
-        { name: "Genestealer Cults", color: "#D8B4E8" },
-        { name: "Grey Knights", color: "#D7D7FF" },
-        { name: "Harlequins", color: "#FBEFFF" },
-        { name: "Imperial Fists", color: "#FFF4B1" },
-        { name: "Imperial Guard", color: "#C9E5C6" },
-        { name: "Imperial Knights", color: "#A3C4FF" },
-        { name: "Leagues of Votann", color: "#D8D8E4" },
-        { name: "Necrons", color: "#D7D7FF" },
-        { name: "Orks", color: "#C9E5C6" },
-        { name: "Raven Guard", color: "#D1D1E9" },
-        { name: "Salamanders", color: "#A4D4A5" },
-        { name: "Sisters of Battle", color: "#D1D1E9" },
-        { name: "Space Wolves", color: "#D0DDFE" },
-        { name: "T'au", color: "#A3C4FF" }, // Corrected spelling
-        { name: "Thousand Sons", color: "#A3C4FF" },
-        { name: "Tyranids", color: "#D8B4E8" },
-        { name: "Ultramarines", color: "#A3C4FF" },
-        { name: "White Scars", color: "#FFFFFF" },
-        { name: "World Eaters", color: "#FFC3C3" },
-        { name: "Ynnari", color: "#FFFFFF" }
-    ];
+            { "name": "Ad Mech", "color": "#FFC3C3" },
+            { "name": "Black Templars", "color": "#D1D1E9" },
+            { "name": "Blood Angels", "color": "#FF9999" },
+            { "name": "Chaos Daemons", "color": "#FFC7C9" },
+            { "name": "Chaos Knights", "color": "#D3CFE9" },
+            { "name": "Chaos Marines", "color": "#E0D1F1" },
+            { "name": "Craftworlds", "color": "#A3C4FF" },
+            { "name": "Custodes", "color": "#FFEAB6" },
+            { "name": "Dark Angels", "color": "#A4D4A5" },
+            { "name": "Death Guard", "color": "#B8D4A6" },
+            { "name": "Deathwatch", "color": "#4F4F4F" },
+            { "name": "Drukhari", "color": "#D8D1EF" },
+            { "name": "Genestealers", "color": "#D8B4E8" },
+            { "name": "Grey Knights", "color": "#D7D7FF" },
+            { "name": "Harlequins", "color": "#FBEFFF" },
+            { "name": "Imperial Fists", "color": "#FFF4B1" },
+            { "name": "Imperial Guard", "color": "#C9E5C6" },
+            { "name": "Imperial Knights", "color": "#A3D3FF" },
+            { "name": "Votann", "color": "#D8D8E4" },
+            { "name": "Necrons", "color": "#B5D3FF" },
+            { "name": "Orks", "color": "#C9F1D1" },
+            { "name": "Raven Guard", "color": "#D3D3ED" },
+            { "name": "Salamanders", "color": "#A8D9A5" },
+            { "name": "Sisters", "color": "#E1CBE9" },
+            { "name": "Space Wolves", "color": "#D0DDFE" },
+            { "name": "T'au", "color": "#ADCFFF" },
+            { "name": "Thousand Sons", "color": "#B0CFFF" },
+            { "name": "Tyranids", "color": "#E1C0E9" },
+            { "name": "Ultramarines", "color": "#A3C4FF" },
+            { "name": "White Scars", "color": "#F0F0F0" },
+            { "name": "World Eaters", "color": "#FFD2D3" },
+            { "name": "Ynnari", "color": "#FFFFF4" }
+        ];
 
     let factionIdCounter = 0;
     let undoStack = [];
@@ -908,6 +908,19 @@
         }
         updateDividerLineAppearance();
     });
+
+    // After all other event listeners
+    const missionButton = document.getElementById('toggle-mission-button');
+    const missionContainer = document.getElementById('mission-container');
+
+    missionButton.addEventListener('click', () => {
+        if (missionContainer.style.display === 'none') {
+            missionContainer.style.display = 'block';
+        } else {
+        missionContainer.style.display = 'none';
+        }
+    });
+
 
     setInterval(handlers.autoSaveData, 300000);
     updateDividerLineAppearance();
