@@ -1,0 +1,126 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Thunderdome</title>
+    <!-- Google Font "Metal Mania" -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Metal+Mania&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Link to external CSS file -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div id="top-right-buttons">
+        <button id="toggle-options-button">Options</button>
+        <div id="options-menu">
+          <button class="critical-button" id="reset-all-button">
+            Reset All
+          </button>
+          <button id="save-data-button">Save</button>
+          <button id="load-data-button">Load</button>
+          <button id="export-data-button">Export Game</button>
+          <button id="import-data-button">Import Game</button>
+          <input
+            type="file"
+            id="import-file-input"
+            accept=".json"
+            style="display: none;"
+          />
+        </div>
+        <button id="toggle-mission-button">Missions (m)</button>
+          <div id="mission-container" style="display:none;">
+            <div class="iframe-container">
+              <iframe src="https://warptracker.com/match" id="embedded-frame"></iframe>
+          </div>
+        </div>
+      </div>
+      <div id="time-container">
+        <div id="live-time">12:00 PM</div>
+      </div>
+      <div id="title-container">
+        <span style="font-size: 30px;">⚡</span>
+        <h1 id="page-title">The Thunderdome</h1>
+        <span id="version-number">v1.6</span>
+      </div>
+      <div id="controls">
+        <button id="add-faction-button">Add Faction (f)</button>
+        <button id="next-command-phase-button">Next Command Phase (c)</button>
+        <button id="undo-button" disabled>Undo (u)</button>
+        <button id="redo-button" disabled>Redo (r)</button>
+      </div>
+    </header>
+
+    <!-- Static dividing line placed outside of main scrollable area -->
+    <div class="divider-line"></div>
+
+    <!-- Main content area that is scrollable -->
+    <main>
+      <div id="faction-list"></div>
+    </main>
+
+    <!-- Fixed footer area -->
+    <footer id="fixed-footer">
+      <div id="footer-content">
+        <!-- Music Section on the bottom left -->
+        <div id="footer-left">
+          <button id="toggle-player-button">Show Music</button>
+          <!-- Embedded Youtube video inside footer for dynamic resizing -->
+          <iframe
+            id="youtube-player"
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/NfiFhQ8W7OU?si=rbuAzNz-UnwotbM3"
+            title="YouTube video player"
+            frameborder="0"
+            allowfullscreen
+            style="display: none; width: 300px; height: 170px;"
+          ></iframe>
+        </div>
+
+        <!-- Appearance Controls on the bottom right -->
+        <div id="footer-right">
+          <div id="appearance-controls">
+            <button id="toggle-appearance-button">Appearance</button>
+            <div id="background-upload">
+              <label>
+                Background:
+                <input type="file" accept="image/*" id="background-file-input" />
+              </label>
+              <label>
+                Contrast Fix:
+                <input type="checkbox" id="title-color-toggle" />
+              </label>
+              <!-- Dark Mode Toggle -->
+              <label>
+                Dark Mode:
+                <input type="checkbox" id="dark-mode-toggle" />
+              </label>
+              <!-- New Inquisition Approved Images Toggle -->
+              <label>
+                Inquisition Approved Images:
+                <input type="checkbox" id="inquisition-images-toggle" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Notification Container -->
+    <div id="notification-container" aria-live="polite"></div>
+
+    <!-- Modal Structure -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true">
+      <div class="modal-content" id="modal-content" tabindex="-1">
+        <!-- Content will be injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Link to external JS file -->
+    <script src="script.js"></script>
+  </body>
+</html>

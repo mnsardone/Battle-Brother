@@ -1,481 +1,540 @@
 /* style.css */
 
 :root {
-    --primary-color: black;
-    --secondary-color: #f0f0f0;
-    --background-color: #e0e0e0;
-    --button-positive-bg: lightgreen;
-    --button-critical-bg: red;
-    --button-hover-positive-bg: mediumseagreen;
-    --button-hover-critical-bg: darkred;
-    --button-active-bg: #cccccc;
-    --modal-bg: rgba(0, 0, 0, 0.5);
-    --modal-content-bg: white;
-    --status-box-bg: #d3d3d3;
-    --version-font-size: 16px;
-    --history-font-color: #444;
-    --footer-min-height: 60px;
+  --primary-color: black;
+  --secondary-color: #f0f0f0;
+  --background-color: #e0e0e0;
+  --button-positive-bg: lightgreen;
+  --button-critical-bg: red;
+  --button-hover-positive-bg: mediumseagreen;
+  --button-hover-critical-bg: darkred;
+  --button-active-bg: #cccccc;
+  --modal-bg: rgba(0, 0, 0, 0.5);
+  --modal-content-bg: white;
+  --status-box-bg: #d3d3d3;
+  --version-font-size: 16px;
+  --history-font-color: #444;
+  --footer-min-height: 60px;
 }
 
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--background-color);
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-attachment: fixed;
-    transition: background-image 0.3s ease-in-out;
-    background-image: url('YOUR_BACKGROUND_IMAGE_URL_HERE');
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-attachment: fixed;
+  transition: background-image 0.3s ease-in-out;
+  background-image: url("YOUR_BACKGROUND_IMAGE_URL_HERE");
 
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
-    position: relative;
-    text-align: center;
-    padding: 20px;
-    background: none;
-    z-index: 10;
+  position: relative;
+  text-align: center;
+  padding: 5px;
+  background: none;
+  z-index: 10;
 }
 
+/* 
+   NEW: Black outline around the textured backdrop 
+   for the title (#title-container) and time (#time-container)
+*/
 #time-container {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    display: inline-flex;
-    align-items: center;
-    background-color: rgba(222, 184, 135, 0.8);
-    padding: 10px 20px;
-    border-radius: 15px;
-    background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
-    background-size: cover;
-    background-repeat: repeat;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(222, 184, 135, 0.8);
+  padding: 10px 20px;
+  border-radius: 15px;
+  background-image: url("https://www.transparenttextures.com/patterns/old-wall.png");
+  background-size: cover;
+  background-repeat: repeat;
+
+  /* Added black outline */
+  border: 2px solid black;
 }
 
 #live-time {
-    font-size: 28px;
-    color: var(--primary-color);
-    transition: color 0.3s ease-in-out;
-    font-family: 'Metal Mania', sans-serif;
-    margin: 0;
+  font-size: 28px;
+  color: var(--primary-color);
+  transition: color 0.3s ease-in-out;
+  font-family: "Metal Mania", sans-serif;
+  margin: 0;
 }
 
+/* 
+   NEW: Black outline around the title container 
+*/
 #title-container {
-    display: inline-flex;
-    align-items: center;
-    background-color: rgba(222, 184, 135, 0.8);
-    padding: 10px 20px;
-    border-radius: 15px;
-    background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
-    background-size: cover;
-    background-repeat: repeat;
-    margin: 10px auto;
+  display: inline-flex;
+  align-items: center;
+  background-color: rgba(222, 184, 135, 0.8);
+  padding: 5px 5px;
+  border-radius: 15px;
+  background-image: url("https://www.transparenttextures.com/patterns/old-wall.png");
+  background-size: cover;
+  background-repeat: repeat;
+
+  /* Added black outline */
+  border: 2px solid black;
+}
+
+#mission-container {
+  position: fixed;
+  top: 5px;
+  left: 5px;
+  width: 90%;
+  height: 90%;
+  display: none;
+  z-index: 9999;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+.iframe-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#embedded-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
 }
 
 h1 {
-    color: var(--primary-color);
-    margin: 0 10px;
-    font-family: 'Metal Mania', sans-serif;
-    transition: color 0.3s ease-in-out;
-    font-size: 48px;
-    display: inline-block;
+  color: var(--primary-color);
+  margin: 0 10px;
+  font-family: "Metal Mania", sans-serif;
+  transition: color 0.3s ease-in-out;
+  font-size: 40px;
+  display: inline-block;
 }
 
 #version-number {
-    font-size: var(--version-font-size);
-    margin-left: 10px;
-    vertical-align: middle;
-    color: var(--primary-color);
-    font-family: 'Metal Mania', sans-serif;
+  font-size: var(--version-font-size);
+  margin-left: 10px;
+  vertical-align: middle;
+  color: var(--primary-color);
+  font-family: "Metal Mania", sans-serif;
 }
 
 #controls {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
 #top-right-buttons {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: flex-end;
-    z-index: 100;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  z-index: 100;
 }
 
 #options-menu {
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 10px;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 10px;
-    border-radius: 5px;
-    position: absolute;
-    top: 40px;
-    right: 0;
-    z-index: 100;
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 5px;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 5px 5px;
+  border-radius: 5px;
+  position: absolute;
+  top: 30px;
+  right: 0;
+  z-index: 100;
 }
 
 /* The divider line is now its own element */
 .divider-line {
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(to right, #333, #999, #333);
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, #333, #999, #333);
 }
 
 /* Main area is scrollable */
 main {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    position: relative;
-    padding: 20px;
-    margin-bottom: var(--footer-min-height);
+  flex: 1 1 auto;
+  overflow-y: auto;
+  position: relative;
+  padding: 20px;
+  margin-bottom: var(--footer-min-height);
 }
 
 #faction-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 30px;
-    justify-content: center;
-    margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+  margin-top: 20px;
 }
 
 .faction {
-    margin-bottom: 30px;
-    padding: 20px;
-    border: 1px solid #333;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex: 1 1 250px;
-    max-width: 300px;
-    gap: 15px;
-    box-sizing: border-box;
-    position: relative;
-    cursor: move;
-    transition: background-color 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.9);
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1 1 250px;
+  max-width: 300px;
+  gap: 15px;
+  box-sizing: border-box;
+  position: relative;
+  cursor: move;
+  transition: background-color 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .faction.dragging {
-    opacity: 0.5;
+  opacity: 0.5;
 }
 
 .faction.over {
-    border: 2px dashed #000;
+  border: 2px dashed #000;
 }
 
 .skull-emoji {
-    font-size: 28px;
-    display: none;
-    position: absolute;
-    top: -10px;
+  font-size: 28px;
+  display: none;
+  position: absolute;
+  top: -10px;
 }
 
 .faction-title {
-    font-size: 40px;
-    font-weight: bold;
-    margin-top: 10px;
-    text-align: center;
-    overflow-wrap: break-word;
-    word-break: break-word;
-    font-family: 'Metal Mania', sans-serif;
-    color: var(--primary-color);
+  font-size: 40px;
+  font-weight: bold;
+  margin-top: 0px;
+  text-align: center;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  font-family: "Metal Mania", sans-serif;
+  color: var(--primary-color);
+}
+
+.faction-selected {
+  outline: 3px solid gold; /* A visible highlight that works in both light & dark modes */
+  outline-offset: -2px; /* Moves outline closer to the element */
 }
 
 .action-buttons {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
 }
 
 .status-dropdown {
-    font-size: 14px;
-    font-weight: lighter;
-    padding: 5px;
-    width: auto;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #fff;
+  font-size: 14px;
+  font-weight: lighter;
+  padding: 5px;
+  width: auto;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
 }
 
 .delete-option {
-    color: #ff4d4d;
-    font-weight: bold;
+  color: #ff4d4d;
+  font-weight: bold;
 }
 
 .faction-values {
-    display: flex;
-    gap: 10px;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  align-items: center;
 }
 
 .faction-value {
-    font-size: 30px;
-    font-weight: bold;
-    color: var(--primary-color);
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--primary-color);
 }
 
 .incrementer {
-    display: flex;
-    gap: 5px;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  align-items: center;
 }
 
 .incrementer input[type="number"] {
-    width: 40px;
-    padding: 5px;
-    font-size: 14px;
-    text-align: center;
-    border: 1px solid #ccc;
-    border-radius: 3px;
+  width: 40px;
+  padding: 5px;
+  font-size: 16px;
+  text-align: center;
+  border: 1px solid #0000;
+  border-radius: 3px;
 }
 
 .incrementer button {
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
+  padding: 5px 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 button {
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 14px;
+  padding: 5px 5px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 5px;
 }
 
 .critical-button {
-    background-color: var(--button-critical-bg);
-    color: var(--secondary-color);
-    border: 2px solid var(--primary-color);
-    transition: background-color 0.3s ease;
+  background-color: var(--button-critical-bg);
+  color: var(--secondary-color);
+  border: 2px solid var(--primary-color);
+  transition: background-color 0.3s ease;
 }
 
 .critical-button:hover {
-    background-color: var(--button-hover-critical-bg);
+  background-color: var(--button-hover-critical-bg);
 }
 
 .positive-button {
-    background-color: var(--button-positive-bg);
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    transition: background-color 0.3s ease;
+  background-color: var(--button-positive-bg);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  transition: background-color 0.3s ease;
 }
 
 .positive-button:hover {
-    background-color: var(--button-hover-positive-bg);
+  background-color: var(--button-hover-positive-bg);
 }
 
 .negative-button {
-    background-color: #f08080;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    transition: background-color 0.3s ease;
+  background-color: #f08080;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+  transition: background-color 0.3s ease;
 }
 
 .negative-button:hover {
-    background-color: #e06666;
+  background-color: #e06666;
 }
 
 .disabled-button {
-    background-color: #ccc !important;
-    color: #666 !important;
-    cursor: not-allowed !important;
+  background-color: #ccc !important;
+  color: #666 !important;
+  cursor: not-allowed !important;
 }
 
 .latest-history {
-    font-size: 14px;
-    color: var(--history-font-color);
-    text-align: center;
-    margin-top: 10px;
-    min-height: 20px;
+  font-size: 14px;
+  color: var(--history-font-color);
+  text-align: center;
+  margin-top: 10px;
+  min-height: 20px;
 }
 
 .history {
-    margin-top: 10px;
-    font-size: 0.9em;
-    color: var(--history-font-color);
-    text-align: center;
-    max-height: 100px;
-    overflow-y: auto;
-    display: none;
-    width: 100%;
-    text-align: left;
+  margin-top: 10px;
+  font-size: 0.9em;
+  color: var(--history-font-color);
+  text-align: center;
+  max-height: 100px;
+  overflow-y: auto;
+  display: none;
+  width: 100%;
+  text-align: left;
 }
 
 .history ul {
-    list-style-type: disc;
-    margin: 0;
-    padding-left: 20px;
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 20px;
 }
 
 .history-button {
-    padding: 5px 10px;
-    font-size: 12px;
+  padding: 5px 10px;
+  font-size: 12px;
 }
 
+/* NEW: Larger, same width for "Mission" and "Options" buttons */
+#toggle-mission-button,
+#toggle-options-button {
+  width: 130px;
+  font-size: 16px;
+  padding: 8px 12px;
+  border: 2px solid #333;
+  border-radius: 5px;
+}
+
+/* Existing style for toggles, extended if you like */
 #toggle-appearance-button,
 #toggle-options-button {
-    padding: 10px 20px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .active-button {
-    background-color: var(--button-active-bg);
+  background-color: var(--button-active-bg);
+  /* Optionally add a glow or outline for emphasis */
+  box-shadow: 0 0 5px 2px rgba(255, 204, 0, 0.7);
 }
 
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: var(--modal-bg);
-    justify-content: center;
-    align-items: center;
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: var(--modal-bg);
+  justify-content: center;
+  align-items: center;
 }
 
 .modal-content {
-    background-color: var(--modal-content-bg);
-    padding: 20px;
-    border-radius: 5px;
-    width: 300px;
-    max-width: 80%;
-    text-align: center;
-    color: var(--primary-color);
+  background-color: var(--modal-content-bg);
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  max-width: 80%;
+  text-align: center;
+  color: var(--primary-color);
 }
 
 .modal input,
 .modal select {
-    width: 80%;
-    padding: 8px;
-    margin-bottom: 10px;
-    color: var(--primary-color);
-    background: var(--secondary-color);
-    border: 1px solid #ccc;
+  width: 80%;
+  padding: 8px;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+  background: var(--secondary-color);
+  border: 1px solid #ccc;
 }
 
 /* Notification Styles */
 #notification-container {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    z-index: 1000;
+  position: fixed;
+  bottom: 1px;
+  right: 42%;
+  z-index: 1000;
 }
 
 .notification {
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    margin-top: 5px;
-    border-radius: 5px;
-    opacity: 0.9;
+  background-color: #333;
+  color: #fff;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  opacity: 0.9;
 }
 
 .notification.success {
-    background-color: green;
+  background-color: green;
 }
 
 .notification.error {
-    background-color: red;
+  background-color: red;
 }
 
 /* Footer styling */
 #fixed-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: rgba(222, 184, 135, 0.8);
-    border-top: 2px solid #333;
-    z-index: 200;
-    background-image: url('https://www.transparenttextures.com/patterns/old-wall.png');
-    background-size: cover;
-    background-repeat: repeat;
-    padding: 5px 10px;
-    transition: height 0.3s ease;
-    display: flex;
-    justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(222, 184, 135, 0.8);
+  border-top: 2px solid #333;
+  z-index: 200;
+  background-image: url("https://www.transparenttextures.com/patterns/old-wall.png");
+  background-size: cover;
+  background-repeat: repeat;
+  padding: 5px 10px;
+  transition: height 0.3s ease;
+  display: flex;
+  justify-content: center;
 }
 
 #footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 100%;
 }
 
 #footer-left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 #footer-right {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 10px;
-    padding-right: 10px; /* Added padding to create a buffer on the right side */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  padding-right: 10px;
 }
 
 #appearance-controls {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    position: relative;
-    padding-right: 10px; /* Add padding here to create a gap on the right side */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: relative;
+  padding-right: 10px;
 }
 
 #background-upload {
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 10px;
-    display: none;
-    flex-direction: column;
-    gap: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-top: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* Dark Mode Styles */
 body.dark-mode {
-    background-color: #121212;
-    background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
-    background-size: cover;
-    background-repeat: repeat;
-    --primary-color: black;
-    --secondary-color: #f0f0f0;
-    --button-positive-bg: lightgreen;
-    --button-critical-bg: red;
-    --button-hover-positive-bg: mediumseagreen;
-    --button-hover-critical-bg: darkred;
-    --button-active-bg: #333333;
-    --modal-bg: rgba(0,0,0,0.8);
-    --modal-content-bg: #e0e0e0;
-    --history-font-color: black;
+  background-color: #121212;
+  background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+  background-size: cover;
+  background-repeat: repeat;
+  --primary-color: black;
+  --secondary-color: #f0f0f0;
+  --button-positive-bg: lightgreen;
+  --button-critical-bg: red;
+  --button-hover-positive-bg: mediumseagreen;
+  --button-hover-critical-bg: darkred;
+  --button-active-bg: #333333;
+  --modal-bg: rgba(0, 0, 0, 0.8);
+  --modal-content-bg: #e0e0e0;
+  --history-font-color: black;
 }
 
 body.dark-mode #title-container,
@@ -484,8 +543,8 @@ body.dark-mode #options-menu,
 body.dark-mode #background-upload,
 body.dark-mode #notification-container,
 body.dark-mode #fixed-footer {
-    background-color: #e0e0e0;
-    border: 1px solid #aaa;
+  background-color: #e0e0e0;
+  border: 1px solid #aaa;
 }
 
 body.dark-mode h1,
@@ -495,140 +554,140 @@ body.dark-mode button,
 body.dark-mode input,
 body.dark-mode select,
 body.dark-mode label {
-    color: black;
+  color: black;
 }
 
 body.dark-mode input,
 body.dark-mode select,
 body.dark-mode button {
-    background-color: #f0f0f0;
-    border: 1px solid #555;
-    color: black;
+  background-color: #f0f0f0;
+  border: 1px solid #555;
+  color: black;
 }
 
 body.dark-mode .critical-button {
-    border: none;
-    background-color: red;
-    color: #fff;
+  border: none;
+  background-color: red;
+  color: #fff;
 }
 
 body.dark-mode .positive-button {
-    background-color: lightgreen;
-    color: black;
-    border: 2px solid black;
+  background-color: lightgreen;
+  color: black;
+  border: 2px solid black;
 }
 
 body.dark-mode .negative-button {
-    background-color: #f08080;
-    color: black;
-    border: 2px solid black;
+  background-color: #f08080;
+  color: black;
+  border: 2px solid black;
 }
 
 body.dark-mode .faction {
-    background-color: #fafafa;
-    color: black;
-    border: 1px solid #555;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  background-color: #fafafa;
+  color: black;
+  border: 1px solid #555;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 body.dark-mode .faction-title,
 body.dark-mode .faction-value,
 body.dark-mode .latest-history,
 body.dark-mode .history {
-    color: black;
+  color: black;
 }
 
 body.dark-mode .incrementer input[type="number"] {
-    background-color: #f0f0f0;
-    color: black;
-    border: 1px solid #666;
+  background-color: #f0f0f0;
+  color: black;
+  border: 1px solid #666;
 }
 
 body.dark-mode .modal-content {
-    background-color: #e0e0e0;
-    color: black;
+  background-color: #e0e0e0;
+  color: black;
 }
 
 body.dark-mode .modal input,
 body.dark-mode .modal select {
-    background: #f0f0f0;
-    color: black;
-    border: 1px solid #ccc;
+  background: #f0f0f0;
+  color: black;
+  border: 1px solid #ccc;
 }
 
 /* Responsive Design */
 @media (max-width: 1024px) {
-    #faction-list {
-        justify-content: space-around;
-    }
+  #faction-list {
+    justify-content: space-around;
+  }
 }
 
 @media (max-width: 600px) {
-    #live-time {
-        font-size: 24px;
-        position: static;
-        margin-bottom: 10px;
-    }
+  #live-time {
+    font-size: 24px;
+    position: static;
+    margin-bottom: 10px;
+  }
 
-    h1 {
-        font-size: 30px;
-    }
+  h1 {
+    font-size: 30px;
+  }
 
-    #controls,
-    #top-right-buttons {
-        flex-direction: column;
-        align-items: center;
-    }
+  #controls,
+  #top-right-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    #top-right-buttons {
-        position: static;
-        margin-top: 20px;
-    }
+  #top-right-buttons {
+    position: static;
+    margin-top: 20px;
+  }
 
-    #options-menu {
-        position: static;
-        width: 100%;
-    }
+  #options-menu {
+    position: static;
+    width: 100%;
+  }
 
-    .faction {
-        flex: 1 1 100%;
-        max-width: none;
-    }
+  .faction {
+    flex: 1 1 100%;
+    max-width: none;
+  }
 
-    .faction-title {
-        font-size: 30px;
-    }
+  .faction-title {
+    font-size: 30px;
+  }
 
-    .faction-value {
-        font-size: 24px;
-    }
+  .faction-value {
+    font-size: 24px;
+  }
 
-    .incrementer input[type="number"] {
-        width: 30px;
-    }
+  .incrementer input[type="number"] {
+    width: 30px;
+  }
 
-    .incrementer button {
-        font-size: 12px;
-        padding: 5px;
-    }
+  .incrementer button {
+    font-size: 12px;
+    padding: 5px;
+  }
 
-    .action-buttons {
-        flex-direction: column;
-        gap: 5px;
-    }
+  .action-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
 
-    .history-button {
-        width: 100%;
-        box-sizing: border-box;
-    }
+  .history-button {
+    width: 100%;
+    box-sizing: border-box;
+  }
 
-    .status-dropdown {
-        width: 100%;
-    }
+  .status-dropdown {
+    width: 100%;
+  }
 
-    button {
-        font-size: 16px;
-        width: 100%;
-        box-sizing: border-box;
-    }
+  button {
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+  }
 }
