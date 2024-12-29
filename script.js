@@ -6,9 +6,7 @@
     liveTimeElement: document.getElementById("live-time"),
     factionListElement: document.getElementById("faction-list"),
     addFactionButton: document.getElementById("add-faction-button"),
-    nextCommandPhaseButton: document.getElementById(
-      "next-command-phase-button"
-    ),
+    nextCommandPhaseButton: document.getElementById("next-command-phase-button"),
     undoButton: document.getElementById("undo-button"),
     redoButton: document.getElementById("redo-button"),
     toggleOptionsButton: document.getElementById("toggle-options-button"),
@@ -33,9 +31,7 @@
     titleContainer: document.getElementById("title-container"),
     timeContainer: document.getElementById("time-container"),
     darkModeToggle: document.getElementById("dark-mode-toggle"),
-    inquisitionImagesToggle: document.getElementById(
-      "inquisition-images-toggle"
-    ),
+    inquisitionImagesToggle: document.getElementById("inquisition-images-toggle"),
   };
 
   // Predefined factions with colors
@@ -404,11 +400,13 @@
                 </div>
                 <div class="incrementer">
                     <input type="number" min="1" id="vp-increment-${factionId}" value="1">
+                    <!-- If you want them to be full bootstrap, add .btn.btn-sm here -->
                     <button class="positive-button increment-vp-button">+ VP</button>
                     <button class="negative-button decrement-vp-button">-1 VP</button>
                 </div>
                 <div class="incrementer">
                     <input type="number" min="1" id="cp-increment-${factionId}" value="1">
+                    <!-- Likewise, .btn.btn-sm can be added -->
                     <button class="positive-button increment-cp-button">+ CP</button>
                     <button class="negative-button decrement-cp-button">-1 CP</button>
                 </div>
@@ -468,10 +466,7 @@
       const factionSelect = document.getElementById("edit-faction-select");
       const selectedFactionName = factionSelect.value;
       if (!selectedFactionName) {
-        utils.showNotification(
-          "Please choose a faction before saving.",
-          "error"
-        );
+        utils.showNotification("Please choose a faction before saving.", "error");
         return;
       }
       const factionObj =
@@ -696,9 +691,9 @@
         const draggedElement = document.getElementById(draggedId);
         const targetElement = document.getElementById(targetId);
 
-        const draggedIndex = Array.from(
-          dom.factionListElement.children
-        ).indexOf(draggedElement);
+        const draggedIndex = Array.from(dom.factionListElement.children).indexOf(
+          draggedElement
+        );
         const targetIndex = Array.from(dom.factionListElement.children).indexOf(
           targetElement
         );
@@ -793,13 +788,7 @@
         action.type,
         isUndo ? action.oldValue : action.newValue
       );
-      factions.addHistory(
-        action.factionId,
-        action.type,
-        null,
-        null,
-        "reverted"
-      );
+      factions.addHistory(action.factionId, action.type, null, null, "reverted");
     },
     restoreAdd: (action) => {
       const factionObj =
@@ -1053,10 +1042,7 @@
 
   // Event Listeners
   dom.addFactionButton.addEventListener("click", modals.showAddFactionModal);
-  dom.nextCommandPhaseButton.addEventListener(
-    "click",
-    handlers.nextCommandPhase
-  );
+  dom.nextCommandPhaseButton.addEventListener("click", handlers.nextCommandPhase);
   dom.undoButton.addEventListener("click", handlers.undo);
   dom.redoButton.addEventListener("click", handlers.redo);
   dom.toggleOptionsButton.addEventListener("click", handlers.toggleOptionsMenu);
@@ -1113,22 +1099,16 @@
     };
     reader.readAsText(file);
   });
-  dom.toggleAppearanceButton.addEventListener(
-    "click",
-    handlers.toggleAppearanceMenu
-  );
+  dom.toggleAppearanceButton.addEventListener("click", handlers.toggleAppearanceMenu);
   dom.backgroundFileInput.addEventListener("change", handlers.setBackground);
-  dom.titleColorToggle.addEventListener(
-    "change",
-    handlers.toggleTitleAndTimeColor
-  );
+  dom.titleColorToggle.addEventListener("change", handlers.toggleTitleAndTimeColor);
   dom.togglePlayerButton.addEventListener("click", () => {
     if (dom.youtubePlayer.style.display === "none") {
       dom.youtubePlayer.style.display = "block";
-      dom.togglePlayerButton.textContent = "Hide Music";
+      dom.togglePlayerButton.textContent = "Hide Sound";
     } else {
       dom.youtubePlayer.style.display = "none";
-      dom.togglePlayerButton.textContent = "Show Music";
+      dom.togglePlayerButton.textContent = "Show Sound";
     }
   });
 
@@ -1168,6 +1148,7 @@
 
   setInterval(handlers.autoSaveData, 300000);
   updateDividerLineAppearance();
+
   // Helper function to get the current list of faction elements
   function getFactionElements() {
     return Array.from(document.querySelectorAll(".faction"));
@@ -1207,9 +1188,9 @@
       return;
     }
     if (event.key === "f") {
-        dom.addFactionButton.click();
-        return;
-      }
+      dom.addFactionButton.click();
+      return;
+    }
 
     // 2) Left/Right (or A/D) to move selection
     if (event.key === "ArrowLeft" || event.key === "a") {

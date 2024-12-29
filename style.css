@@ -1,27 +1,14 @@
 /* style.css */
 
-:root {
-  --primary-color: black;
-  --secondary-color: #f0f0f0;
-  --background-color: #e0e0e0;
-  --button-positive-bg: lightgreen;
-  --button-critical-bg: red;
-  --button-hover-positive-bg: mediumseagreen;
-  --button-hover-critical-bg: darkred;
-  --button-active-bg: #cccccc;
-  --modal-bg: rgba(0, 0, 0, 0.5);
-  --modal-content-bg: white;
-  --status-box-bg: #d3d3d3;
-  --version-font-size: 16px;
-  --history-font-color: #444;
-  --footer-min-height: 60px;
-}
-
+/* 
+   1) Use "Space Grotesk" for the global font.
+   2) Keep "Metal Mania" only where explicitly set (like h1, #live-time, .faction-title).
+*/
 body {
-  font-family: Arial, sans-serif;
+  font-family: "Space Grotesk", sans-serif;
   margin: 0;
   padding: 0;
-  background-color: var(--background-color);
+  background-color: #e0e0e0;
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -34,6 +21,29 @@ body {
   flex-direction: column;
 }
 
+/* Keep "Metal Mania" for certain headings and text */
+h1 {
+  font-family: "Metal Mania", sans-serif;
+  color: black;
+  margin: 0 10px;
+  transition: color 0.3s ease-in-out;
+  font-size: 40px;
+  display: inline-block;
+}
+
+#live-time {
+  font-family: "Metal Mania", sans-serif;
+  font-size: 28px;
+  margin: 0;
+  color: black;
+  transition: color 0.3s ease-in-out;
+}
+
+.faction-title {
+  font-family: "Metal Mania", sans-serif;
+  font-size: 40px;
+}
+
 header {
   position: relative;
   text-align: center;
@@ -42,10 +52,6 @@ header {
   z-index: 10;
 }
 
-/* 
-   NEW: Black outline around the textured backdrop 
-   for the title (#title-container) and time (#time-container)
-*/
 #time-container {
   position: absolute;
   top: 20px;
@@ -58,22 +64,9 @@ header {
   background-image: url("https://www.transparenttextures.com/patterns/old-wall.png");
   background-size: cover;
   background-repeat: repeat;
-
-  /* Added black outline */
   border: 2px solid black;
 }
 
-#live-time {
-  font-size: 28px;
-  color: var(--primary-color);
-  transition: color 0.3s ease-in-out;
-  font-family: "Metal Mania", sans-serif;
-  margin: 0;
-}
-
-/* 
-   NEW: Black outline around the title container 
-*/
 #title-container {
   display: inline-flex;
   align-items: center;
@@ -83,8 +76,6 @@ header {
   background-image: url("https://www.transparenttextures.com/patterns/old-wall.png");
   background-size: cover;
   background-repeat: repeat;
-
-  /* Added black outline */
   border: 2px solid black;
 }
 
@@ -117,21 +108,12 @@ header {
   border: none;
 }
 
-h1 {
-  color: var(--primary-color);
-  margin: 0 10px;
-  font-family: "Metal Mania", sans-serif;
-  transition: color 0.3s ease-in-out;
-  font-size: 40px;
-  display: inline-block;
-}
-
 #version-number {
-  font-size: var(--version-font-size);
+  font-size: 16px;
+  font-family: "Metal Mania", sans-serif;
   margin-left: 10px;
   vertical-align: middle;
-  color: var(--primary-color);
-  font-family: "Metal Mania", sans-serif;
+  color: black;
 }
 
 #controls {
@@ -167,20 +149,18 @@ h1 {
   z-index: 100;
 }
 
-/* The divider line is now its own element */
 .divider-line {
   width: 100%;
   height: 3px;
   background: linear-gradient(to right, #333, #999, #333);
 }
 
-/* Main area is scrollable */
 main {
   flex: 1 1 auto;
   overflow-y: auto;
   position: relative;
   padding: 20px;
-  margin-bottom: var(--footer-min-height);
+  margin-bottom: 60px; /* fallback in place of var(--footer-min-height) */
 }
 
 #faction-list {
@@ -225,20 +205,9 @@ main {
   top: -10px;
 }
 
-.faction-title {
-  font-size: 40px;
-  font-weight: bold;
-  margin-top: 0px;
-  text-align: center;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  font-family: "Metal Mania", sans-serif;
-  color: var(--primary-color);
-}
-
 .faction-selected {
-  outline: 3px solid gold; /* A visible highlight that works in both light & dark modes */
-  outline-offset: -2px; /* Moves outline closer to the element */
+  outline: 3px solid gold;
+  outline-offset: -2px;
 }
 
 .action-buttons {
@@ -275,7 +244,7 @@ main {
 .faction-value {
   font-size: 30px;
   font-weight: bold;
-  color: var(--primary-color);
+  color: black;
 }
 
 .incrementer {
@@ -290,7 +259,7 @@ main {
   padding: 5px;
   font-size: 16px;
   text-align: center;
-  border: 1px solid #0000;
+  border: 1px solid transparent;
   border-radius: 3px;
 }
 
@@ -309,35 +278,33 @@ button {
   border-radius: 5px;
 }
 
+/* Legacy color classes if still needed */
 .critical-button {
-  background-color: var(--button-critical-bg);
-  color: var(--secondary-color);
-  border: 2px solid var(--primary-color);
+  background-color: red;
+  color: #f0f0f0;
+  border: 2px solid black;
   transition: background-color 0.3s ease;
 }
-
 .critical-button:hover {
-  background-color: var(--button-hover-critical-bg);
+  background-color: darkred;
 }
 
 .positive-button {
-  background-color: var(--button-positive-bg);
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  background-color: lightgreen;
+  color: black;
+  border: 2px solid black;
   transition: background-color 0.3s ease;
 }
-
 .positive-button:hover {
-  background-color: var(--button-hover-positive-bg);
+  background-color: mediumseagreen;
 }
 
 .negative-button {
   background-color: #f08080;
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
+  color: black;
+  border: 2px solid black;
   transition: background-color 0.3s ease;
 }
-
 .negative-button:hover {
   background-color: #e06666;
 }
@@ -350,7 +317,7 @@ button {
 
 .latest-history {
   font-size: 14px;
-  color: var(--history-font-color);
+  color: #444;
   text-align: center;
   margin-top: 10px;
   min-height: 20px;
@@ -359,7 +326,7 @@ button {
 .history {
   margin-top: 10px;
   font-size: 0.9em;
-  color: var(--history-font-color);
+  color: #444;
   text-align: center;
   max-height: 100px;
   overflow-y: auto;
@@ -367,7 +334,6 @@ button {
   width: 100%;
   text-align: left;
 }
-
 .history ul {
   list-style-type: disc;
   margin: 0;
@@ -379,28 +345,12 @@ button {
   font-size: 12px;
 }
 
-/* NEW: Larger, same width for "Mission" and "Options" buttons */
-#toggle-mission-button,
-#toggle-options-button {
-  width: 130px;
-  font-size: 16px;
-  padding: 8px 12px;
-  border: 2px solid #333;
-  border-radius: 5px;
-}
-
-/* Existing style for toggles, extended if you like */
-#toggle-appearance-button,
-#toggle-options-button {
-  transition: background-color 0.3s ease;
-}
-
 .active-button {
-  background-color: var(--button-active-bg);
-  /* Optionally add a glow or outline for emphasis */
+  background-color: #cccccc;
   box-shadow: 0 0 5px 2px rgba(255, 204, 0, 0.7);
 }
 
+/* Modal */
 .modal {
   display: none;
   position: fixed;
@@ -410,19 +360,18 @@ button {
   width: 100%;
   height: 100%;
   overflow: auto;
-  background-color: var(--modal-bg);
+  background-color: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
 }
-
 .modal-content {
-  background-color: var(--modal-content-bg);
+  background-color: white;
   padding: 20px;
   border-radius: 5px;
   width: 300px;
   max-width: 80%;
   text-align: center;
-  color: var(--primary-color);
+  color: black;
 }
 
 .modal input,
@@ -430,12 +379,13 @@ button {
   width: 80%;
   padding: 8px;
   margin-bottom: 10px;
-  color: var(--primary-color);
-  background: var(--secondary-color);
+  color: black;
+  background: #f0f0f0;
   border: 1px solid #ccc;
+  margin: 5px auto;
 }
 
-/* Notification Styles */
+/* Notifications */
 #notification-container {
   position: fixed;
   bottom: 1px;
@@ -460,7 +410,7 @@ button {
   background-color: red;
 }
 
-/* Footer styling */
+/* Footer */
 #fixed-footer {
   position: fixed;
   bottom: 0;
@@ -519,22 +469,15 @@ button {
   gap: 10px;
 }
 
-/* Dark Mode Styles */
+/* ============================= */
+/* Dark Mode: restore textures  */
+/* ============================= */
 body.dark-mode {
   background-color: #121212;
   background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
   background-size: cover;
   background-repeat: repeat;
-  --primary-color: black;
-  --secondary-color: #f0f0f0;
-  --button-positive-bg: lightgreen;
-  --button-critical-bg: red;
-  --button-hover-positive-bg: mediumseagreen;
-  --button-hover-critical-bg: darkred;
-  --button-active-bg: #333333;
-  --modal-bg: rgba(0, 0, 0, 0.8);
-  --modal-content-bg: #e0e0e0;
-  --history-font-color: black;
+  color: black; /* You may adjust text color if needed */
 }
 
 body.dark-mode #title-container,
@@ -545,77 +488,101 @@ body.dark-mode #notification-container,
 body.dark-mode #fixed-footer {
   background-color: #e0e0e0;
   border: 1px solid #aaa;
+  background-image: url("https://www.transparenttextures.com/patterns/dark-matter.png");
+  background-size: cover;
+  background-repeat: repeat;
 }
 
-body.dark-mode h1,
-body.dark-mode #live-time,
-body.dark-mode #version-number,
-body.dark-mode button,
-body.dark-mode input,
-body.dark-mode select,
-body.dark-mode label {
+/* Pastel Buttons: dark grey border (#444) */
+.btn-reset {
+  background-color: #F28B82; /* pastel red */
   color: black;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-reset:hover {
+  background-color: #FFAB91;
+  border-color: #444;
 }
 
-body.dark-mode input,
-body.dark-mode select,
-body.dark-mode button {
-  background-color: #f0f0f0;
-  border: 1px solid #555;
+.btn-save {
+  background-color: #A5D6A7; /* pastel green */
   color: black;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-save:hover {
+  background-color: #81C995;
+  border-color: #444;
 }
 
-body.dark-mode .critical-button {
-  border: none;
-  background-color: red;
-  color: #fff;
-}
-
-body.dark-mode .positive-button {
-  background-color: lightgreen;
+.btn-load {
+  background-color: #90CAF9; /* pastel blue */
   color: black;
-  border: 2px solid black;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-load:hover {
+  background-color: #64B5F6;
+  border-color: #444;
 }
 
-body.dark-mode .negative-button {
-  background-color: #f08080;
+.btn-export {
+  background-color: #E1BEE7; /* lighter pastel purple */
   color: black;
-  border: 2px solid black;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-export:hover {
+  background-color: #CE93D8; /* darker hover */
+  border-color: #444;
 }
 
-body.dark-mode .faction {
-  background-color: #fafafa;
+.btn-import {
+  background-color: #FFE082; /* pastel yellow */
   color: black;
-  border: 1px solid #555;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-import:hover {
+  background-color: #FFD54F;
+  border-color: #444;
 }
 
-body.dark-mode .faction-title,
-body.dark-mode .faction-value,
-body.dark-mode .latest-history,
-body.dark-mode .history {
+.btn-mission {
+  background-color: #FFD180; /* pastel orange */
   color: black;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-mission:hover {
+  background-color: #FFAB40;
+  border-color: #444;
 }
 
-body.dark-mode .incrementer input[type="number"] {
-  background-color: #f0f0f0;
+.btn-undo {
+  background-color: #CFD8DC; /* pastel grey */
   color: black;
-  border: 1px solid #666;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-undo:hover {
+  background-color: #B0BEC5;
+  border-color: #444;
 }
 
-body.dark-mode .modal-content {
-  background-color: #e0e0e0;
+.btn-options {
+  background-color: #F8BBD0; /* pastel pink */
   color: black;
+  border: 2px solid #444;
+  transition: all 0.2s ease-in-out;
+}
+.btn-options:hover {
+  background-color: #F48FB1;
+  border-color: #444;
 }
 
-body.dark-mode .modal input,
-body.dark-mode .modal select {
-  background: #f0f0f0;
-  color: black;
-  border: 1px solid #ccc;
-}
-
-/* Responsive Design */
+/* Responsive design adjustments */
 @media (max-width: 1024px) {
   #faction-list {
     justify-content: space-around;
@@ -678,7 +645,6 @@ body.dark-mode .modal select {
 
   .history-button {
     width: 100%;
-    box-sizing: border-box;
   }
 
   .status-dropdown {
@@ -688,6 +654,5 @@ body.dark-mode .modal select {
   button {
     font-size: 16px;
     width: 100%;
-    box-sizing: border-box;
   }
 }
