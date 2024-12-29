@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>The Thunderdome</title>
+
+    <!-- Include Bootstrap 5 CSS (CDN) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    />
+
+    <!-- Google Fonts: Metal Mania (existing) + Space Grotesk (new) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Metal+Mania&family=Space+Grotesk:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Your external CSS (after Bootstrap, so overrides apply last) -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header>
+      <div id="top-right-buttons">
+        <!-- Toggle Options -->
+        <button
+          id="toggle-options-button"
+          class="btn btn-sm btn-options"
+          type="button"
+        >
+          <b>Options</b>
+        </button>
+        <!-- Options Menu -->
+        <div id="options-menu">
+          <!-- Reset All (pastel red) -->
+          <button
+            class="btn btn-sm btn-reset critical-button"
+            id="reset-all-button"
+            type="button"
+          >
+            Reset All
+          </button>
+          <!-- Save (pastel green) -->
+          <button
+            id="save-data-button"
+            class="btn btn-sm btn-save"
+            type="button"
+          >
+            Save
+          </button>
+          <!-- Load (pastel blue) -->
+          <button
+            id="load-data-button"
+            class="btn btn-sm btn-load"
+            type="button"
+          >
+            Load
+          </button>
+          <!-- Export (this is a pastel purple in general) -->
+          <button
+            id="export-data-button"
+            class="btn btn-sm btn-export"
+            type="button"
+          >
+            Export Game
+          </button>
+          <!-- Import (pastel yellow) -->
+          <button
+            id="import-data-button"
+            class="btn btn-sm btn-import"
+            type="button"
+          >
+            Import Game
+          </button>
+          <input
+            type="file"
+            id="import-file-input"
+            accept=".json"
+            style="display: none;"
+          />
+        </div>
+
+        <!-- Mission (pastel orange) -->
+        <button
+          id="toggle-mission-button"
+          class="btn btn-sm btn-load"
+          type="button"
+        >
+          <b>Mission</b> (m)
+        </button>
+        <div id="mission-container" style="display:none;">
+          <div class="iframe-container">
+            <iframe
+              src="https://warptracker.com/match"
+              id="embedded-frame"
+            ></iframe>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time container -->
+      <div id="time-container">
+        <!-- h1 / #live-time use "Metal Mania", so we do NOT override that -->
+        <div id="live-time">12:00 PM</div>
+      </div>
+
+      <!-- Title container -->
+      <div id="title-container">
+        <span style="font-size: 30px;">⚡</span>
+        <h1 id="page-title">The Thunderdome</h1>
+        <span id="version-number">v1.7</span>
+      </div>
+
+      <!-- Controls -->
+      <div id="controls">
+        <!-- Add Faction (pastel green) -->
+        <button
+          id="add-faction-button"
+          class="btn btn-sm btn-save"
+          type="button"
+        >
+          <b>Add Faction</b> (f)
+        </button>
+        <!-- Next Command Phase (pastel orange) -->
+        <button
+          id="next-command-phase-button"
+          class="btn btn-sm btn-mission"
+          type="button"
+        >
+          <b>Next Command Phase</b> (c)
+        </button>
+        <!-- Undo/Redo (pastel grey) -->
+        <button
+          id="undo-button"
+          class="btn btn-sm btn-undo"
+          type="button"
+          disabled
+        >
+          <b>Undo</b> (u)
+        </button>
+        <button
+          id="redo-button"
+          class="btn btn-sm btn-undo"
+          type="button"
+          disabled
+        >
+          <b>Redo</b> (r)
+        </button>
+      </div>
+    </header>
+
+    <!-- Divider line -->
+    <div class="divider-line"></div>
+
+    <!-- Main content area -->
+    <main>
+      <div id="faction-list"></div>
+    </main>
+
+    <!-- Fixed footer -->
+    <footer id="fixed-footer">
+      <div id="footer-content">
+        <!-- Bottom-left (Music) -->
+        <div id="footer-left">
+          <!-- Show Music (now lighter pastel purple) -->
+          <button
+            id="toggle-player-button"
+            class="btn btn-sm btn-undo"
+            type="button"
+          >
+            Show Sound
+          </button>
+          <iframe
+            id="youtube-player"
+            width="560"
+            height="315"
+            src="https://www.youtube.com/embed/GMUmFRG07s8?si=pDBsZKCP2A8Sl8bz"
+            title="YouTube video player"
+            frameborder="0"
+            allowfullscreen
+            style="display: none; width: 300px; height: 170px;"
+          ></iframe>
+        </div>
+
+        <!-- Bottom-right (Appearance Controls) -->
+        <div id="footer-right">
+          <div id="appearance-controls">
+            <!-- Toggle Appearance (pastel blue) -->
+            <button
+              id="toggle-appearance-button"
+              class="btn btn-sm btn-undo"
+              type="button"
+            >
+              Appearance
+            </button>
+            <div id="background-upload">
+              <label>
+                <b>Background:</b>
+                <input
+                  type="file"
+                  accept="image/*"
+                  id="background-file-input"
+                />
+              </label>
+              <label>
+                <b>Dark Mode:</b>
+                <input type="checkbox" id="dark-mode-toggle" />
+              </label>
+              <label>
+                <b>Inquisition Approved Images:</b>
+                <input type="checkbox" id="inquisition-images-toggle" />
+              </label>
+			  <label>
+                <b>Contrast Fix (broken):</b>
+                <input type="checkbox" id="title-color-toggle" />
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Notifications -->
+    <div id="notification-container" aria-live="polite"></div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal" role="dialog" aria-modal="true">
+      <div class="modal-content" id="modal-content" tabindex="-1">
+        <!-- Content injected dynamically -->
+      </div>
+    </div>
+
+    <!-- Your original script -->
+    <script src="script.js"></script>
+
+    <!-- (Optional) Bootstrap JS Bundle -->
+    <!--
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    ></script>
+    -->
+  </body>
+</html>
