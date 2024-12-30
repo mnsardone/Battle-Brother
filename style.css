@@ -111,7 +111,7 @@ header {
 #version-number {
   font-size: 16px;
   font-family: "Metal Mania", sans-serif;
-  margin-left: 10px;
+  align-content: center;
   vertical-align: middle;
   color: black;
 }
@@ -388,8 +388,8 @@ button {
 /* Notifications */
 #notification-container {
   position: fixed;
-  bottom: 1px;
-  right: 42%;
+  bottom: 7px;
+  right: 50%;
   z-index: 1000;
 }
 
